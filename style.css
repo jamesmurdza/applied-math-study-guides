@@ -73,20 +73,29 @@ body {
 }
 
 .topics {
-  margin-top: 28px;
+  margin-top: 40px;
 }
 
-.topics h2 {
-  font-size: 1.05rem;
+.topic {
+  padding: 28px 0;
+}
+
+.topic + .topic {
+  border-top: 1px solid #eee;
+}
+
+.topic h2 {
+  font-size: 1.1rem;
   font-weight: 600;
   color: #1a1a1a;
-  margin: 0;
-  padding: 14px 0;
-  border-bottom: 1px solid #eee;
+  margin: 0 0 8px;
 }
 
-.topics h2:first-child {
-  border-top: 1px solid #eee;
+.topic p {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #888;
+  margin: 0;
 }
 
 @keyframes fade {
