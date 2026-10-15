@@ -110,15 +110,13 @@ body {
 }
 
 .set-examples {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
   margin-top: 16px;
-  flex-wrap: wrap;
 }
 
 .set-card {
-  flex: 1;
-  min-width: 140px;
   border: 1px solid #eee;
   border-radius: 6px;
   padding: 14px;
