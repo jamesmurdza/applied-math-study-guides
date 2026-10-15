@@ -86,7 +86,7 @@
             <p>The factory wants to maximize profit from the liters it produces.</p>
             <p class="math">$$\max\quad 5\textcolor{#e64980}{x_1} + 4\textcolor{#3b6bd6}{x_2}$$</p>
             <p>There's only so much milk on hand, so milk used across both flavors can't exceed the supply.</p>
-            <p class="math">$$6\textcolor{#e64980}{x_1} + 4\textcolor{#3b6bd6}{x_2} \leq 24$$</p>
+            <p class="math">$$2\textcolor{#e64980}{x_1} + 4\textcolor{#3b6bd6}{x_2} \leq 24$$</p>
             <p>Peppermint extract only goes into the peppermint flavor, and there's a limited supply of it.</p>
             <p class="math">$$\textcolor{#e64980}{x_1} \leq 6$$</p>
             <p>Fresh blueberries are limited too, capping how much of that flavor can be made.</p>
@@ -98,17 +98,19 @@
               <svg viewBox="0 0 410 330" role="img" aria-labelledby="lp-graph-title">
                 <title id="lp-graph-title">Feasible region for the ice cream LP example</title>
 
-                <!-- feasible region -->
-                <polygon points="50,300 210,300 76.7,100 50,100" fill="#1a1a1a" fill-opacity="0.06"></polygon>
+                <!-- feasible region: (0,0) (6,0) (6,3) (2,5) (0,5) -->
+                <polygon points="50,300 290,300 290,180 130,100 50,100" fill="#1a1a1a" fill-opacity="0.06"></polygon>
 
-                <!-- milk constraint: 6x1 + 4x2 = 24 -->
-                <line x1="50" y1="60" x2="210" y2="300" stroke="#1a1a1a" stroke-width="1.5"></line>
+                <!-- milk constraint: 2x1 + 4x2 = 24, active edge from (2,5) to (6,3) -->
+                <line x1="130" y1="100" x2="290" y2="180" stroke="#1a1a1a" stroke-width="1.5"></line>
+                <!-- milk line continued past the peppermint cap, where it's no longer feasible -->
+                <line x1="290" y1="180" x2="370" y2="220" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="4,4" stroke-opacity="0.5"></line>
 
                 <!-- blueberry constraint: x2 = 5 -->
                 <line x1="50" y1="100" x2="370" y2="100" stroke="#3b6bd6" stroke-width="1.5"></line>
 
-                <!-- peppermint constraint: x1 = 6 (never binding) -->
-                <line x1="290" y1="300" x2="290" y2="20" stroke="#e64980" stroke-width="1.5" stroke-dasharray="5,4"></line>
+                <!-- peppermint constraint: x1 = 6 (binding — slices off the corner) -->
+                <line x1="290" y1="300" x2="290" y2="20" stroke="#e64980" stroke-width="1.5"></line>
 
                 <!-- axes -->
                 <line x1="50" y1="300" x2="385" y2="300" stroke="#333" stroke-width="1"></line>
@@ -116,17 +118,19 @@
 
                 <!-- x-axis ticks -->
                 <line x1="50" y1="300" x2="50" y2="305" stroke="#333"></line>
-                <line x1="210" y1="300" x2="210" y2="305" stroke="#333"></line>
+                <line x1="130" y1="300" x2="130" y2="305" stroke="#333"></line>
                 <line x1="290" y1="300" x2="290" y2="305" stroke="#333"></line>
                 <line x1="370" y1="300" x2="370" y2="305" stroke="#333"></line>
                 <text x="50" y="318" font-size="11" fill="#555" text-anchor="middle">0</text>
-                <text x="210" y="318" font-size="11" fill="#555" text-anchor="middle">4</text>
+                <text x="130" y="318" font-size="11" fill="#555" text-anchor="middle">2</text>
                 <text x="290" y="318" font-size="11" fill="#555" text-anchor="middle">6</text>
                 <text x="370" y="318" font-size="11" fill="#555" text-anchor="middle">8</text>
 
                 <!-- y-axis ticks -->
+                <line x1="44" y1="180" x2="50" y2="180" stroke="#333"></line>
                 <line x1="44" y1="100" x2="50" y2="100" stroke="#333"></line>
                 <line x1="44" y1="20" x2="50" y2="20" stroke="#333"></line>
+                <text x="38" y="183" font-size="11" fill="#555" text-anchor="end">3</text>
                 <text x="38" y="103" font-size="11" fill="#555" text-anchor="end">5</text>
                 <text x="38" y="23" font-size="11" fill="#555" text-anchor="end">7</text>
 
@@ -135,16 +139,16 @@
                 <text x="50" y="10" font-size="12" fill="#1a1a1a" text-anchor="middle">x₂</text>
 
                 <!-- optimal vertex -->
-                <circle cx="76.7" cy="100" r="4" fill="#1a1a1a"></circle>
-                <text x="86" y="92" font-size="11" fill="#1a1a1a">optimal: (⅔, 5)</text>
+                <circle cx="290" cy="180" r="4" fill="#1a1a1a"></circle>
+                <text x="235" y="172" font-size="11" fill="#1a1a1a">optimal: (6, 3)</text>
               </svg>
 
               <div class="lp-legend">
-                <span><i style="background:#1a1a1a"></i>milk: 6x₁ + 4x₂ ≤ 24</span>
+                <span><i style="background:#1a1a1a"></i>milk: 2x₁ + 4x₂ ≤ 24</span>
                 <span><i style="background:#3b6bd6"></i>blueberries: x₂ ≤ 5</span>
                 <span><i style="background:#e64980"></i>peppermint extract: x₁ ≤ 6</span>
               </div>
-              <p>The shaded region is every feasible production plan. The best one sits at a corner — here, (x₁, x₂) = (⅔, 5), for a profit of about 23.33. The peppermint cap never actually kicks in: the milk limit runs out first.</p>
+              <p>The shaded region is every feasible production plan. The dashed gray line shows where the milk constraint alone would have allowed production to continue — the peppermint cap (pink) slices off that corner. The best plan sits right where the two meet: (x₁, x₂) = (6, 3), for a profit of 42.</p>
             </div>
           </div>
           <div class="topic">
