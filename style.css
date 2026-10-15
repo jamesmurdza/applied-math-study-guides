@@ -73,20 +73,20 @@ body {
 }
 
 .topics {
-  margin: 28px 0 0;
-  padding: 0;
-  list-style: none;
+  margin-top: 28px;
 }
 
-.topics li {
-  padding: 10px 0;
+.topics h2 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+  padding: 14px 0;
   border-bottom: 1px solid #eee;
-  font-size: 0.95rem;
-  color: #333;
 }
 
-.topics li:last-child {
-  border-bottom: none;
+.topics h2:first-child {
+  border-top: 1px solid #eee;
 }
 
 @keyframes fade {
