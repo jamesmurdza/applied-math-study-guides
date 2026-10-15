@@ -109,6 +109,39 @@ body {
   font-weight: 600;
 }
 
+.set-examples {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.set-card {
+  flex: 1;
+  min-width: 140px;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 14px;
+  text-align: center;
+}
+
+.set-card svg {
+  width: 100%;
+  max-width: 160px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.set-card p {
+  margin-top: 10px;
+  font-size: 0.85rem;
+}
+
+.set-card p:first-of-type {
+  margin-top: 12px;
+}
+
 .lp-graph {
   margin-top: 20px;
   padding-top: 20px;
