@@ -24,7 +24,6 @@
         <div class="lp-legend ra-legend">
           <span><i style="background:#4078F2"></i>function (d, f)</span>
           <span><i style="background:#0184BC"></i>operator (=, &lt;, ∈, ⊆)</span>
-          <span><i style="background:#A626A4"></i>quantifier/connective (∀, ∃, ⟺)</span>
           <span><i style="background:#986801"></i>constant (0, 1, ∞)</span>
           <span><i style="background:#C18401"></i>named set (U, X, ℕ)</span>
         </div>
@@ -36,7 +35,7 @@
             <p>Distance is never negative.</p>
             <p class="math">$$\textcolor{#4078F2}{d}(x,y) \textcolor{#0184BC}{\geq} \textcolor{#986801}{0}$$</p>
             <p>Two points are at distance zero exactly when they are the same point.</p>
-            <p class="math">$$\textcolor{#4078F2}{d}(x,y) \textcolor{#0184BC}{=} \textcolor{#986801}{0} \textcolor{#A626A4}{\iff} x \textcolor{#0184BC}{=} y$$</p>
+            <p class="math">$$\textcolor{#4078F2}{d}(x,y) \textcolor{#0184BC}{=} \textcolor{#986801}{0} \iff x \textcolor{#0184BC}{=} y$$</p>
             <p>Distance doesn't depend on which point you measure from.</p>
             <p class="math">$$\textcolor{#4078F2}{d}(x,y) \textcolor{#0184BC}{=} \textcolor{#4078F2}{d}(y,x)$$</p>
             <p>Going through a third point never shortens the direct route.</p>
@@ -45,32 +44,32 @@
           <div class="topic">
             <h2>Open and Closed Sets</h2>
             <p>Open sets are built from balls that fit entirely inside them, while closed sets contain all of their limit points.</p>
-            <p class="math">$$\textcolor{#C18401}{U} \text{ open} \textcolor{#A626A4}{\iff} \textcolor{#A626A4}{\forall} x \textcolor{#0184BC}{\in} \textcolor{#C18401}{U},\ \textcolor{#A626A4}{\exists}\, \varepsilon \textcolor{#0184BC}{>} \textcolor{#986801}{0} \text{ s.t. } \textcolor{#C18401}{B}(x,\varepsilon) \textcolor{#0184BC}{\subseteq} \textcolor{#C18401}{U}$$</p>
+            <p class="math">$$\textcolor{#C18401}{U} \text{ open} \iff \forall x \textcolor{#0184BC}{\in} \textcolor{#C18401}{U},\ \exists\, \varepsilon \textcolor{#0184BC}{>} \textcolor{#986801}{0} \text{ s.t. } \textcolor{#C18401}{B}(x,\varepsilon) \textcolor{#0184BC}{\subseteq} \textcolor{#C18401}{U}$$</p>
           </div>
           <div class="topic">
             <h2>Sequences and Convergence</h2>
             <p>A sequence converges when its terms get and stay arbitrarily close to a single limit point.</p>
-            <p class="math">$$x_n \to x \textcolor{#A626A4}{\iff} \textcolor{#A626A4}{\forall} \varepsilon \textcolor{#0184BC}{>} \textcolor{#986801}{0},\ \textcolor{#A626A4}{\exists} N \textcolor{#0184BC}{\in} \textcolor{#C18401}{\mathbb{N}} \text{ s.t. } \textcolor{#A626A4}{\forall} n \textcolor{#0184BC}{\geq} N,\ \textcolor{#4078F2}{d}(x_n, x) \textcolor{#0184BC}{<} \varepsilon$$</p>
+            <p class="math">$$x_n \to x \iff \forall \varepsilon \textcolor{#0184BC}{>} \textcolor{#986801}{0},\ \exists N \textcolor{#0184BC}{\in} \textcolor{#C18401}{\mathbb{N}} \text{ s.t. } \forall n \textcolor{#0184BC}{\geq} N,\ \textcolor{#4078F2}{d}(x_n, x) \textcolor{#0184BC}{<} \varepsilon$$</p>
           </div>
           <div class="topic">
             <h2>Continuity</h2>
             <p>A function is continuous when small changes in input produce arbitrarily small changes in output.</p>
-            <p class="math">$$\textcolor{#4078F2}{f} \text{ continuous at } x_0 \textcolor{#A626A4}{\iff} \textcolor{#A626A4}{\forall} \varepsilon \textcolor{#0184BC}{>} \textcolor{#986801}{0},\ \textcolor{#A626A4}{\exists}\, \delta \textcolor{#0184BC}{>} \textcolor{#986801}{0} \text{ s.t. } \textcolor{#4078F2}{d}(x,x_0) \textcolor{#0184BC}{<} \delta \textcolor{#A626A4}{\implies} \textcolor{#4078F2}{d}(\textcolor{#4078F2}{f}(x), \textcolor{#4078F2}{f}(x_0)) \textcolor{#0184BC}{<} \varepsilon$$</p>
+            <p class="math">$$\textcolor{#4078F2}{f} \text{ continuous at } x_0 \iff \forall \varepsilon \textcolor{#0184BC}{>} \textcolor{#986801}{0},\ \exists\, \delta \textcolor{#0184BC}{>} \textcolor{#986801}{0} \text{ s.t. } \textcolor{#4078F2}{d}(x,x_0) \textcolor{#0184BC}{<} \delta \implies \textcolor{#4078F2}{d}(\textcolor{#4078F2}{f}(x), \textcolor{#4078F2}{f}(x_0)) \textcolor{#0184BC}{<} \varepsilon$$</p>
           </div>
           <div class="topic">
             <h2>Boundedness and Total Boundedness</h2>
             <p>Total boundedness strengthens boundedness by requiring a set to be coverable by finitely many small balls.</p>
-            <p class="math">$$\textcolor{#C18401}{A} \text{ totally bounded} \textcolor{#A626A4}{\iff} \textcolor{#A626A4}{\forall} \varepsilon \textcolor{#0184BC}{>} \textcolor{#986801}{0},\ \textcolor{#C18401}{A} \textcolor{#0184BC}{\subseteq} \textcolor{#0184BC}{\bigcup}_{i=\textcolor{#986801}{1}}^{n} \textcolor{#C18401}{B}(x_i, \varepsilon) \text{ for some finite } x_1, \dots, x_n$$</p>
+            <p class="math">$$\textcolor{#C18401}{A} \text{ totally bounded} \iff \forall \varepsilon \textcolor{#0184BC}{>} \textcolor{#986801}{0},\ \textcolor{#C18401}{A} \textcolor{#0184BC}{\subseteq} \textcolor{#0184BC}{\bigcup}_{i=\textcolor{#986801}{1}}^{n} \textcolor{#C18401}{B}(x_i, \varepsilon) \text{ for some finite } x_1, \dots, x_n$$</p>
           </div>
           <div class="topic">
             <h2>Completeness and Compactness</h2>
             <p>A complete space contains the limits of all its Cauchy sequences, leaving no "gaps" to converge into.</p>
-            <p class="math">$$(\textcolor{#C18401}{X},\textcolor{#4078F2}{d}) \text{ complete} \textcolor{#A626A4}{\iff} \text{every Cauchy sequence } (x_n) \text{ in } \textcolor{#C18401}{X} \text{ converges to some } x \textcolor{#0184BC}{\in} \textcolor{#C18401}{X}$$</p>
+            <p class="math">$$(\textcolor{#C18401}{X},\textcolor{#4078F2}{d}) \text{ complete} \iff \text{every Cauchy sequence } (x_n) \text{ in } \textcolor{#C18401}{X} \text{ converges to some } x \textcolor{#0184BC}{\in} \textcolor{#C18401}{X}$$</p>
           </div>
           <div class="topic">
             <h2>Sequences and Series of Functions</h2>
             <p>Uniform convergence requires the entire function, not just each point, to be well-approximated as n grows.</p>
-            <p class="math">$$\textcolor{#4078F2}{f_n} \to \textcolor{#4078F2}{f} \text{ uniformly} \textcolor{#A626A4}{\iff} \sup_{x \textcolor{#0184BC}{\in} \textcolor{#C18401}{X}} |\textcolor{#4078F2}{f_n}(x) - \textcolor{#4078F2}{f}(x)| \to \textcolor{#986801}{0} \text{ as } n \to \textcolor{#986801}{\infty}$$</p>
+            <p class="math">$$\textcolor{#4078F2}{f_n} \to \textcolor{#4078F2}{f} \text{ uniformly} \iff \sup_{x \textcolor{#0184BC}{\in} \textcolor{#C18401}{X}} |\textcolor{#4078F2}{f_n}(x) - \textcolor{#4078F2}{f}(x)| \to \textcolor{#986801}{0} \text{ as } n \to \textcolor{#986801}{\infty}$$</p>
           </div>
         </div>
       </section>
