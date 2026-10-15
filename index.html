@@ -75,7 +75,14 @@
           <div class="topic">
             <h2>Linear Programming (LP) Formulation</h2>
             <p>Example: a factory picks batches of chocolate (x₁) and vanilla (x₂) ice cream to maximize profit under ingredient limits.</p>
-            <p class="math">$$\begin{aligned} \max\quad & 5x_1 + 4x_2 \\ \text{s.t.}\quad & 6x_1 + 4x_2 \leq 24 \quad \text{(cream)} \\ & x_1 + 2x_2 \leq 6 \quad \text{(cocoa)} \\ & x_1, x_2 \geq 0 \end{aligned}$$</p>
+            <p>The factory wants to maximize profit from the batches it produces.</p>
+            <p class="math">$$\max\quad 5x_1 + 4x_2$$</p>
+            <p>There's only so much cream on hand, so cream used across both flavors can't exceed the supply.</p>
+            <p class="math">$$6x_1 + 4x_2 \leq 24$$</p>
+            <p>Cocoa is limited too.</p>
+            <p class="math">$$x_1 + 2x_2 \leq 6$$</p>
+            <p>You can't produce a negative number of batches.</p>
+            <p class="math">$$x_1, x_2 \geq 0$$</p>
           </div>
           <div class="topic">
             <h2>Integer Linear Programming (ILP) Formulation</h2>
