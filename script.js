@@ -7,3 +7,9 @@ document.querySelectorAll('.tab').forEach(tab => {
     document.getElementById(tab.dataset.tab).classList.add('active');
   });
 });
+
+document.querySelectorAll('.topic-toggle').forEach(toggle => {
+  toggle.addEventListener('click', () => {
+    toggle.closest('.topic').classList.toggle('open');
+  });
+});
