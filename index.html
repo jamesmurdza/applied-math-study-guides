@@ -26,38 +26,38 @@
             <h2>Metric Spaces</h2>
             <p>A metric space pairs a set with a distance function that formalizes notions like nearness and size.</p>
             <p>Distance is never negative.</p>
-            <p class="math">$$d(x,y) \geq 0$$</p>
+            <p class="math">$$\textcolor{#4078F2}{d}(x,y) \textcolor{#0184BC}{\geq} 0$$</p>
             <p>Two points are at distance zero exactly when they are the same point.</p>
-            <p class="math">$$d(x,y) = 0 \iff x = y$$</p>
+            <p class="math">$$\textcolor{#4078F2}{d}(x,y) \textcolor{#0184BC}{=} 0 \iff x \textcolor{#0184BC}{=} y$$</p>
             <p>Distance doesn't depend on which point you measure from.</p>
-            <p class="math">$$d(x,y) = d(y,x)$$</p>
+            <p class="math">$$\textcolor{#4078F2}{d}(x,y) \textcolor{#0184BC}{=} \textcolor{#4078F2}{d}(y,x)$$</p>
             <p>Going through a third point never shortens the direct route.</p>
-            <p class="math">$$d(x,z) \leq d(x,y) + d(y,z)$$</p>
+            <p class="math">$$\textcolor{#4078F2}{d}(x,z) \textcolor{#0184BC}{\leq} \textcolor{#4078F2}{d}(x,y) + \textcolor{#4078F2}{d}(y,z)$$</p>
           </div>
           <div class="topic">
             <h2>Open and Closed Sets</h2>
             <p>Open sets are built from balls that fit entirely inside them, while closed sets contain all of their limit points.</p>
-            <p class="math">$$U \text{ open} \iff \forall x \in U,\ \exists\, \varepsilon > 0 \text{ s.t. } B(x,\varepsilon) \subseteq U$$</p>
+            <p class="math">$$U \text{ open} \iff \forall x \in U,\ \exists\, \varepsilon \textcolor{#0184BC}{>} 0 \text{ s.t. } B(x,\varepsilon) \subseteq U$$</p>
           </div>
           <div class="topic">
             <h2>Sequences and Convergence</h2>
             <p>A sequence converges when its terms get and stay arbitrarily close to a single limit point.</p>
-            <p class="math">$$x_n \to x \iff \forall \varepsilon > 0,\ \exists N \in \mathbb{N} \text{ s.t. } \forall n \geq N,\ d(x_n, x) < \varepsilon$$</p>
+            <p class="math">$$x_n \to x \iff \forall \varepsilon \textcolor{#0184BC}{>} 0,\ \exists N \in \mathbb{N} \text{ s.t. } \forall n \textcolor{#0184BC}{\geq} N,\ \textcolor{#4078F2}{d}(x_n, x) \textcolor{#0184BC}{<} \varepsilon$$</p>
           </div>
           <div class="topic">
             <h2>Continuity</h2>
             <p>A function is continuous when small changes in input produce arbitrarily small changes in output.</p>
-            <p class="math">$$f \text{ continuous at } x_0 \iff \forall \varepsilon > 0,\ \exists\, \delta > 0 \text{ s.t. } d(x,x_0) < \delta \implies d(f(x), f(x_0)) < \varepsilon$$</p>
+            <p class="math">$$f \text{ continuous at } x_0 \iff \forall \varepsilon \textcolor{#0184BC}{>} 0,\ \exists\, \delta \textcolor{#0184BC}{>} 0 \text{ s.t. } \textcolor{#4078F2}{d}(x,x_0) \textcolor{#0184BC}{<} \delta \implies \textcolor{#4078F2}{d}(f(x), f(x_0)) \textcolor{#0184BC}{<} \varepsilon$$</p>
           </div>
           <div class="topic">
             <h2>Boundedness and Total Boundedness</h2>
             <p>Total boundedness strengthens boundedness by requiring a set to be coverable by finitely many small balls.</p>
-            <p class="math">$$A \text{ totally bounded} \iff \forall \varepsilon > 0,\ A \subseteq \bigcup_{i=1}^{n} B(x_i, \varepsilon) \text{ for some finite } x_1, \dots, x_n$$</p>
+            <p class="math">$$A \text{ totally bounded} \iff \forall \varepsilon \textcolor{#0184BC}{>} 0,\ A \subseteq \bigcup_{i=1}^{n} B(x_i, \varepsilon) \text{ for some finite } x_1, \dots, x_n$$</p>
           </div>
           <div class="topic">
             <h2>Completeness and Compactness</h2>
             <p>A complete space contains the limits of all its Cauchy sequences, leaving no "gaps" to converge into.</p>
-            <p class="math">$$(X,d) \text{ complete} \iff \text{every Cauchy sequence } (x_n) \text{ in } X \text{ converges to some } x \in X$$</p>
+            <p class="math">$$(X,\textcolor{#4078F2}{d}) \text{ complete} \iff \text{every Cauchy sequence } (x_n) \text{ in } X \text{ converges to some } x \in X$$</p>
           </div>
           <div class="topic">
             <h2>Sequences and Series of Functions</h2>
