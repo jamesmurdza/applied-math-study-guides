@@ -87,6 +87,15 @@ body {
   margin: 0 0 8px;
 }
 
+.topic p + p {
+  margin-top: 8px;
+}
+
+.topic .math {
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9rem;
+}
+
 @keyframes fade {
   from { opacity: 0; }
   to { opacity: 1; }
