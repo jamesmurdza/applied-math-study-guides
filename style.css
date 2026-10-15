@@ -88,12 +88,15 @@ body {
 }
 
 .topic p + p {
-  margin-top: 8px;
+  margin-top: 14px;
 }
 
 .topic .math {
-  font-family: "SF Mono", Menlo, Consolas, monospace;
-  font-size: 0.9rem;
+  overflow-x: auto;
+}
+
+.topic .math .katex-display {
+  margin: 0;
 }
 
 @keyframes fade {

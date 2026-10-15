@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Math Topics</title>
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 </head>
 <body>
 
@@ -24,37 +25,37 @@
           <div class="topic">
             <h2>Metric Spaces</h2>
             <p>A metric space pairs a set with a distance function that formalizes notions like nearness and size.</p>
-            <p class="math">d(x, y) ≥ 0,  d(x, y) = 0 ⟺ x = y,  d(x, y) = d(y, x),  d(x, z) ≤ d(x, y) + d(y, z)</p>
+            <p class="math">$$d(x,y) \geq 0, \quad d(x,y) = 0 \iff x = y, \quad d(x,y) = d(y,x), \quad d(x,z) \leq d(x,y) + d(y,z)$$</p>
           </div>
           <div class="topic">
             <h2>Open and Closed Sets</h2>
             <p>Open sets are built from balls that fit entirely inside them, while closed sets contain all of their limit points.</p>
-            <p class="math">U is open ⟺ ∀x ∈ U, ∃ε &gt; 0 such that B(x, ε) ⊆ U</p>
+            <p class="math">$$U \text{ open} \iff \forall x \in U,\ \exists\, \varepsilon > 0 \text{ s.t. } B(x,\varepsilon) \subseteq U$$</p>
           </div>
           <div class="topic">
             <h2>Sequences and Convergence</h2>
             <p>A sequence converges when its terms get and stay arbitrarily close to a single limit point.</p>
-            <p class="math">xₙ → x ⟺ ∀ε &gt; 0, ∃N ∈ ℕ such that ∀n ≥ N, d(xₙ, x) &lt; ε</p>
+            <p class="math">$$x_n \to x \iff \forall \varepsilon > 0,\ \exists N \in \mathbb{N} \text{ s.t. } \forall n \geq N,\ d(x_n, x) < \varepsilon$$</p>
           </div>
           <div class="topic">
             <h2>Continuity</h2>
             <p>A function is continuous when small changes in input produce arbitrarily small changes in output.</p>
-            <p class="math">f continuous at x₀ ⟺ ∀ε &gt; 0, ∃δ &gt; 0 such that d(x, x₀) &lt; δ ⟹ d(f(x), f(x₀)) &lt; ε</p>
+            <p class="math">$$f \text{ continuous at } x_0 \iff \forall \varepsilon > 0,\ \exists\, \delta > 0 \text{ s.t. } d(x,x_0) < \delta \implies d(f(x), f(x_0)) < \varepsilon$$</p>
           </div>
           <div class="topic">
             <h2>Boundedness and Total Boundedness</h2>
             <p>Total boundedness strengthens boundedness by requiring a set to be coverable by finitely many small balls.</p>
-            <p class="math">A is totally bounded ⟺ ∀ε &gt; 0, A ⊆ ⋃ᵢ₌₁ⁿ B(xᵢ, ε) for some finite x₁, …, xₙ</p>
+            <p class="math">$$A \text{ totally bounded} \iff \forall \varepsilon > 0,\ A \subseteq \bigcup_{i=1}^{n} B(x_i, \varepsilon) \text{ for some finite } x_1, \dots, x_n$$</p>
           </div>
           <div class="topic">
             <h2>Completeness and Compactness</h2>
             <p>A complete space contains the limits of all its Cauchy sequences, leaving no "gaps" to converge into.</p>
-            <p class="math">(X, d) is complete ⟺ every Cauchy sequence (xₙ) in X converges to some x ∈ X</p>
+            <p class="math">$$(X,d) \text{ complete} \iff \text{every Cauchy sequence } (x_n) \text{ in } X \text{ converges to some } x \in X$$</p>
           </div>
           <div class="topic">
             <h2>Sequences and Series of Functions</h2>
             <p>Uniform convergence requires the entire function, not just each point, to be well-approximated as n grows.</p>
-            <p class="math">fₙ → f uniformly ⟺ sup₍ₓ∈X₎ |fₙ(x) − f(x)| → 0 as n → ∞</p>
+            <p class="math">$$f_n \to f \text{ uniformly} \iff \sup_{x \in X} |f_n(x) - f(x)| \to 0 \text{ as } n \to \infty$$</p>
           </div>
         </div>
       </section>
@@ -67,12 +68,7 @@
           <div class="topic">
             <h2>Linear Programming (LP) Formulation</h2>
             <p>Example: a factory picks batches of chocolate (x₁) and vanilla (x₂) ice cream to maximize profit under ingredient limits.</p>
-            <p class="math">
-              max 5x₁ + 4x₂<br>
-              s.t. 6x₁ + 4x₂ ≤ 24 (cream)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;x₁ + 2x₂ ≤ 6 (cocoa)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;x₁, x₂ ≥ 0
-            </p>
+            <p class="math">$$\begin{aligned} \max\quad & 5x_1 + 4x_2 \\ \text{s.t.}\quad & 6x_1 + 4x_2 \leq 24 \quad \text{(cream)} \\ & x_1 + 2x_2 \leq 6 \quad \text{(cocoa)} \\ & x_1, x_2 \geq 0 \end{aligned}$$</p>
           </div>
           <div class="topic">
             <h2>Integer Linear Programming (ILP) Formulation</h2>
@@ -151,6 +147,8 @@
     </main>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
