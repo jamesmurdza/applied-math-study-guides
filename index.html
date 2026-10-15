@@ -26,43 +26,43 @@
             <h2>Metric Spaces</h2>
             <p>A metric space pairs a set with a distance function that formalizes notions like nearness and size.</p>
             <p>Distance is never negative.</p>
-            <p class="math">$$\textcolor{#4078F2}{d}(x,y) \textcolor{#3D6A8C}{\geq} 0$$</p>
+            <p class="math">$$\textcolor{#4078F2}{d}(x,y) \textcolor{#5B4B66}{\geq} 0$$</p>
             <p>Two points are at distance zero exactly when they are the same point.</p>
-            <p class="math">$$\textcolor{#4078F2}{d}(x,y) \textcolor{#3D6A8C}{=} 0 \iff x \textcolor{#3D6A8C}{=} y$$</p>
+            <p class="math">$$\textcolor{#4078F2}{d}(x,y) \textcolor{#5B4B66}{=} 0 \textcolor{#5B4B66}{\iff} x \textcolor{#5B4B66}{=} y$$</p>
             <p>Distance doesn't depend on which point you measure from.</p>
-            <p class="math">$$\textcolor{#4078F2}{d}(x,y) \textcolor{#3D6A8C}{=} \textcolor{#4078F2}{d}(y,x)$$</p>
+            <p class="math">$$\textcolor{#4078F2}{d}(x,y) \textcolor{#5B4B66}{=} \textcolor{#4078F2}{d}(y,x)$$</p>
             <p>Going through a third point never shortens the direct route.</p>
-            <p class="math">$$\textcolor{#4078F2}{d}(x,z) \textcolor{#3D6A8C}{\leq} \textcolor{#4078F2}{d}(x,y) + \textcolor{#4078F2}{d}(y,z)$$</p>
+            <p class="math">$$\textcolor{#4078F2}{d}(x,z) \textcolor{#5B4B66}{\leq} \textcolor{#4078F2}{d}(x,y) + \textcolor{#4078F2}{d}(y,z)$$</p>
           </div>
           <div class="topic">
             <h2>Open and Closed Sets</h2>
             <p>Open sets are built from balls that fit entirely inside them, while closed sets contain all of their limit points.</p>
-            <p class="math">$$\textcolor{#C18401}{U} \text{ open} \iff \forall x \textcolor{#3D6A8C}{\in} \textcolor{#C18401}{U},\ \exists\, \varepsilon \textcolor{#3D6A8C}{>} 0 \text{ s.t. } \textcolor{#C18401}{B}(x,\varepsilon) \textcolor{#3D6A8C}{\subseteq} \textcolor{#C18401}{U}$$</p>
+            <p class="math">$$\textcolor{#C18401}{U} \text{ open} \textcolor{#5B4B66}{\iff} \textcolor{#5B4B66}{\forall} x \textcolor{#5B4B66}{\in} \textcolor{#C18401}{U},\ \textcolor{#5B4B66}{\exists}\, \varepsilon \textcolor{#5B4B66}{>} 0 \text{ s.t. } \textcolor{#C18401}{B}(x,\varepsilon) \textcolor{#5B4B66}{\subseteq} \textcolor{#C18401}{U}$$</p>
           </div>
           <div class="topic">
             <h2>Sequences and Convergence</h2>
             <p>A sequence converges when its terms get and stay arbitrarily close to a single limit point.</p>
-            <p class="math">$$x_n \to x \iff \forall \varepsilon \textcolor{#3D6A8C}{>} 0,\ \exists N \textcolor{#3D6A8C}{\in} \textcolor{#C18401}{\mathbb{N}} \text{ s.t. } \forall n \textcolor{#3D6A8C}{\geq} N,\ \textcolor{#4078F2}{d}(x_n, x) \textcolor{#3D6A8C}{<} \varepsilon$$</p>
+            <p class="math">$$x_n \to x \textcolor{#5B4B66}{\iff} \textcolor{#5B4B66}{\forall} \varepsilon \textcolor{#5B4B66}{>} 0,\ \textcolor{#5B4B66}{\exists} N \textcolor{#5B4B66}{\in} \textcolor{#C18401}{\mathbb{N}} \text{ s.t. } \textcolor{#5B4B66}{\forall} n \textcolor{#5B4B66}{\geq} N,\ \textcolor{#4078F2}{d}(x_n, x) \textcolor{#5B4B66}{<} \varepsilon$$</p>
           </div>
           <div class="topic">
             <h2>Continuity</h2>
             <p>A function is continuous when small changes in input produce arbitrarily small changes in output.</p>
-            <p class="math">$$\textcolor{#4078F2}{f} \text{ continuous at } x_0 \iff \forall \varepsilon \textcolor{#3D6A8C}{>} 0,\ \exists\, \delta \textcolor{#3D6A8C}{>} 0 \text{ s.t. } \textcolor{#4078F2}{d}(x,x_0) \textcolor{#3D6A8C}{<} \delta \implies \textcolor{#4078F2}{d}(\textcolor{#4078F2}{f}(x), \textcolor{#4078F2}{f}(x_0)) \textcolor{#3D6A8C}{<} \varepsilon$$</p>
+            <p class="math">$$\textcolor{#4078F2}{f} \text{ continuous at } x_0 \textcolor{#5B4B66}{\iff} \textcolor{#5B4B66}{\forall} \varepsilon \textcolor{#5B4B66}{>} 0,\ \textcolor{#5B4B66}{\exists}\, \delta \textcolor{#5B4B66}{>} 0 \text{ s.t. } \textcolor{#4078F2}{d}(x,x_0) \textcolor{#5B4B66}{<} \delta \textcolor{#5B4B66}{\implies} \textcolor{#4078F2}{d}(\textcolor{#4078F2}{f}(x), \textcolor{#4078F2}{f}(x_0)) \textcolor{#5B4B66}{<} \varepsilon$$</p>
           </div>
           <div class="topic">
             <h2>Boundedness and Total Boundedness</h2>
             <p>Total boundedness strengthens boundedness by requiring a set to be coverable by finitely many small balls.</p>
-            <p class="math">$$\textcolor{#C18401}{A} \text{ totally bounded} \iff \forall \varepsilon \textcolor{#3D6A8C}{>} 0,\ \textcolor{#C18401}{A} \textcolor{#3D6A8C}{\subseteq} \textcolor{#3D6A8C}{\bigcup}_{i=1}^{n} \textcolor{#C18401}{B}(x_i, \varepsilon) \text{ for some finite } x_1, \dots, x_n$$</p>
+            <p class="math">$$\textcolor{#C18401}{A} \text{ totally bounded} \textcolor{#5B4B66}{\iff} \textcolor{#5B4B66}{\forall} \varepsilon \textcolor{#5B4B66}{>} 0,\ \textcolor{#C18401}{A} \textcolor{#5B4B66}{\subseteq} \textcolor{#5B4B66}{\bigcup}_{i=1}^{n} \textcolor{#C18401}{B}(x_i, \varepsilon) \text{ for some finite } x_1, \dots, x_n$$</p>
           </div>
           <div class="topic">
             <h2>Completeness and Compactness</h2>
             <p>A complete space contains the limits of all its Cauchy sequences, leaving no "gaps" to converge into.</p>
-            <p class="math">$$(\textcolor{#C18401}{X},\textcolor{#4078F2}{d}) \text{ complete} \iff \text{every Cauchy sequence } (x_n) \text{ in } \textcolor{#C18401}{X} \text{ converges to some } x \textcolor{#3D6A8C}{\in} \textcolor{#C18401}{X}$$</p>
+            <p class="math">$$(\textcolor{#C18401}{X},\textcolor{#4078F2}{d}) \text{ complete} \textcolor{#5B4B66}{\iff} \text{every Cauchy sequence } (x_n) \text{ in } \textcolor{#C18401}{X} \text{ converges to some } x \textcolor{#5B4B66}{\in} \textcolor{#C18401}{X}$$</p>
           </div>
           <div class="topic">
             <h2>Sequences and Series of Functions</h2>
             <p>Uniform convergence requires the entire function, not just each point, to be well-approximated as n grows.</p>
-            <p class="math">$$\textcolor{#4078F2}{f_n} \to \textcolor{#4078F2}{f} \text{ uniformly} \iff \sup_{x \textcolor{#3D6A8C}{\in} \textcolor{#C18401}{X}} |\textcolor{#4078F2}{f_n}(x) - \textcolor{#4078F2}{f}(x)| \to 0 \text{ as } n \to \infty$$</p>
+            <p class="math">$$\textcolor{#4078F2}{f_n} \to \textcolor{#4078F2}{f} \text{ uniformly} \textcolor{#5B4B66}{\iff} \sup_{x \textcolor{#5B4B66}{\in} \textcolor{#C18401}{X}} |\textcolor{#4078F2}{f_n}(x) - \textcolor{#4078F2}{f}(x)| \to 0 \text{ as } n \to \infty$$</p>
           </div>
         </div>
       </section>
