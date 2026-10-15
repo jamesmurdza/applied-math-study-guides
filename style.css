@@ -99,6 +99,16 @@ body {
   margin: 0;
 }
 
+.var-choc {
+  color: #8a5a2b;
+  font-weight: 600;
+}
+
+.var-berry {
+  color: #3b6bd6;
+  font-weight: 600;
+}
+
 @keyframes fade {
   from { opacity: 0; }
   to { opacity: 1; }
