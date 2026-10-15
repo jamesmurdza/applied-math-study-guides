@@ -67,6 +67,47 @@
                 <p class="math">$$\{(x,y) : x^2 + y^2 \textcolor{#7B4B8C}{\leq} 1\}$$</p>
               </div>
             </div>
+
+            <p>A set can also be both open and closed at once (called clopen) — or neither, if it includes only part of its boundary.</p>
+
+            <div class="set-examples">
+              <div class="set-card">
+                <svg viewBox="0 0 160 160" role="img" aria-label="The whole plane">
+                  <rect x="10" y="10" width="140" height="140" fill="#C18401" fill-opacity="0.15"></rect>
+                  <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
+                </svg>
+                <p><strong>Clopen:</strong> the whole plane</p>
+                <p class="math">$$\textcolor{#C18401}{\mathbb{R}^2}$$</p>
+              </div>
+              <div class="set-card">
+                <svg viewBox="0 0 160 160" role="img" aria-label="The empty set">
+                  <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="20" y1="76" x2="20" y2="84" stroke="#ccc"></line>
+                  <line x1="140" y1="76" x2="140" y2="84" stroke="#ccc"></line>
+                  <line x1="76" y1="20" x2="84" y2="20" stroke="#ccc"></line>
+                  <line x1="76" y1="140" x2="84" y2="140" stroke="#ccc"></line>
+                </svg>
+                <p><strong>Clopen:</strong> the empty set</p>
+                <p class="math">$$\textcolor{#C18401}{\varnothing}$$</p>
+              </div>
+              <div class="set-card">
+                <svg viewBox="0 0 160 160" role="img" aria-label="Disk with mixed boundary">
+                  <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="20" y1="76" x2="20" y2="84" stroke="#ccc"></line>
+                  <line x1="140" y1="76" x2="140" y2="84" stroke="#ccc"></line>
+                  <line x1="76" y1="20" x2="84" y2="20" stroke="#ccc"></line>
+                  <line x1="76" y1="140" x2="84" y2="140" stroke="#ccc"></line>
+                  <circle cx="80" cy="80" r="60" fill="#C18401" fill-opacity="0.15"></circle>
+                  <path d="M 20,80 A 60,60 0 0,1 140,80" fill="none" stroke="#C18401" stroke-width="2"></path>
+                  <path d="M 140,80 A 60,60 0 0,1 20,80" fill="none" stroke="#C18401" stroke-width="2" stroke-dasharray="4,4"></path>
+                </svg>
+                <p><strong>Neither:</strong> half-open disk — top boundary included, bottom excluded</p>
+                <p class="math">$$\{x^2\!+\!y^2 \textcolor{#7B4B8C}{<} 1\} \cup \{x^2\!+\!y^2 \textcolor{#7B4B8C}{=} 1, y \textcolor{#7B4B8C}{\geq} 0\}$$</p>
+              </div>
+            </div>
           </div>
           <div class="topic">
             <h2>Sequences and Convergence</h2>
