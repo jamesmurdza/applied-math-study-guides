@@ -73,64 +73,20 @@ body {
 }
 
 .topics {
-  margin-top: 32px;
-  border-top: 1px solid #eee;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
 }
 
-.topic {
+.topics li {
+  padding: 10px 0;
   border-bottom: 1px solid #eee;
-}
-
-.topic-toggle {
-  width: 100%;
-  text-align: left;
-  background: none;
-  border: none;
-  outline: none;
-  font-family: inherit;
   font-size: 0.95rem;
-  font-weight: 500;
-  color: #1a1a1a;
-  padding: 16px 4px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  transition: color 0.15s ease;
+  color: #333;
 }
 
-.topic-toggle:hover {
-  color: #555;
-}
-
-.topic-toggle::after {
-  content: "+";
-  font-size: 1.1rem;
-  font-weight: 400;
-  color: #aaa;
-  margin-left: 12px;
-  transition: transform 0.15s ease;
-}
-
-.topic.open .topic-toggle::after {
-  content: "\2212";
-}
-
-.topic-body {
-  display: none;
-  padding: 0 4px 18px;
-}
-
-.topic.open .topic-body {
-  display: block;
-  animation: fade 0.15s ease;
-}
-
-.topic-body p {
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: #888;
-  margin: 0;
+.topics li:last-child {
+  border-bottom: none;
 }
 
 @keyframes fade {
