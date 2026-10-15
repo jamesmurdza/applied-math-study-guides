@@ -77,11 +77,7 @@ body {
 }
 
 .topic {
-  padding: 28px 0;
-}
-
-.topic + .topic {
-  border-top: 1px solid #eee;
+  margin-bottom: 28px;
 }
 
 .topic h2 {
