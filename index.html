@@ -358,6 +358,7 @@
             <p>Add a minimum order to the same ice cream line: at least 2 liters total must be made, or it isn't worth running the machine.</p>
             <p class="math">$$\textcolor{#e64980}{x_1} + \textcolor{#3b6bd6}{x_2} \geq 2$$</p>
             <p>Now the origin is infeasible, so simplex has nowhere obvious to start. Phase one ignores profit and just hunts for any feasible corner, using an artificial variable to patch the constraint; phase two then optimizes real profit from there.</p>
+            <div class="lp-graph" id="two-phase-graph-root"></div>
             <div class="tableau-wrap" id="two-phase-tableau-root"></div>
           </div>
           <div class="topic">

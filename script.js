@@ -554,6 +554,30 @@ if (window.renderMathInElement) {
     });
   }
 
+  // Two-phase simplex: the same polytope, further cut by the minimum-order
+  // constraint x1+x2>=2 (written as -x1-x2<=-2), which shaves off the corner
+  // nearest the origin — so phase one's starting point is (2, 0), not (0, 0).
+  const twoPhaseMount = document.getElementById('two-phase-graph-root');
+  if (twoPhaseMount) {
+    renderLPGraph(twoPhaseMount, {
+      xMax: 8,
+      yMax: 7,
+      varNames: ['x₁', 'x₂'],
+      varColors: ['#e64980', '#3b6bd6'],
+      axisLabels: ['pink peppermint ice cream (l)', 'blueberry ice cream (l)'],
+      objective: { a: 5, b: 4 },
+      objectiveLabel: 'profit',
+      constraints: [
+        { a: 2, b: 4, c: 24 },
+        { a: 1, b: 0, c: 6 },
+        { a: 0, b: 1, c: 5 },
+        { a: -1, b: -1, c: -2 }
+      ],
+      path: [{ x: 2, y: 0 }, { x: 6, y: 0 }, { x: 6, y: 3 }],
+      caption: (best, val) => `The minimum-order line slices the corner nearest the origin off the feasible region, so (0, 0) is no longer a valid start. Phase one jumps straight to (2, 0) instead; phase two then walks (2, 0) → (6, 0) → (${fmt(best.x)}, ${fmt(best.y)}) to the same optimum, a profit of ${fmt(val)}.`
+    });
+  }
+
   // Gomory cutting planes: the same green-eggs-and-ham ILP, but showing just
   // the continuous relaxation (no integer lattice) before and after a cut
   // slices off the fractional corner.
