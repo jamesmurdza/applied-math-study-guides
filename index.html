@@ -292,6 +292,8 @@
           </div>
           <div class="topic">
             <h2>Sequences and Series of Functions</h2>
+            <p>Pointwise convergence only asks each individual input to eventually settle, with no control over how fast that happens from one point to the next.</p>
+            <p class="math">$$\forall x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X},\quad \textcolor{#4078F2}{f_n}(x) \to \textcolor{#4078F2}{f}(x) \text{ as } n \to \infty$$</p>
             <p>Uniform convergence requires the entire function, not just each point, to be well-approximated as n grows.</p>
             <p class="math">$$\textcolor{#4078F2}{f_n} \to \textcolor{#4078F2}{f} \text{ uniformly} \textcolor{#7B4B8C}{\iff} \sup_{x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X}} |\textcolor{#4078F2}{f_n}(x) - \textcolor{#4078F2}{f}(x)| \to 0 \text{ as } n \to \infty$$</p>
 
@@ -323,6 +325,11 @@
                 <p>A spike escapes the tube no matter how large n is.</p>
               </div>
             </div>
+
+            <p>A series of functions converges uniformly when its partial sums converge uniformly to the same limit function.</p>
+            <p class="math">$$\textstyle\sum_{n=1}^{N} \textcolor{#4078F2}{f_n} \to \textcolor{#4078F2}{f} \text{ uniformly as } N \to \infty$$</p>
+            <p>The Weierstrass M-test gets uniform convergence for free: bound each term by a constant, and if those constants are summable, so is the series — uniformly.</p>
+            <p class="math">$$\Big(\forall n,\ \forall x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X},\ |\textcolor{#4078F2}{f_n}(x)| \le M_n\Big) \wedge \sum_{n=1}^{\infty} M_n < \infty \quad \textcolor{#7B4B8C}{\implies} \quad \sum_{n=1}^{\infty} \textcolor{#4078F2}{f_n} \text{ converges uniformly}$$</p>
           </div>
         </div>
       </section>
