@@ -163,24 +163,6 @@ body {
   display: block;
 }
 
-.lp-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-top: 12px;
-  font-size: 0.85rem;
-  color: #555;
-}
-
-.lp-legend i {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 2px;
-  margin-right: 6px;
-  vertical-align: middle;
-}
-
 .lp-graph p {
   margin-top: 14px;
   font-size: 0.9rem;

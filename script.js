@@ -222,7 +222,7 @@ if (window.renderMathInElement) {
         const cs = toScreen(bestCont.x, bestCont.y);
         svg.appendChild(el('circle', { cx: cs.x.toFixed(1), cy: cs.y.toFixed(1), r: 4, fill: 'none', stroke: '#1a1a1a', 'stroke-width': '1.5', 'stroke-dasharray': '2,2' }));
         const clabel = el('text', {
-          x: (cs.x + 8).toFixed(1), y: (cs.y + 14).toFixed(1),
+          x: (cs.x + 10).toFixed(1), y: (cs.y - 8).toFixed(1),
           'font-size': '10', fill: '#888'
         });
         clabel.textContent = `LP relaxation: (${fmt(bestCont.x)}, ${fmt(bestCont.y)})`;
@@ -232,29 +232,15 @@ if (window.renderMathInElement) {
 
     const bs = toScreen(best.x, best.y);
     svg.appendChild(el('circle', { cx: bs.x.toFixed(1), cy: bs.y.toFixed(1), r: 4, fill: '#1a1a1a' }));
-    const labelLeft = bs.x > width * 0.55;
     const label = el('text', {
-      x: (bs.x + (labelLeft ? -10 : 10)).toFixed(1), y: (bs.y - 8).toFixed(1),
-      'font-size': '11', fill: '#1a1a1a', 'text-anchor': labelLeft ? 'end' : 'start'
+      x: (bs.x + 10).toFixed(1), y: (bs.y - 8).toFixed(1),
+      'font-size': '11', fill: '#1a1a1a'
     });
     label.textContent = `optimal: (${fmt(best.x)}, ${fmt(best.y)})`;
     svg.appendChild(label);
 
     container.innerHTML = '';
     container.appendChild(svg);
-
-    // legend, built from the same constraint list used to draw the lines
-    const legend = document.createElement('div');
-    legend.className = 'lp-legend';
-    constraints.forEach(cons => {
-      const span = document.createElement('span');
-      const swatch = document.createElement('i');
-      swatch.style.background = cons.color;
-      span.appendChild(swatch);
-      span.appendChild(document.createTextNode(cons.label));
-      legend.appendChild(span);
-    });
-    container.appendChild(legend);
 
     // caption with the computed optimum and profit filled in
     const caption = document.createElement('p');
