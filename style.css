@@ -168,6 +168,39 @@ body {
   font-size: 0.9rem;
 }
 
+.stat-chart {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+.stat-chart svg {
+  width: 100%;
+  max-width: 380px;
+  height: auto;
+  display: block;
+}
+
+.stat-chart p {
+  margin-top: 14px;
+  font-size: 0.9rem;
+}
+
+.var-prior {
+  color: #868e96;
+  font-weight: 600;
+}
+
+.var-likelihood {
+  color: #e8590c;
+  font-weight: 600;
+}
+
+.var-posterior {
+  color: #0b7285;
+  font-weight: 600;
+}
+
 .chart-tooltip {
   display: none;
   position: fixed;
