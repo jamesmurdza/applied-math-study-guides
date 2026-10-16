@@ -109,6 +109,16 @@ body {
   font-weight: 600;
 }
 
+.var-egg {
+  color: #c9870f;
+  font-weight: 600;
+}
+
+.var-toast {
+  color: #8b5a2b;
+  font-weight: 600;
+}
+
 .set-examples {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

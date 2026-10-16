@@ -105,8 +105,24 @@ if (window.renderMathInElement) {
     return node;
   }
 
+  function isFeasible(x, y, constraints) {
+    if (x < -1e-9 || y < -1e-9) return false;
+    return constraints.every(({ a, b, c }) => a * x + b * y <= c + 1e-9);
+  }
+
+  // Every integer point inside [0,xMax] x [0,yMax] that satisfies every constraint.
+  function latticePoints(constraints, xMax, yMax) {
+    const pts = [];
+    for (let x = 0; x <= xMax; x++) {
+      for (let y = 0; y <= yMax; y++) {
+        if (isFeasible(x, y, constraints)) pts.push({ x, y });
+      }
+    }
+    return pts;
+  }
+
   function renderLPGraph(container, config) {
-    const { xMax, yMax, constraints, objective, varNames } = config;
+    const { xMax, yMax, constraints, objective, varNames, integer } = config;
     const scale = 40, padL = 50, padR = 25, padT = 20, padB = 30;
     const width = padL + xMax * scale + padR;
     const height = padT + yMax * scale + padB;
@@ -161,12 +177,44 @@ if (window.renderMathInElement) {
     yLabel.textContent = varNames[1];
     svg.appendChild(yLabel);
 
-    // optimal vertex = polygon point maximizing the objective
-    let best = poly[0], bestVal = -Infinity;
+    // continuous LP-relaxation optimum = polygon point maximizing the objective
+    let bestCont = poly[0], bestContVal = -Infinity;
     poly.forEach(p => {
       const v = objective.a * p.x + objective.b * p.y;
-      if (v > bestVal) { bestVal = v; best = p; }
+      if (v > bestContVal) { bestContVal = v; bestCont = p; }
     });
+
+    let best = bestCont, bestVal = bestContVal;
+
+    if (integer) {
+      // lattice points inside the feasible region
+      const pts = latticePoints(constraints, xMax, yMax);
+      pts.forEach(p => {
+        const s = toScreen(p.x, p.y);
+        svg.appendChild(el('circle', { cx: s.x.toFixed(1), cy: s.y.toFixed(1), r: 2.5, fill: '#1a1a1a', 'fill-opacity': '0.35' }));
+      });
+
+      // true integer optimum = best lattice point
+      let bestInt = pts[0], bestIntVal = -Infinity;
+      pts.forEach(p => {
+        const v = objective.a * p.x + objective.b * p.y;
+        if (v > bestIntVal) { bestIntVal = v; bestInt = p; }
+      });
+      best = bestInt; bestVal = bestIntVal;
+
+      // hollow marker for the (generally non-integer, and possibly worse-looking) LP relaxation optimum
+      if (Math.abs(bestCont.x - bestInt.x) > 1e-6 || Math.abs(bestCont.y - bestInt.y) > 1e-6) {
+        const cs = toScreen(bestCont.x, bestCont.y);
+        svg.appendChild(el('circle', { cx: cs.x.toFixed(1), cy: cs.y.toFixed(1), r: 4, fill: 'none', stroke: '#1a1a1a', 'stroke-width': '1.5', 'stroke-dasharray': '2,2' }));
+        const clabel = el('text', {
+          x: (cs.x + 8).toFixed(1), y: (cs.y + 14).toFixed(1),
+          'font-size': '10', fill: '#888'
+        });
+        clabel.textContent = `LP relaxation: (${fmt(bestCont.x)}, ${fmt(bestCont.y)})`;
+        svg.appendChild(clabel);
+      }
+    }
+
     const bs = toScreen(best.x, best.y);
     svg.appendChild(el('circle', { cx: bs.x.toFixed(1), cy: bs.y.toFixed(1), r: 4, fill: '#1a1a1a' }));
     const labelLeft = bs.x > width * 0.55;
@@ -195,7 +243,11 @@ if (window.renderMathInElement) {
 
     // caption with the computed optimum and profit filled in
     const caption = document.createElement('p');
-    caption.textContent = `The shaded region is every feasible production plan. The best one sits at a corner — here, (${varNames[0]}, ${varNames[1]}) = (${fmt(best.x)}, ${fmt(best.y)}), for a profit of ${fmt(bestVal)}.`;
+    if (integer) {
+      caption.textContent = `The shaded region is the continuous feasible area; the dots are the integer points inside it. The best integer point is (${varNames[0]}, ${varNames[1]}) = (${fmt(best.x)}, ${fmt(best.y)}), for a value of ${fmt(bestVal)} — not the same as rounding the LP relaxation's optimum.`;
+    } else {
+      caption.textContent = `The shaded region is every feasible production plan. The best one sits at a corner — here, (${varNames[0]}, ${varNames[1]}) = (${fmt(best.x)}, ${fmt(best.y)}), for a profit of ${fmt(bestVal)}.`;
+    }
     container.appendChild(caption);
   }
 
@@ -214,6 +266,20 @@ if (window.renderMathInElement) {
         { a: 2, b: 4, c: 24, color: '#1a1a1a', label: 'milk: 2x₁ + 4x₂ ≤ 24' },
         { a: 1, b: 0, c: 6, color: '#e64980', label: 'peppermint extract: x₁ ≤ 6' },
         { a: 0, b: 1, c: 5, color: '#3b6bd6', label: 'blueberries: x₂ ≤ 5' }
+      ]
+    });
+  }
+
+  const ilpMount = document.getElementById('ilp-graph-root');
+  if (ilpMount) {
+    renderLPGraph(ilpMount, {
+      xMax: 6,
+      yMax: 5,
+      integer: true,
+      varNames: ['x₁', 'x₂'],
+      objective: { a: 7, b: 10 },
+      constraints: [
+        { a: 0.7, b: 0.9, c: 3, color: '#1a1a1a', label: 'budget: 0.7x₁ + 0.9x₂ ≤ €3' }
       ]
     });
   }
