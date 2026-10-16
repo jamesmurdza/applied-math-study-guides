@@ -167,6 +167,18 @@ if (window.renderMathInElement) {
     return pts;
   }
 
+  // Every integer point inside [0,xMax] x [0,yMax] that fails at least one constraint —
+  // drawn very faded, just to show the lattice continuing outside the feasible region.
+  function infeasibleLatticePoints(constraints, xMax, yMax) {
+    const pts = [];
+    for (let x = 0; x <= xMax; x++) {
+      for (let y = 0; y <= yMax; y++) {
+        if (!isFeasible(x, y, constraints)) pts.push({ x, y });
+      }
+    }
+    return pts;
+  }
+
   function renderLPGraph(container, config) {
     const { xMax, yMax, constraints, objective, varNames, varColors, integer } = config;
     const colors = varColors || ['#1a1a1a', '#1a1a1a'];
@@ -280,6 +292,15 @@ if (window.renderMathInElement) {
     let best = bestCont, bestVal = bestContVal;
 
     if (integer) {
+      // lattice points outside the feasible region — drawn first (so feasible
+      // points and markers sit on top) and very faded, just to show the grid
+      // continuing past the boundary.
+      const outsidePts = infeasibleLatticePoints(constraints, xMax, yMax);
+      outsidePts.forEach(p => {
+        const s = toScreen(p.x, p.y);
+        svg.appendChild(el('circle', { cx: s.x.toFixed(1), cy: s.y.toFixed(1), r: 2.5, fill: '#1a1a1a', 'fill-opacity': '0.08' }));
+      });
+
       // lattice points inside the feasible region
       const pts = latticePoints(constraints, xMax, yMax);
       pts.forEach(p => {
