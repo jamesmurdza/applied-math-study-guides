@@ -146,12 +146,33 @@ if (window.renderMathInElement) {
 
     const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img', 'aria-label': 'Feasible region graph' });
 
-    // feasible polygon — fill only, no outline
+    // feasible polygon — filled with a subtle gradient running along the
+    // objective vector, so shading gets a touch darker toward "better".
     const poly = feasibleRegion(constraints, xMax, yMax);
     const polyPts = poly.map(p => toScreen(p.x, p.y));
+
+    let worst = poly[0], worstVal = Infinity, bestForGrad = poly[0], bestForGradVal = -Infinity;
+    poly.forEach(p => {
+      const v = objective.a * p.x + objective.b * p.y;
+      if (v < worstVal) { worstVal = v; worst = p; }
+      if (v > bestForGradVal) { bestForGradVal = v; bestForGrad = p; }
+    });
+    const gradId = `objGrad-${container.id || Math.random().toString(36).slice(2)}`;
+    const defs = el('defs', {});
+    const wScreen = toScreen(worst.x, worst.y), bScreen = toScreen(bestForGrad.x, bestForGrad.y);
+    const gradient = el('linearGradient', {
+      id: gradId, gradientUnits: 'userSpaceOnUse',
+      x1: wScreen.x.toFixed(1), y1: wScreen.y.toFixed(1),
+      x2: bScreen.x.toFixed(1), y2: bScreen.y.toFixed(1)
+    });
+    gradient.appendChild(el('stop', { offset: '0%', 'stop-color': '#1a1a1a', 'stop-opacity': '0.02' }));
+    gradient.appendChild(el('stop', { offset: '100%', 'stop-color': '#1a1a1a', 'stop-opacity': '0.16' }));
+    defs.appendChild(gradient);
+    svg.appendChild(defs);
+
     svg.appendChild(el('polygon', {
       points: polyPts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' '),
-      fill: '#1a1a1a', 'fill-opacity': '0.06'
+      fill: `url(#${gradId})`
     }));
 
     // each constraint's full boundary line, dashed gray, for context
