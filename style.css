@@ -150,6 +150,24 @@ body {
   margin-top: 12px;
 }
 
+.viz {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.viz svg {
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.viz p {
+  margin-top: 10px;
+  font-size: 0.85rem;
+}
+
 .lp-graph {
   margin-top: 20px;
   padding-top: 20px;
