@@ -155,6 +155,10 @@ if (window.renderMathInElement) {
     const toScreen = (x, y) => ({ x: originX + x * scale, y: originY - y * scale });
 
     const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img', 'aria-label': 'Feasible region graph' });
+    // Collected and appended last (so they sit on top of every other element
+    // in SVG's paint order) — otherwise axis lines, labels, and markers drawn
+    // afterward would intercept the hover before it reaches these.
+    const hoverTargets = [];
 
     // feasible polygon — filled with a subtle gradient running along the
     // objective vector, so shading gets a touch darker toward "better".
@@ -185,15 +189,12 @@ if (window.renderMathInElement) {
       fill: `url(#${gradId})`
     }));
 
-    // invisible hover targets on each vertex (continuous mode has no visible
-    // dots otherwise) — purely for the native tooltip, no visual change
+    // hover targets on each vertex (continuous mode has no visible dots
+    // otherwise) — purely for the native tooltip, no visual change
     if (!integer) {
       poly.forEach(p => {
         const s = toScreen(p.x, p.y);
-        svg.appendChild(withTitle(
-          el('circle', { cx: s.x.toFixed(1), cy: s.y.toFixed(1), r: 8, fill: '#000', 'fill-opacity': '0' }),
-          pointTitle(p)
-        ));
+        hoverTargets.push({ x: s.x, y: s.y, r: 8, title: pointTitle(p) });
       });
     }
 
@@ -250,11 +251,7 @@ if (window.renderMathInElement) {
       pts.forEach(p => {
         const s = toScreen(p.x, p.y);
         svg.appendChild(el('circle', { cx: s.x.toFixed(1), cy: s.y.toFixed(1), r: 2.5, fill: '#1a1a1a', 'fill-opacity': '0.35' }));
-        // slightly larger invisible hit target, same tooltip approach as the continuous vertices
-        svg.appendChild(withTitle(
-          el('circle', { cx: s.x.toFixed(1), cy: s.y.toFixed(1), r: 6, fill: '#000', 'fill-opacity': '0' }),
-          pointTitle(p)
-        ));
+        hoverTargets.push({ x: s.x, y: s.y, r: 6, title: pointTitle(p) });
       });
 
       // true integer optimum = best lattice point
@@ -268,10 +265,8 @@ if (window.renderMathInElement) {
       // hollow marker for the (generally non-integer, and possibly worse-looking) LP relaxation optimum
       if (Math.abs(bestCont.x - bestInt.x) > 1e-6 || Math.abs(bestCont.y - bestInt.y) > 1e-6) {
         const cs = toScreen(bestCont.x, bestCont.y);
-        svg.appendChild(withTitle(
-          el('circle', { cx: cs.x.toFixed(1), cy: cs.y.toFixed(1), r: 4, fill: 'none', stroke: '#1a1a1a', 'stroke-width': '1.5', 'stroke-dasharray': '2,2' }),
-          pointTitle(bestCont)
-        ));
+        svg.appendChild(el('circle', { cx: cs.x.toFixed(1), cy: cs.y.toFixed(1), r: 4, fill: 'none', stroke: '#1a1a1a', 'stroke-width': '1.5', 'stroke-dasharray': '2,2' }));
+        hoverTargets.push({ x: cs.x, y: cs.y, r: 6, title: pointTitle(bestCont) });
         const clabel = el('text', {
           x: (cs.x + 10).toFixed(1), y: (cs.y - 8).toFixed(1),
           'font-size': '10', fill: '#888'
@@ -282,16 +277,34 @@ if (window.renderMathInElement) {
     }
 
     const bs = toScreen(best.x, best.y);
-    svg.appendChild(withTitle(
-      el('circle', { cx: bs.x.toFixed(1), cy: bs.y.toFixed(1), r: 4, fill: '#1a1a1a' }),
-      pointTitle(best)
-    ));
+    svg.appendChild(el('circle', { cx: bs.x.toFixed(1), cy: bs.y.toFixed(1), r: 4, fill: '#1a1a1a' }));
+    hoverTargets.push({ x: bs.x, y: bs.y, r: 6, title: pointTitle(best) });
     const label = el('text', {
       x: (bs.x + 10).toFixed(1), y: (bs.y - 8).toFixed(1),
       'font-size': '11', fill: '#1a1a1a'
     });
     label.textContent = `optimal: (${fmt(best.x)}, ${fmt(best.y)})`;
     svg.appendChild(label);
+
+    // Append every hover target last so it's painted on top of everything
+    // else (axis lines, labels, markers) and reliably catches the pointer.
+    // Dedupe by location — the optimal point is both "a vertex" and "best",
+    // so it'd otherwise get two identical, redundantly stacked targets.
+    const seen = new Set();
+    hoverTargets.filter(t => {
+      const key = `${t.x.toFixed(1)},${t.y.toFixed(1)}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }).forEach(t => {
+      svg.appendChild(withTitle(
+        el('circle', {
+          cx: t.x.toFixed(1), cy: t.y.toFixed(1), r: Math.max(t.r, 6),
+          fill: '#000', 'fill-opacity': '0', 'pointer-events': 'all'
+        }),
+        t.title
+      ));
+    });
 
     container.innerHTML = '';
     container.appendChild(svg);
