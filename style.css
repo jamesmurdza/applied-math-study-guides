@@ -257,6 +257,67 @@ body {
   accent-color: #1a1a1a;
 }
 
+.tableau-wrap {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+  overflow-x: auto;
+}
+
+.tableau-phase {
+  margin: 0 0 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.tableau {
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.tableau th,
+.tableau td {
+  text-align: right;
+  padding: 6px 12px 6px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.tableau thead th {
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.tableau tbody th {
+  text-align: left;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.tableau tbody tr:last-child th,
+.tableau tbody tr:last-child td {
+  border-bottom: none;
+  border-top: 1px solid #ccc;
+  font-weight: 600;
+}
+
+.pivot-cell {
+  color: #c0392b;
+  font-weight: 700;
+}
+
+.tableau-controls {
+  margin-top: 14px;
+}
+
+.tableau-controls input[type="range"] {
+  width: 100%;
+  max-width: 420px;
+  display: block;
+  accent-color: #1a1a1a;
+}
+
 .chart-tooltip {
   display: none;
   position: fixed;

@@ -580,6 +580,266 @@ if (window.renderMathInElement) {
 })();
 
 // ---------------------------------------------------------------------------
+// Simplex / two-phase simplex: step through the actual pivoting tableau, one
+// pivot per slider tick. Same approach as Dijkstra below — run the real
+// algorithm, snapshot the tableau before each pivot, let the slider scrub
+// through the recorded snapshots. Nothing here is a hand-placed per-step
+// table; every number is produced by the pivot arithmetic itself.
+// ---------------------------------------------------------------------------
+(function () {
+  const COL = ['x₁', 'x₂', 's₁', 's₂', 's₃', 's₄', 'a₁'];
+  const COL_COLOR = { 'x₁': '#e64980', 'x₂': '#3b6bd6' };
+
+  function fmt(n) {
+    if (Math.abs(n) < 1e-9) n = 0;
+    return Math.abs(n - Math.round(n)) < 1e-6 ? String(Math.round(n)) : n.toFixed(2);
+  }
+
+  // Zero out the objective row's entries in every currently-basic column, so
+  // it holds correct reduced costs relative to the starting basis (needed
+  // whenever the raw objective row isn't already reduced — e.g. phase one's
+  // artificial-variable objective, or phase two's fresh real objective).
+  function reduceObjRow(tableau, basis, numRows, numCols) {
+    const obj = tableau[numRows];
+    for (let i = 0; i < numRows; i++) {
+      const factor = obj[basis[i]];
+      if (Math.abs(factor) > 1e-9) {
+        const row = tableau[i];
+        for (let j = 0; j <= numCols; j++) obj[j] -= factor * row[j];
+      }
+    }
+  }
+
+  // Most-negative-reduced-cost entering rule + minimum-ratio-test leaving
+  // rule — standard Dantzig simplex. Returns null when optimal.
+  function findPivot(tableau, basis, numRows, numCols) {
+    const obj = tableau[numRows];
+    let enterCol = -1, best = -1e-7;
+    for (let j = 0; j < numCols; j++) if (obj[j] < best) { best = obj[j]; enterCol = j; }
+    if (enterCol === -1) return null;
+    let leaveRow = -1, bestRatio = Infinity;
+    for (let i = 0; i < numRows; i++) {
+      const a = tableau[i][enterCol];
+      if (a > 1e-7) {
+        const ratio = tableau[i][numCols] / a;
+        if (ratio < bestRatio - 1e-7 || (Math.abs(ratio - bestRatio) <= 1e-7 && (leaveRow === -1 || basis[i] < basis[leaveRow]))) {
+          bestRatio = ratio; leaveRow = i;
+        }
+      }
+    }
+    if (leaveRow === -1) return null; // unbounded — not reached by these examples
+    return { enterCol, leaveRow, ratio: bestRatio, element: tableau[leaveRow][enterCol] };
+  }
+
+  function applyPivot(tableau, basis, pivot, numRows, numCols) {
+    const { enterCol, leaveRow, element } = pivot;
+    const prow = tableau[leaveRow];
+    for (let j = 0; j <= numCols; j++) prow[j] /= element;
+    for (let i = 0; i <= numRows; i++) {
+      if (i === leaveRow) continue;
+      const factor = tableau[i][enterCol];
+      if (Math.abs(factor) < 1e-9) continue;
+      const row = tableau[i];
+      for (let j = 0; j <= numCols; j++) row[j] -= factor * prow[j];
+    }
+    basis[leaveRow] = enterCol;
+  }
+
+  // Runs simplex to completion, recording a frame BEFORE each pivot is
+  // applied (so the frame can show the pivot cell about to be used), plus
+  // one final frame once no reduced cost is negative.
+  function runSimplexFrames(rows, basisInit, objRaw, numCols) {
+    const numRows = rows.length;
+    const tableau = rows.map(r => [...r.coeffs, r.rhs]);
+    tableau.push([...objRaw, 0]);
+    const basis = basisInit.slice();
+    reduceObjRow(tableau, basis, numRows, numCols);
+    const frames = [];
+    for (let iter = 0; iter < 20; iter++) {
+      const pivot = findPivot(tableau, basis, numRows, numCols);
+      frames.push({ tableau: tableau.map(r => r.slice()), basis: basis.slice(), pivot });
+      if (!pivot) break;
+      applyPivot(tableau, basis, pivot, numRows, numCols);
+    }
+    return frames;
+  }
+
+  function solutionValues(frame, numStructural) {
+    const vals = new Array(numStructural).fill(0);
+    frame.basis.forEach((col, i) => {
+      if (col < numStructural) vals[col] = frame.tableau[i][frame.tableau[i].length - 1];
+    });
+    return vals;
+  }
+
+  function pivotCaption(frame, varNames, objectiveLabel, numStructural) {
+    if (!frame.pivot) {
+      const vals = solutionValues(frame, numStructural);
+      const objVal = frame.tableau[frame.tableau.length - 1][frame.tableau[0].length - 1];
+      const parts = varNames.map((n, i) => `${n} = ${fmt(vals[i])}`).join(', ');
+      return `Every reduced cost is now ≥ 0 — optimal. ${parts}, ${objectiveLabel} = ${fmt(objVal)}.`;
+    }
+    const { enterCol, leaveRow, element, ratio } = frame.pivot;
+    const objRow = frame.tableau[frame.tableau.length - 1];
+    const rc = objRow[enterCol];
+    const leaveLab = COL[frame.basis[leaveRow]];
+    const rhs = frame.tableau[leaveRow][frame.tableau[leaveRow].length - 1];
+    return `${COL[enterCol]} enters — its reduced cost (${fmt(rc)}) is the most negative. ${leaveLab} leaves by the minimum ratio test (${fmt(rhs)} / ${fmt(element)} = ${fmt(ratio)}).`;
+  }
+
+  function mountTableau(mount, frames, varNames, objectiveLabel, numStructural, phaseAt) {
+    if (!mount) return;
+    let idx = 0;
+
+    const controls = document.createElement('div');
+    controls.className = 'tableau-controls';
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.min = '0';
+    slider.max = String(frames.length - 1);
+    slider.value = '0';
+    controls.appendChild(slider);
+    mount.parentNode.insertBefore(controls, mount.nextSibling);
+
+    const caption = document.createElement('p');
+    mount.parentNode.insertBefore(caption, controls.nextSibling);
+
+    function render() {
+      const frame = frames[idx];
+      const numCols = frame.tableau[0].length - 1;
+      const numRows = frame.tableau.length - 1;
+
+      mount.innerHTML = '';
+
+      if (phaseAt) {
+        const label = document.createElement('p');
+        label.className = 'tableau-phase';
+        label.textContent = `Phase ${phaseAt(idx)}`;
+        mount.appendChild(label);
+      }
+
+      const table = document.createElement('table');
+      table.className = 'tableau';
+
+      const thead = document.createElement('thead');
+      const headRow = document.createElement('tr');
+      headRow.appendChild(document.createElement('th'));
+      for (let j = 0; j < numCols; j++) {
+        const th = document.createElement('th');
+        th.textContent = COL[j];
+        if (COL_COLOR[COL[j]]) th.style.color = COL_COLOR[COL[j]];
+        if (frame.pivot && frame.pivot.enterCol === j) th.classList.add('pivot-cell');
+        headRow.appendChild(th);
+      }
+      const rhsTh = document.createElement('th');
+      rhsTh.textContent = 'RHS';
+      headRow.appendChild(rhsTh);
+      thead.appendChild(headRow);
+      table.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+      for (let i = 0; i < numRows; i++) {
+        const tr = document.createElement('tr');
+        const basisTh = document.createElement('th');
+        const basisName = COL[frame.basis[i]];
+        basisTh.textContent = basisName;
+        if (COL_COLOR[basisName]) basisTh.style.color = COL_COLOR[basisName];
+        if (frame.pivot && frame.pivot.leaveRow === i) basisTh.classList.add('pivot-cell');
+        tr.appendChild(basisTh);
+        for (let j = 0; j < numCols; j++) {
+          const td = document.createElement('td');
+          td.textContent = fmt(frame.tableau[i][j]);
+          if (frame.pivot && frame.pivot.leaveRow === i && frame.pivot.enterCol === j) td.classList.add('pivot-cell');
+          tr.appendChild(td);
+        }
+        const rhsTd = document.createElement('td');
+        rhsTd.textContent = fmt(frame.tableau[i][numCols]);
+        tr.appendChild(rhsTd);
+        tbody.appendChild(tr);
+      }
+
+      const zRow = document.createElement('tr');
+      const zTh = document.createElement('th');
+      zTh.textContent = 'z';
+      zRow.appendChild(zTh);
+      for (let j = 0; j < numCols; j++) {
+        const td = document.createElement('td');
+        td.textContent = fmt(frame.tableau[numRows][j]);
+        zRow.appendChild(td);
+      }
+      const zRhs = document.createElement('td');
+      zRhs.textContent = fmt(frame.tableau[numRows][numCols]);
+      zRow.appendChild(zRhs);
+      tbody.appendChild(zRow);
+      table.appendChild(tbody);
+
+      mount.appendChild(table);
+
+      // Phase one's objective tracks the artificial variable, not the real
+      // objective — "profit = 0" there would misleadingly read as a bad
+      // outcome, so its optimal frame gets its own wording instead.
+      if (phaseAt && phaseAt(idx) === 1 && !frame.pivot) {
+        const vals = solutionValues(frame, numStructural);
+        const parts = varNames.map((n, i) => `${n} = ${fmt(vals[i])}`).join(', ');
+        caption.textContent = `No artificial variable remains in the basis — a feasible corner is found (${parts}). Phase two now optimizes the real objective from here.`;
+      } else {
+        caption.textContent = pivotCaption(frame, varNames, objectiveLabel, numStructural);
+      }
+      slider.value = String(idx);
+    }
+
+    slider.addEventListener('input', () => {
+      idx = Number(slider.value);
+      render();
+    });
+
+    render();
+  }
+
+  // --- Simplex (single phase): the pink-peppermint / blueberry LP ----------
+  // max 5x1 + 4x2 s.t. 2x1+4x2<=24, x1<=6, x2<=5, x1,x2>=0
+  const simplexFrames = runSimplexFrames(
+    [
+      { coeffs: [2, 4, 1, 0, 0], rhs: 24 },
+      { coeffs: [1, 0, 0, 1, 0], rhs: 6 },
+      { coeffs: [0, 1, 0, 0, 1], rhs: 5 }
+    ],
+    [2, 3, 4],
+    [-5, -4, 0, 0, 0],
+    5
+  );
+  mountTableau(document.getElementById('simplex-tableau-root'), simplexFrames, ['x₁', 'x₂'], 'profit', 2, null);
+
+  // --- Two-phase simplex: same LP, plus a minimum order x1+x2>=2 -----------
+  // Phase 1 drives the artificial variable a1 to 0 (feasible corner found);
+  // phase 2 then optimizes the real profit from that corner onward.
+  const phase1Frames = runSimplexFrames(
+    [
+      { coeffs: [2, 4, 1, 0, 0, 0, 0], rhs: 24 },
+      { coeffs: [1, 0, 0, 1, 0, 0, 0], rhs: 6 },
+      { coeffs: [0, 1, 0, 0, 1, 0, 0], rhs: 5 },
+      { coeffs: [1, 1, 0, 0, 0, -1, 1], rhs: 2 }
+    ],
+    [2, 3, 4, 6],
+    [0, 0, 0, 0, 0, 0, 1],
+    7
+  );
+  const lastP1 = phase1Frames[phase1Frames.length - 1];
+  const phase2Rows = lastP1.tableau.slice(0, 4).map(r => ({ coeffs: r.slice(0, 6), rhs: r[7] }));
+  const phase2Frames = runSimplexFrames(phase2Rows, lastP1.basis.slice(), [-5, -4, 0, 0, 0, 0], 6);
+  const twoPhaseFrames = phase1Frames.concat(phase2Frames);
+  const phaseBoundary = phase1Frames.length;
+  mountTableau(
+    document.getElementById('two-phase-tableau-root'),
+    twoPhaseFrames,
+    ['x₁', 'x₂'],
+    'profit',
+    2,
+    idx => (idx < phaseBoundary ? 1 : 2)
+  );
+})();
+
+// ---------------------------------------------------------------------------
 // Dijkstra's algorithm: a small weighted graph, stepped through one "settle
 // the closest unvisited node" step at a time. Distances/tree are computed
 // live by running the real algorithm, not hand-placed per step.
