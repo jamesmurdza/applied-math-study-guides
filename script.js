@@ -277,21 +277,31 @@ if (window.renderMathInElement) {
       svg.appendChild(t);
     }
 
+    // axis variable tags, right at the axis tips (original placement)
+    const xLabel = el('text', { x: originX + xMax * scale + 15, y: o.y + 4, 'font-size': '12', 'font-weight': '600', fill: colors[0] });
+    xLabel.textContent = varNames[0];
+    svg.appendChild(xLabel);
+    const yLabel = el('text', { x: o.x, y: padT - 10, 'font-size': '12', 'font-weight': '600', fill: colors[1], 'text-anchor': 'middle' });
+    yLabel.textContent = varNames[1];
+    svg.appendChild(yLabel);
+
     // axis titles — descriptive name for each variable (e.g. "pink peppermint
     // ice cream, x₁ (l)"), centered under the x-axis and rotated beside the y-axis.
-    const xTitle = el('text', {
-      x: originX + (xMax * scale) / 2, y: height - 6,
-      'font-size': '11', 'font-weight': '600', fill: colors[0], 'text-anchor': 'middle'
-    });
-    xTitle.textContent = axisLabels ? axisLabels[0] : varNames[0];
-    svg.appendChild(xTitle);
-    const yTitleY = originY - (yMax * scale) / 2;
-    const yTitle = el('text', {
-      x: 14, y: yTitleY, 'font-size': '11', 'font-weight': '600', fill: colors[1],
-      'text-anchor': 'middle', transform: `rotate(-90, 14, ${yTitleY.toFixed(1)})`
-    });
-    yTitle.textContent = axisLabels ? axisLabels[1] : varNames[1];
-    svg.appendChild(yTitle);
+    if (axisLabels) {
+      const xTitle = el('text', {
+        x: originX + (xMax * scale) / 2, y: height - 6,
+        'font-size': '11', 'font-weight': '600', fill: colors[0], 'text-anchor': 'middle'
+      });
+      xTitle.textContent = axisLabels[0];
+      svg.appendChild(xTitle);
+      const yTitleY = originY - (yMax * scale) / 2;
+      const yTitle = el('text', {
+        x: 14, y: yTitleY, 'font-size': '11', 'font-weight': '600', fill: colors[1],
+        'text-anchor': 'middle', transform: `rotate(-90, 14, ${yTitleY.toFixed(1)})`
+      });
+      yTitle.textContent = axisLabels[1];
+      svg.appendChild(yTitle);
+    }
 
     // continuous LP-relaxation optimum = polygon point maximizing the objective
     let bestCont = poly[0], bestContVal = -Infinity;
@@ -396,7 +406,7 @@ if (window.renderMathInElement) {
       yMax: 7,
       varNames: ['x₁', 'x₂'],
       varColors: ['#e64980', '#3b6bd6'],
-      axisLabels: ['pink peppermint ice cream, x₁ (l)', 'blueberry ice cream, x₂ (l)'],
+      axisLabels: ['pink peppermint ice cream (l)', 'blueberry ice cream (l)'],
       objective: { a: 5, b: 4 },
       objectiveLabel: 'profit',
       constraints: [
@@ -415,7 +425,7 @@ if (window.renderMathInElement) {
       integer: true,
       varNames: ['x₁', 'x₂'],
       varColors: ['#2f9e44', '#c2525c'],
-      axisLabels: ['green eggs, x₁', 'ham, x₂'],
+      axisLabels: ['green eggs', 'ham'],
       objective: { a: 7, b: 10 },
       objectiveLabel: 'protein',
       constraints: [
