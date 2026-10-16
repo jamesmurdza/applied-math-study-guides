@@ -1,0 +1,10 @@
+{
+  "name": "math-topics",
+  "private": true,
+  "scripts": {
+    "dev": "live-server --port=8080 --no-browser --host=0.0.0.0"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math Topics</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+</head>
+<body>
+
+  <div class="container">
+    <nav class="tabs">
+      <button class="tab active" data-tab="real-analysis">Real Analysis</button>
+      <button class="tab" data-tab="optimization">Optimization</button>
+      <button class="tab" data-tab="statistics">Statistics</button>
+    </nav>
+
+    <main class="panels">
+      <section class="panel active" id="real-analysis">
+        <h1>Real Analysis</h1>
+        <p>The rigorous study of limits, continuity, differentiation, integration, and sequences and series of real numbers.</p>
+
+        <div class="topics">
+          <div class="topic">
+            <h2>Metric Spaces</h2>
+            <p>A metric space pairs a set with a distance function that formalizes notions like nearness and size.</p>
+            <p>Distance is never negative.</p>
+            <p class="math">$$\textcolor{#4078F2}{d}(x,y) \textcolor{#7B4B8C}{\geq} 0$$</p>
+            <p>Two points are at distance zero exactly when they are the same point.</p>
+            <p class="math">$$\textcolor{#4078F2}{d}(x,y) \textcolor{#7B4B8C}{=} 0 \textcolor{#7B4B8C}{\iff} x \textcolor{#7B4B8C}{=} y$$</p>
+            <p>Distance doesn't depend on which point you measure from.</p>
+            <p class="math">$$\textcolor{#4078F2}{d}(x,y) \textcolor{#7B4B8C}{=} \textcolor{#4078F2}{d}(y,x)$$</p>
+            <p>Going through a third point never shortens the direct route.</p>
+            <p class="math">$$\textcolor{#4078F2}{d}(x,z) \textcolor{#7B4B8C}{\leq} \textcolor{#4078F2}{d}(x,y) + \textcolor{#4078F2}{d}(y,z)$$</p>
+          </div>
+          <div class="topic">
+            <h2>Open and Closed Sets</h2>
+            <p>Open sets are built from balls that fit entirely inside them, while closed sets contain all of their limit points.</p>
+            <p class="math">$$\textcolor{#C18401}{U} \text{ open} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{U},\ \textcolor{#7B4B8C}{\exists}\, \varepsilon \textcolor{#7B4B8C}{>} 0 \text{ s.t. } \textcolor{#C18401}{B}(x,\varepsilon) \textcolor{#7B4B8C}{\subseteq} \textcolor{#C18401}{U}$$</p>
+            <p>A set is closed exactly when its complement is open.</p>
+            <p class="math">$$\textcolor{#C18401}{A} \text{ closed} \textcolor{#7B4B8C}{\iff} \textcolor{#C18401}{X} \setminus \textcolor{#C18401}{A} \text{ open}$$</p>
+            <p>Equivalently, a closed set contains the limit of every convergent sequence built from its own points.</p>
+            <p class="math">$$\big(\textcolor{#7B4B8C}{\forall} n \textcolor{#7B4B8C}{\in} \mathbb{N},\ x_n \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{A}\big) \textcolor{#7B4B8C}{\wedge} x_n \to x\ \textcolor{#7B4B8C}{\implies}\ x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{A}$$</p>
+
+            <div class="set-examples">
+              <div class="set-card">
+                <svg viewBox="0 0 160 160" role="img" aria-label="Open unit disk">
+                  <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="20" y1="76" x2="20" y2="84" stroke="#ccc"></line>
+                  <line x1="140" y1="76" x2="140" y2="84" stroke="#ccc"></line>
+                  <line x1="76" y1="20" x2="84" y2="20" stroke="#ccc"></line>
+                  <line x1="76" y1="140" x2="84" y2="140" stroke="#ccc"></line>
+                  <circle cx="80" cy="80" r="60" fill="#C18401" fill-opacity="0.15" stroke="#C18401" stroke-width="2" stroke-dasharray="4,4"></circle>
+                </svg>
+                <p><strong>Open, not closed</strong></p>
+                <p class="math">$$\{(x,y) : x^2 + y^2 \textcolor{#7B4B8C}{<} 1\}$$</p>
+              </div>
+              <div class="set-card">
+                <svg viewBox="0 0 160 160" role="img" aria-label="Closed unit disk">
+                  <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="20" y1="76" x2="20" y2="84" stroke="#ccc"></line>
+                  <line x1="140" y1="76" x2="140" y2="84" stroke="#ccc"></line>
+                  <line x1="76" y1="20" x2="84" y2="20" stroke="#ccc"></line>
+                  <line x1="76" y1="140" x2="84" y2="140" stroke="#ccc"></line>
+                  <circle cx="80" cy="80" r="60" fill="#C18401" fill-opacity="0.15" stroke="#C18401" stroke-width="2"></circle>
+                </svg>
+                <p><strong>Closed, not open</strong></p>
+                <p class="math">$$\{(x,y) : x^2 + y^2 \textcolor{#7B4B8C}{\leq} 1\}$$</p>
+              </div>
+            </div>
+
+            <div class="set-examples">
+              <div class="set-card">
+                <svg viewBox="0 0 160 160" role="img" aria-label="The whole plane">
+                  <rect x="10" y="10" width="140" height="140" fill="#C18401" fill-opacity="0.15"></rect>
+                  <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
+                </svg>
+                <p><strong>Closed and open</strong></p>
+                <p class="math">$$\textcolor{#C18401}{\mathbb{R}^2}$$</p>
+              </div>
+              <div class="set-card">
+                <svg viewBox="0 0 160 160" role="img" aria-label="The empty set">
+                  <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="20" y1="76" x2="20" y2="84" stroke="#ccc"></line>
+                  <line x1="140" y1="76" x2="140" y2="84" stroke="#ccc"></line>
+                  <line x1="76" y1="20" x2="84" y2="20" stroke="#ccc"></line>
+                  <line x1="76" y1="140" x2="84" y2="140" stroke="#ccc"></line>
+                </svg>
+                <p><strong>Closed and open</strong></p>
+                <p class="math">$$\textcolor{#C18401}{\varnothing}$$</p>
+              </div>
+              <div class="set-card">
+                <svg viewBox="0 0 160 160" role="img" aria-label="Disk with mixed boundary">
+                  <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="20" y1="76" x2="20" y2="84" stroke="#ccc"></line>
+                  <line x1="140" y1="76" x2="140" y2="84" stroke="#ccc"></line>
+                  <line x1="76" y1="20" x2="84" y2="20" stroke="#ccc"></line>
+                  <line x1="76" y1="140" x2="84" y2="140" stroke="#ccc"></line>
+                  <circle cx="80" cy="80" r="60" fill="#C18401" fill-opacity="0.15"></circle>
+                  <path d="M 20,80 A 60,60 0 0,1 140,80" fill="none" stroke="#C18401" stroke-width="2"></path>
+                  <path d="M 140,80 A 60,60 0 0,1 20,80" fill="none" stroke="#C18401" stroke-width="2" stroke-dasharray="4,4"></path>
+                </svg>
+                <p><strong>Not closed, not open</strong></p>
+                <p class="math">$$\{x^2\!+\!y^2 \textcolor{#7B4B8C}{<} 1\} \cup \{x^2\!+\!y^2 \textcolor{#7B4B8C}{=} 1, y \textcolor{#7B4B8C}{\geq} 0\}$$</p>
+              </div>
+              <div class="set-card">
+                <svg viewBox="0 0 160 160" role="img" aria-label="Punctured closed disk">
+                  <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="20" y1="76" x2="20" y2="84" stroke="#ccc"></line>
+                  <line x1="140" y1="76" x2="140" y2="84" stroke="#ccc"></line>
+                  <line x1="76" y1="20" x2="84" y2="20" stroke="#ccc"></line>
+                  <line x1="76" y1="140" x2="84" y2="140" stroke="#ccc"></line>
+                  <circle cx="80" cy="80" r="60" fill="#C18401" fill-opacity="0.15" stroke="#C18401" stroke-width="2"></circle>
+                  <line x1="76" y1="76" x2="84" y2="84" stroke="#C18401" stroke-width="2"></line>
+                  <line x1="84" y1="76" x2="76" y2="84" stroke="#C18401" stroke-width="2"></line>
+                </svg>
+                <p><strong>Not closed, not open</strong></p>
+                <p class="math">$$\{(x,y) : 0 \textcolor{#7B4B8C}{<} x^2+y^2 \textcolor{#7B4B8C}{\leq} 1\}$$</p>
+              </div>
+            </div>
+          </div>
+          <div class="topic">
+            <h2>Sequences and Convergence</h2>
+            <p>A sequence converges when its terms get and stay arbitrarily close to a single limit point.</p>
+            <p class="math">$$x_n \to x \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#7B4B8C}{\exists} N \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{\mathbb{N}} \text{ s.t. } \textcolor{#7B4B8C}{\forall} n \textcolor{#7B4B8C}{\geq} N,\ \textcolor{#4078F2}{d}(x_n, x) \textcolor{#7B4B8C}{<} \varepsilon$$</p>
+          </div>
+          <div class="topic">
+            <h2>Continuity</h2>
+            <p>A function is continuous when small changes in input produce arbitrarily small changes in output.</p>
+            <p class="math">$$\textcolor{#4078F2}{f} \text{ continuous at } x_0 \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#7B4B8C}{\exists}\, \delta \textcolor{#7B4B8C}{>} 0 \text{ s.t. } \textcolor{#4078F2}{d}(x,x_0) \textcolor{#7B4B8C}{<} \delta \textcolor{#7B4B8C}{\implies} \textcolor{#4078F2}{d}(\textcolor{#4078F2}{f}(x), \textcolor{#4078F2}{f}(x_0)) \textcolor{#7B4B8C}{<} \varepsilon$$</p>
+          </div>
+          <div class="topic">
+            <h2>Boundedness and Total Boundedness</h2>
+            <p>Total boundedness strengthens boundedness by requiring a set to be coverable by finitely many small balls.</p>
+            <p class="math">$$\textcolor{#C18401}{A} \text{ totally bounded} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#C18401}{A} \textcolor{#7B4B8C}{\subseteq} \textcolor{#7B4B8C}{\bigcup}_{i=1}^{n} \textcolor{#C18401}{B}(x_i, \varepsilon) \text{ for some finite } x_1, \dots, x_n$$</p>
+          </div>
+          <div class="topic">
+            <h2>Completeness and Compactness</h2>
+            <p>A complete space contains the limits of all its Cauchy sequences, leaving no "gaps" to converge into.</p>
+            <p class="math">$$(\textcolor{#C18401}{X},\textcolor{#4078F2}{d}) \text{ complete} \textcolor{#7B4B8C}{\iff} \text{every Cauchy sequence } (x_n) \text{ in } \textcolor{#C18401}{X} \text{ converges to some } x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X}$$</p>
+          </div>
+          <div class="topic">
+            <h2>Sequences and Series of Functions</h2>
+            <p>Uniform convergence requires the entire function, not just each point, to be well-approximated as n grows.</p>
+            <p class="math">$$\textcolor{#4078F2}{f_n} \to \textcolor{#4078F2}{f} \text{ uniformly} \textcolor{#7B4B8C}{\iff} \sup_{x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X}} |\textcolor{#4078F2}{f_n}(x) - \textcolor{#4078F2}{f}(x)| \to 0 \text{ as } n \to \infty$$</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="optimization">
+        <h1>Optimization</h1>
+        <p>The study of finding the best solution from a set of feasible options, often by maximizing or minimizing an objective function.</p>
+
+        <div class="topics">
+          <div class="topic">
+            <h2>Linear Programming (LP) Formulation</h2>
+            <p>Example: a factory picks liters of <span class="var-mint">pink peppermint (x₁)</span> and <span class="var-berry">blueberry (x₂)</span> ice cream to maximize profit under ingredient limits.</p>
+            <p>The factory wants to maximize profit from the liters it produces.</p>
+            <p class="math">$$\max\quad 5\textcolor{#e64980}{x_1} + 4\textcolor{#3b6bd6}{x_2}$$</p>
+            <p>There's only so much milk on hand, so milk used across both flavors can't exceed the supply.</p>
+            <p class="math">$$2\textcolor{#e64980}{x_1} + 4\textcolor{#3b6bd6}{x_2} \leq 24$$</p>
+            <p>Peppermint extract only goes into the peppermint flavor, and there's a limited supply of it.</p>
+            <p class="math">$$\textcolor{#e64980}{x_1} \leq 6$$</p>
+            <p>Fresh blueberries are limited too, capping how much of that flavor can be made.</p>
+            <p class="math">$$\textcolor{#3b6bd6}{x_2} \leq 5$$</p>
+            <p>You can't produce a negative number of liters.</p>
+            <p class="math">$$\textcolor{#e64980}{x_1}, \textcolor{#3b6bd6}{x_2} \geq 0$$</p>
+
+            <div class="lp-graph" id="lp-graph-root"></div>
+          </div>
+          <div class="topic">
+            <h2>Integer Linear Programming (ILP) Formulation</h2>
+            <p>Example: a breakfast budget — pick <span class="var-egg">green eggs (x₁)</span> and slices of <span class="var-ham">ham (x₂)</span> to maximize protein without busting a €3 budget.</p>
+            <p>The goal is to maximize total protein from breakfast.</p>
+            <p class="math">$$\max z = 7\textcolor{#2f9e44}{x_1} + 10\textcolor{#c2525c}{x_2}$$</p>
+            <p>Green eggs and ham each cost money, and the morning budget is fixed.</p>
+            <p class="math">$$0.7\textcolor{#2f9e44}{x_1} + 0.9\textcolor{#c2525c}{x_2} \leq 3$$</p>
+            <p>You can only buy a whole number of eggs or ham slices — no fractions, which is what makes this an integer program.</p>
+            <p class="math">$$\textcolor{#2f9e44}{x_1}, \textcolor{#c2525c}{x_2} \in \mathbb{Z}_{\geq 0}$$</p>
+
+            <div class="lp-graph" id="ilp-graph-root"></div>
+          </div>
+          <div class="topic">
+            <h2>Simplex</h2>
+            <p>Placeholder text.</p>
+          </div>
+          <div class="topic">
+            <h2>Two-Phase Simplex</h2>
+            <p>Placeholder text.</p>
+          </div>
+          <div class="topic">
+            <h2>Getting a Dual from a Primal</h2>
+            <p>Placeholder text.</p>
+          </div>
+          <div class="topic">
+            <h2>Complementary Slackness</h2>
+            <p>Placeholder text.</p>
+          </div>
+          <div class="topic">
+            <h2>Dijkstra's Algorithm</h2>
+            <p>Placeholder text.</p>
+          </div>
+          <div class="topic">
+            <h2>Gomory Cutting Planes</h2>
+            <p>Placeholder text.</p>
+          </div>
+          <div class="topic">
+            <h2>Complexity and NP-Completeness</h2>
+            <p>Placeholder text.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="statistics">
+        <h1>Statistics</h1>
+        <p>The discipline of collecting, analyzing, interpreting, and presenting data to uncover patterns and inform decisions.</p>
+
+        <div class="topics">
+          <div class="topic">
+            <h2>MLEs</h2>
+            <p>Placeholder text.</p>
+          </div>
+          <div class="topic">
+            <h2>Bayesian inference</h2>
+            <p>Placeholder text.</p>
+          </div>
+          <div class="topic">
+            <h2>Method of moments</h2>
+            <p>Placeholder text.</p>
+          </div>
+          <div class="topic">
+            <h2>Hypothesis testing</h2>
+            <p>Placeholder text.</p>
+          </div>
+          <div class="topic">
+            <h2>Likelihood ratio</h2>
+            <p>Placeholder text.</p>
+          </div>
+          <div class="topic">
+            <h2>Pivotal quantities</h2>
+            <p>Placeholder text.</p>
+          </div>
+          <div class="topic">
+            <h2>(Stochastic) Regression models</h2>
+            <p>Placeholder text.</p>
+          </div>
+          <div class="topic">
+            <h2>Fisher information???</h2>
+            <p>Placeholder text.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="vendor/katex/katex.min.js"></script>
+  <script src="vendor/katex/auto-render.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
