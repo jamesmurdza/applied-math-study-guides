@@ -390,3 +390,197 @@ if (window.renderMathInElement) {
     });
   }
 })();
+
+// ---------------------------------------------------------------------------
+// Statistics visuals — small curve charts (normal tail, likelihood, Bayes
+// overlay). Each samples a plain JS function over a domain and draws it as
+// an SVG path; nothing here is hand-placed.
+// ---------------------------------------------------------------------------
+(function () {
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+
+  function el(tag, attrs) {
+    const node = document.createElementNS(SVG_NS, tag);
+    for (const k in attrs) node.setAttribute(k, attrs[k]);
+    return node;
+  }
+
+  function sample(fn, xMin, xMax, n) {
+    const pts = [];
+    for (let i = 0; i <= n; i++) {
+      const x = xMin + (xMax - xMin) * i / n;
+      pts.push({ x, y: fn(x) });
+    }
+    return pts;
+  }
+
+  function pathFor(pts, toScreen) {
+    return pts.map((p, i) => {
+      const s = toScreen(p.x, p.y);
+      return `${i === 0 ? 'M' : 'L'}${s.x.toFixed(1)},${s.y.toFixed(1)}`;
+    }).join(' ');
+  }
+
+  // Standard normal curve with a shaded right-tail rejection region, the
+  // critical value z*, and an observed test statistic marked.
+  function renderHypothesisChart(container) {
+    const xMin = -4, xMax = 4;
+    const zCrit = 1.645, zObs = 2.10;
+    const normalPdf = x => Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
+    const width = 380, height = 190, padL = 16, padR = 16, padT = 18, padB = 10;
+    const plotW = width - padL - padR, plotH = height - padT - padB;
+    const yMax = normalPdf(0) * 1.15;
+    const toScreen = (x, y) => ({
+      x: padL + (x - xMin) / (xMax - xMin) * plotW,
+      y: padT + plotH - (y / yMax) * plotH
+    });
+
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img', 'aria-label': 'Standard normal curve with rejection region' });
+
+    const curvePts = sample(normalPdf, xMin, xMax, 200);
+    svg.appendChild(el('path', { d: pathFor(curvePts, toScreen), fill: 'none', stroke: '#1a1a1a', 'stroke-width': '1.75' }));
+
+    // shaded rejection region: zCrit..xMax, closed down to the x-axis
+    const tailPts = sample(normalPdf, zCrit, xMax, 60);
+    const baseLeft = toScreen(zCrit, 0), baseRight = toScreen(xMax, 0);
+    let shadeD = `M${baseLeft.x.toFixed(1)},${baseLeft.y.toFixed(1)} `;
+    shadeD += tailPts.map(p => { const s = toScreen(p.x, p.y); return `L${s.x.toFixed(1)},${s.y.toFixed(1)}`; }).join(' ');
+    shadeD += ` L${baseRight.x.toFixed(1)},${baseRight.y.toFixed(1)} Z`;
+    svg.appendChild(el('path', { d: shadeD, fill: '#c92a2a', 'fill-opacity': '0.25' }));
+
+    // x axis
+    const o = toScreen(xMin, 0), oR = toScreen(xMax, 0);
+    svg.appendChild(el('line', { x1: o.x, y1: o.y, x2: oR.x, y2: oR.y, stroke: '#333' }));
+
+    // critical value marker
+    const cs = toScreen(zCrit, normalPdf(zCrit));
+    const cb = toScreen(zCrit, 0);
+    svg.appendChild(el('line', { x1: cs.x, y1: cs.y, x2: cb.x, y2: cb.y, stroke: '#c92a2a', 'stroke-width': '1.25', 'stroke-dasharray': '3,3' }));
+    const critLabel = el('text', { x: cs.x, y: padT - 5, 'font-size': '10.5', fill: '#c92a2a', 'text-anchor': 'middle' });
+    critLabel.textContent = `z* = ${zCrit}`;
+    svg.appendChild(critLabel);
+
+    // alpha label — sits just above the axis out past the observed marker,
+    // where the thin tail has room and nothing else is drawn
+    const alphaScreenX = toScreen((xMax + zObs) / 2 + 0.3, 0).x;
+    const alphaLabel = el('text', { x: alphaScreenX, y: padT + plotH - 12, 'font-size': '12', fill: '#c92a2a', 'text-anchor': 'middle', 'font-weight': '600' });
+    alphaLabel.textContent = 'α';
+    svg.appendChild(alphaLabel);
+
+    // observed statistic marker — label sits directly above its own point,
+    // clear of the α label beside it
+    const os = toScreen(zObs, normalPdf(zObs));
+    const ob = toScreen(zObs, 0);
+    svg.appendChild(el('line', { x1: os.x, y1: os.y, x2: ob.x, y2: ob.y, stroke: '#1a1a1a', 'stroke-width': '1.25' }));
+    svg.appendChild(el('circle', { cx: os.x.toFixed(1), cy: os.y.toFixed(1), r: 3, fill: '#1a1a1a' }));
+    const obsLabel = el('text', { x: os.x, y: os.y - 8, 'font-size': '10.5', fill: '#1a1a1a', 'text-anchor': 'middle' });
+    obsLabel.textContent = `z = ${zObs}`;
+    svg.appendChild(obsLabel);
+
+    container.innerHTML = '';
+    container.appendChild(svg);
+    const caption = document.createElement('p');
+    caption.textContent = `The shaded tail is the rejection region, sized to hold exactly α = 0.05 of the area under the null distribution. The observed statistic falls at z = ${zObs}, past the critical value z* = ${zCrit} — inside the rejection region, so H₀ is rejected.`;
+    container.appendChild(caption);
+  }
+
+  // Likelihood curve over θ for a Bernoulli sample, peaked at the MLE.
+  function renderMLEChart(container) {
+    const xMin = 0, xMax = 1;
+    const n = 10, k = 7;
+    const likelihood = theta => Math.pow(theta, k) * Math.pow(1 - theta, n - k);
+    const thetaHat = k / n;
+    const width = 380, height = 170, padL = 16, padR = 16, padT = 20, padB = 24;
+    const plotW = width - padL - padR, plotH = height - padT - padB;
+    const pts = sample(likelihood, xMin, xMax, 200);
+    const maxY = Math.max(...pts.map(p => p.y));
+    const toScreen = (x, y) => ({
+      x: padL + (x - xMin) / (xMax - xMin) * plotW,
+      y: padT + plotH - (y / maxY) * plotH
+    });
+
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img', 'aria-label': 'Likelihood curve peaked at the MLE' });
+    svg.appendChild(el('path', { d: pathFor(pts, toScreen), fill: 'none', stroke: '#0b7285', 'stroke-width': '1.75' }));
+
+    const o = toScreen(xMin, 0), oR = toScreen(xMax, 0);
+    svg.appendChild(el('line', { x1: o.x, y1: o.y, x2: oR.x, y2: oR.y, stroke: '#333' }));
+
+    const peak = toScreen(thetaHat, maxY);
+    const peakBase = toScreen(thetaHat, 0);
+    svg.appendChild(el('line', { x1: peak.x, y1: peak.y, x2: peakBase.x, y2: peakBase.y, stroke: '#0b7285', 'stroke-width': '1.25', 'stroke-dasharray': '3,3' }));
+    svg.appendChild(el('circle', { cx: peak.x.toFixed(1), cy: peak.y.toFixed(1), r: 3, fill: '#0b7285' }));
+    const label = el('text', { x: peak.x, y: peak.y - 8, 'font-size': '11', fill: '#0b7285', 'text-anchor': 'middle', 'font-weight': '600' });
+    label.textContent = `θ̂ = ${thetaHat}`;
+    svg.appendChild(label);
+
+    [0, 1].forEach(v => {
+      const s = toScreen(v, 0);
+      const t = el('text', { x: s.x, y: s.y + 16, 'font-size': '10.5', fill: '#555', 'text-anchor': 'middle' });
+      t.textContent = v;
+      svg.appendChild(t);
+    });
+
+    container.innerHTML = '';
+    container.appendChild(svg);
+    const caption = document.createElement('p');
+    caption.textContent = `With 7 heads in 10 flips, the likelihood L(θ) = θ⁷(1−θ)³ peaks at θ̂ = 0.7 — the value that makes this exact data most probable.`;
+    container.appendChild(caption);
+  }
+
+  // Prior, likelihood, and posterior curves overlaid (Beta-Binomial),
+  // each normalized to its own peak so the three shapes are comparable.
+  function renderBayesChart(container) {
+    const xMin = 0, xMax = 1;
+    const n = 10, k = 7;
+    const priorFn = x => x * (1 - x);                       // Beta(2,2), unnormalized
+    const likelihoodFn = x => Math.pow(x, k) * Math.pow(1 - x, n - k);
+    const posteriorFn = x => priorFn(x) * likelihoodFn(x);  // Beta(9,5), unnormalized
+
+    const width = 380, height = 190, padL = 16, padR = 16, padT = 18, padB = 24;
+    const plotW = width - padL - padR, plotH = height - padT - padB;
+
+    const curves = [
+      { fn: priorFn, color: '#868e96', dash: '4,3', weight: '1.5' },
+      { fn: likelihoodFn, color: '#e8590c', dash: '4,3', weight: '1.5' },
+      { fn: posteriorFn, color: '#0b7285', dash: null, weight: '2' }
+    ];
+
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img', 'aria-label': 'Prior, likelihood, and posterior curves' });
+
+    curves.forEach(c => {
+      const pts = sample(c.fn, xMin, xMax, 200);
+      const maxY = Math.max(...pts.map(p => p.y));
+      const toScreen = (x, y) => ({
+        x: padL + (x - xMin) / (xMax - xMin) * plotW,
+        y: padT + plotH - (y / maxY) * plotH
+      });
+      const attrs = { d: pathFor(pts, toScreen), fill: 'none', stroke: c.color, 'stroke-width': c.weight };
+      if (c.dash) attrs['stroke-dasharray'] = c.dash;
+      svg.appendChild(el('path', attrs));
+    });
+
+    const oY = padT + plotH;
+    svg.appendChild(el('line', { x1: padL, y1: oY, x2: padL + plotW, y2: oY, stroke: '#333' }));
+    [0, 1].forEach(v => {
+      const sx = padL + (v - xMin) / (xMax - xMin) * plotW;
+      const t = el('text', { x: sx, y: oY + 16, 'font-size': '10.5', fill: '#555', 'text-anchor': 'middle' });
+      t.textContent = v;
+      svg.appendChild(t);
+    });
+
+    container.innerHTML = '';
+    container.appendChild(svg);
+    const caption = document.createElement('p');
+    caption.innerHTML = `Starting from a <span class="var-prior">prior</span> centered on "fair" and updating with the <span class="var-likelihood">likelihood</span> of 7 heads in 10 flips produces a <span class="var-posterior">posterior</span> peaked near 0.67 — pulled toward the data, but not all the way to the data's own peak at 0.7.`;
+    container.appendChild(caption);
+  }
+
+  const mleMount = document.getElementById('mle-chart-root');
+  if (mleMount) renderMLEChart(mleMount);
+
+  const bayesMount = document.getElementById('bayes-chart-root');
+  if (bayesMount) renderBayesChart(bayesMount);
+
+  const hypMount = document.getElementById('hyp-chart-root');
+  if (hypMount) renderHypothesisChart(hypMount);
+})();
