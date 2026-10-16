@@ -119,11 +119,35 @@ if (window.renderMathInElement) {
     return node;
   }
 
-  // Native <title> tooltip — no extra markup/CSS, just the browser default.
+  // Custom on-page tooltip — a single shared floating element, shown/moved/
+  // hidden via mouse events. More reliable than a native <title> tooltip
+  // (no hover delay, works the same everywhere, and is actually verifiable).
+  function getTooltipEl() {
+    if (!window.__chartTooltip) {
+      const div = document.createElement('div');
+      div.className = 'chart-tooltip';
+      document.body.appendChild(div);
+      window.__chartTooltip = div;
+    }
+    return window.__chartTooltip;
+  }
+
   function withTitle(node, text) {
-    const title = el('title', {});
-    title.textContent = text;
-    node.appendChild(title);
+    node.addEventListener('mouseenter', (e) => {
+      const tip = getTooltipEl();
+      tip.textContent = text;
+      tip.style.display = 'block';
+      tip.style.left = (e.clientX + 12) + 'px';
+      tip.style.top = (e.clientY + 12) + 'px';
+    });
+    node.addEventListener('mousemove', (e) => {
+      const tip = getTooltipEl();
+      tip.style.left = (e.clientX + 12) + 'px';
+      tip.style.top = (e.clientY + 12) + 'px';
+    });
+    node.addEventListener('mouseleave', () => {
+      getTooltipEl().style.display = 'none';
+    });
     return node;
   }
 
