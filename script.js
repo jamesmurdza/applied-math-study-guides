@@ -119,6 +119,18 @@ if (window.renderMathInElement) {
     return node;
   }
 
+  // Small filled triangle pointing along `angle` (radians), tip at `tip`.
+  function arrowHead(svg, tip, angle, color, size) {
+    size = size || 7;
+    const a1 = angle + Math.PI - 0.45, a2 = angle - Math.PI + 0.45;
+    const p1 = { x: tip.x + size * Math.cos(a1), y: tip.y + size * Math.sin(a1) };
+    const p2 = { x: tip.x + size * Math.cos(a2), y: tip.y + size * Math.sin(a2) };
+    svg.appendChild(el('polygon', {
+      points: `${tip.x.toFixed(1)},${tip.y.toFixed(1)} ${p1.x.toFixed(1)},${p1.y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`,
+      fill: color
+    }));
+  }
+
   // Custom on-page tooltip — a single shared floating element, shown/moved/
   // hidden via mouse events. More reliable than a native <title> tooltip
   // (no hover delay, works the same everywhere, and is actually verifiable).
@@ -167,12 +179,31 @@ if (window.renderMathInElement) {
     return pts;
   }
 
+  // Every integer point inside [0,xMax] x [0,yMax] that fails at least one constraint —
+  // drawn very faded, just to show the lattice continuing outside the feasible region.
+  function infeasibleLatticePoints(constraints, xMax, yMax) {
+    const pts = [];
+    for (let x = 0; x <= xMax; x++) {
+      for (let y = 0; y <= yMax; y++) {
+        if (!isFeasible(x, y, constraints)) pts.push({ x, y });
+      }
+    }
+    return pts;
+  }
+
   function renderLPGraph(container, config) {
-    const { xMax, yMax, constraints, objective, varNames, varColors, integer } = config;
+    const { xMax, yMax, constraints, objective, varNames, varColors, integer, axisLabels, cut, path } = config;
     const colors = varColors || ['#1a1a1a', '#1a1a1a'];
     const objectiveLabel = config.objectiveLabel || 'value';
     const pointTitle = (p) => `(${fmt(p.x)}, ${fmt(p.y)}): ${objectiveLabel} = ${fmt(objective.a * p.x + objective.b * p.y)}`;
-    const scale = 40, padL = 50, padR = 25, padT = 20, padB = 30;
+    // A "cut" is just one more constraint — feasibleRegion()/isFeasible() see
+    // the tightened set automatically. We keep the original list too, so the
+    // pre-cut region can still be drawn for comparison.
+    const effectiveConstraints = cut ? constraints.concat([cut]) : constraints;
+    // Extra left/bottom room is needed to fit the descriptive axis titles
+    // (rotated beside the y-axis, centered under the x-axis) without
+    // crowding the tick numbers.
+    const scale = 40, padL = axisLabels ? 64 : 50, padR = 25, padT = 20, padB = axisLabels ? 46 : 30;
     const width = padL + xMax * scale + padR;
     const height = padT + yMax * scale + padB;
     const originX = padL, originY = height - padB;
@@ -186,8 +217,19 @@ if (window.renderMathInElement) {
 
     // feasible polygon — filled with a subtle gradient running along the
     // objective vector, so shading gets a touch darker toward "better".
-    const poly = feasibleRegion(constraints, xMax, yMax);
+    const poly = feasibleRegion(effectiveConstraints, xMax, yMax);
     const polyPts = poly.map(p => toScreen(p.x, p.y));
+
+    // pre-cut region, drawn as a faint outline underneath so the slice the
+    // cut removes is visible by comparison.
+    if (cut) {
+      const basePoly = feasibleRegion(constraints, xMax, yMax);
+      const basePts = basePoly.map(p => toScreen(p.x, p.y));
+      svg.appendChild(el('polygon', {
+        points: basePts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' '),
+        fill: 'none', stroke: '#bbb', 'stroke-width': '1.5', 'stroke-dasharray': '3,3'
+      }));
+    }
 
     // Find the range of objective values across the polygon, but place the
     // gradient's two endpoints ON the true objective-vector line (through the
@@ -232,15 +274,24 @@ if (window.renderMathInElement) {
       });
     }
 
-    // each constraint's full boundary line, dashed gray, for context
-    constraints.forEach(cons => {
+    // each constraint's full boundary line, dashed gray, for context — except
+    // the cut (if any), drawn solid and in its own color since it's the point.
+    effectiveConstraints.forEach(cons => {
       const seg = clipLineToBox(cons.a, cons.b, cons.c, xMax, yMax);
       if (!seg) return;
       const s1 = toScreen(seg.x1, seg.y1), s2 = toScreen(seg.x2, seg.y2);
+      const isCut = cons === cut;
       svg.appendChild(el('line', {
         x1: s1.x.toFixed(1), y1: s1.y.toFixed(1), x2: s2.x.toFixed(1), y2: s2.y.toFixed(1),
-        stroke: '#999', 'stroke-width': '1.5', 'stroke-dasharray': '5,4'
+        stroke: isCut ? (cut.color || '#c0392b') : '#999', 'stroke-width': isCut ? '2' : '1.5',
+        'stroke-dasharray': isCut ? 'none' : '5,4'
       }));
+      if (isCut && cut.label) {
+        const mx = (s1.x + s2.x) / 2, my = (s1.y + s2.y) / 2;
+        const lbl = el('text', { x: (mx + 6).toFixed(1), y: (my - 6).toFixed(1), 'font-size': '10', fill: cut.color || '#c0392b' });
+        lbl.textContent = cut.label;
+        svg.appendChild(lbl);
+      }
     });
 
     // axes
@@ -262,13 +313,31 @@ if (window.renderMathInElement) {
       svg.appendChild(t);
     }
 
-    // axis variable labels
+    // axis variable tags, right at the axis tips (original placement)
     const xLabel = el('text', { x: originX + xMax * scale + 15, y: o.y + 4, 'font-size': '12', 'font-weight': '600', fill: colors[0] });
     xLabel.textContent = varNames[0];
     svg.appendChild(xLabel);
     const yLabel = el('text', { x: o.x, y: padT - 10, 'font-size': '12', 'font-weight': '600', fill: colors[1], 'text-anchor': 'middle' });
     yLabel.textContent = varNames[1];
     svg.appendChild(yLabel);
+
+    // axis titles — descriptive name for each variable (e.g. "pink peppermint
+    // ice cream, x₁ (l)"), centered under the x-axis and rotated beside the y-axis.
+    if (axisLabels) {
+      const xTitle = el('text', {
+        x: originX + (xMax * scale) / 2, y: height - 6,
+        'font-size': '11', 'font-weight': '600', fill: colors[0], 'text-anchor': 'middle'
+      });
+      xTitle.textContent = axisLabels[0];
+      svg.appendChild(xTitle);
+      const yTitleY = originY - (yMax * scale) / 2;
+      const yTitle = el('text', {
+        x: 14, y: yTitleY, 'font-size': '11', 'font-weight': '600', fill: colors[1],
+        'text-anchor': 'middle', transform: `rotate(-90, 14, ${yTitleY.toFixed(1)})`
+      });
+      yTitle.textContent = axisLabels[1];
+      svg.appendChild(yTitle);
+    }
 
     // continuous LP-relaxation optimum = polygon point maximizing the objective
     let bestCont = poly[0], bestContVal = -Infinity;
@@ -277,17 +346,53 @@ if (window.renderMathInElement) {
       if (v > bestContVal) { bestContVal = v; bestCont = p; }
     });
 
+    // pre-cut optimum, for comparison against the (tighter) post-cut one above
+    if (cut) {
+      const basePoly = feasibleRegion(constraints, xMax, yMax);
+      let baseBest = basePoly[0], baseBestVal = -Infinity;
+      basePoly.forEach(p => {
+        const v = objective.a * p.x + objective.b * p.y;
+        if (v > baseBestVal) { baseBestVal = v; baseBest = p; }
+      });
+      if (Math.abs(baseBest.x - bestCont.x) > 1e-6 || Math.abs(baseBest.y - bestCont.y) > 1e-6) {
+        const cs = toScreen(baseBest.x, baseBest.y);
+        svg.appendChild(el('circle', { cx: cs.x.toFixed(1), cy: cs.y.toFixed(1), r: 4, fill: 'none', stroke: '#bbb', 'stroke-width': '1.5', 'stroke-dasharray': '2,2' }));
+        const clabel = el('text', { x: (cs.x + 10).toFixed(1), y: (cs.y - 8).toFixed(1), 'font-size': '10', fill: '#999' });
+        clabel.textContent = `before cut: (${fmt(baseBest.x)}, ${fmt(baseBest.y)})`;
+        svg.appendChild(clabel);
+      }
+    }
+
     let best = bestCont, bestVal = bestContVal;
 
-    if (integer) {
+    // Lattice dots can be shown independently of whether the chart's "best"
+    // point is the integer optimum (ILP topic) or a continuous one (Gomory,
+    // which wants the dots visible but still reports the cut's LP optimum).
+    const showLattice = config.showLattice !== undefined ? config.showLattice : integer;
+    let pts = null;
+    if (showLattice || integer) {
+      pts = latticePoints(effectiveConstraints, xMax, yMax);
+    }
+
+    if (showLattice) {
+      // lattice points outside the feasible region — drawn first (so feasible
+      // points and markers sit on top) and very faded, just to show the grid
+      // continuing past the boundary.
+      const outsidePts = infeasibleLatticePoints(effectiveConstraints, xMax, yMax);
+      outsidePts.forEach(p => {
+        const s = toScreen(p.x, p.y);
+        svg.appendChild(el('circle', { cx: s.x.toFixed(1), cy: s.y.toFixed(1), r: 2.5, fill: '#1a1a1a', 'fill-opacity': '0.08' }));
+      });
+
       // lattice points inside the feasible region
-      const pts = latticePoints(constraints, xMax, yMax);
       pts.forEach(p => {
         const s = toScreen(p.x, p.y);
         svg.appendChild(el('circle', { cx: s.x.toFixed(1), cy: s.y.toFixed(1), r: 2.5, fill: '#1a1a1a', 'fill-opacity': '0.35' }));
         hoverTargets.push({ x: s.x, y: s.y, r: 6, title: pointTitle(p) });
       });
+    }
 
+    if (integer) {
       // true integer optimum = best lattice point
       let bestInt = pts[0], bestIntVal = -Infinity;
       pts.forEach(p => {
@@ -310,6 +415,39 @@ if (window.renderMathInElement) {
       }
     }
 
+    // a walked path (e.g. simplex pivoting vertex-to-vertex) drawn as solid
+    // arrows, under the final optimal marker so its dot/label stay on top
+    if (path && path.length > 1) {
+      const pathColor = config.pathColor || '#c0392b';
+      const pPts = path.map(p => toScreen(p.x, p.y));
+      for (let i = 0; i < pPts.length - 1; i++) {
+        svg.appendChild(el('line', {
+          x1: pPts[i].x.toFixed(1), y1: pPts[i].y.toFixed(1),
+          x2: pPts[i + 1].x.toFixed(1), y2: pPts[i + 1].y.toFixed(1),
+          stroke: pathColor, 'stroke-width': '2'
+        }));
+        const angle = Math.atan2(pPts[i + 1].y - pPts[i].y, pPts[i + 1].x - pPts[i].x);
+        arrowHead(svg, pPts[i + 1], angle, pathColor);
+      }
+      for (let i = 1; i < pPts.length - 1; i++) {
+        svg.appendChild(el('circle', { cx: pPts[i].x.toFixed(1), cy: pPts[i].y.toFixed(1), r: 3.5, fill: pathColor }));
+      }
+      const startLabel = el('text', { x: (pPts[0].x + 8).toFixed(1), y: (pPts[0].y - 8).toFixed(1), 'font-size': '10', fill: pathColor });
+      startLabel.textContent = 'start';
+      svg.appendChild(startLabel);
+    }
+
+    // a plain reference point for context (e.g. the true integer optimum,
+    // shown alongside a cutting-plane's continuous optimum)
+    if (config.referencePoint) {
+      const rp = config.referencePoint;
+      const rs = toScreen(rp.x, rp.y);
+      svg.appendChild(el('circle', { cx: rs.x.toFixed(1), cy: rs.y.toFixed(1), r: 3.5, fill: '#555' }));
+      const rl = el('text', { x: (rs.x + 8).toFixed(1), y: (rs.y + 15).toFixed(1), 'font-size': '10', fill: '#555' });
+      rl.textContent = rp.label;
+      svg.appendChild(rl);
+    }
+
     const bs = toScreen(best.x, best.y);
     svg.appendChild(el('circle', { cx: bs.x.toFixed(1), cy: bs.y.toFixed(1), r: 4, fill: '#1a1a1a' }));
     hoverTargets.push({ x: bs.x, y: bs.y, r: 6, title: pointTitle(best) });
@@ -317,7 +455,7 @@ if (window.renderMathInElement) {
       x: (bs.x + 10).toFixed(1), y: (bs.y - 8).toFixed(1),
       'font-size': '11', fill: '#1a1a1a'
     });
-    label.textContent = `optimal: (${fmt(best.x)}, ${fmt(best.y)})`;
+    label.textContent = `${config.optimalLabel || 'optimal'}: (${fmt(best.x)}, ${fmt(best.y)})`;
     svg.appendChild(label);
 
     // Append every hover target last so it's painted on top of everything
@@ -345,7 +483,9 @@ if (window.renderMathInElement) {
 
     // caption with the computed optimum and profit filled in
     const caption = document.createElement('p');
-    if (integer) {
+    if (config.caption) {
+      caption.textContent = config.caption(best, bestVal);
+    } else if (integer) {
       caption.textContent = `The shaded region is the continuous feasible area; the dots are the integer points inside it. The best integer point is (${varNames[0]}, ${varNames[1]}) = (${fmt(best.x)}, ${fmt(best.y)}), for a value of ${fmt(bestVal)} — not the same as rounding the LP relaxation's optimum.`;
     } else {
       caption.textContent = `The shaded region is every feasible production plan. The best one sits at a corner — here, (${varNames[0]}, ${varNames[1]}) = (${fmt(best.x)}, ${fmt(best.y)}), for a profit of ${fmt(bestVal)}.`;
@@ -364,6 +504,7 @@ if (window.renderMathInElement) {
       yMax: 7,
       varNames: ['x₁', 'x₂'],
       varColors: ['#e64980', '#3b6bd6'],
+      axisLabels: ['pink peppermint ice cream (l)', 'blueberry ice cream (l)'],
       objective: { a: 5, b: 4 },
       objectiveLabel: 'profit',
       constraints: [
@@ -382,6 +523,7 @@ if (window.renderMathInElement) {
       integer: true,
       varNames: ['x₁', 'x₂'],
       varColors: ['#2f9e44', '#c2525c'],
+      axisLabels: ['green eggs', 'ham'],
       objective: { a: 7, b: 10 },
       objectiveLabel: 'protein',
       constraints: [
@@ -389,6 +531,202 @@ if (window.renderMathInElement) {
       ]
     });
   }
+
+  // Simplex: the same ice-cream polytope, with arrows tracing the vertex-to-
+  // vertex path simplex actually walks along the boundary toward the optimum.
+  const simplexMount = document.getElementById('simplex-graph-root');
+  if (simplexMount) {
+    renderLPGraph(simplexMount, {
+      xMax: 8,
+      yMax: 7,
+      varNames: ['x₁', 'x₂'],
+      varColors: ['#e64980', '#3b6bd6'],
+      axisLabels: ['pink peppermint ice cream (l)', 'blueberry ice cream (l)'],
+      objective: { a: 5, b: 4 },
+      objectiveLabel: 'profit',
+      constraints: [
+        { a: 2, b: 4, c: 24 },
+        { a: 1, b: 0, c: 6 },
+        { a: 0, b: 1, c: 5 }
+      ],
+      path: [{ x: 0, y: 0 }, { x: 6, y: 0 }, { x: 6, y: 3 }],
+      caption: (best, val) => `Simplex starts at a feasible vertex — here, (0, 0) — then repeatedly pivots to an adjacent vertex along the boundary whenever that improves the objective: (0, 0) → (6, 0) → (${fmt(best.x)}, ${fmt(best.y)}). It stops once no neighboring vertex scores higher, landing on the optimum with a profit of ${fmt(val)}.`
+    });
+  }
+
+  // Gomory cutting planes: the same green-eggs-and-ham ILP, but showing just
+  // the continuous relaxation (no integer lattice) before and after a cut
+  // slices off the fractional corner.
+  const gomoryMount = document.getElementById('gomory-graph-root');
+  if (gomoryMount) {
+    renderLPGraph(gomoryMount, {
+      xMax: 6,
+      yMax: 5,
+      varNames: ['x₁', 'x₂'],
+      varColors: ['#2f9e44', '#c2525c'],
+      axisLabels: ['green eggs', 'ham'],
+      objective: { a: 7, b: 10 },
+      objectiveLabel: 'protein',
+      constraints: [
+        { a: 0.7, b: 0.9, c: 3 }
+      ],
+      cut: { a: 0, b: 1, c: 3, color: '#c0392b', label: 'cut: x₂ ≤ 3' },
+      showLattice: true,
+      optimalLabel: 'after cut',
+      referencePoint: { x: 3, y: 1, label: 'integer optimum = 31' },
+      caption: (best, val) => `The faint dashed outline is the LP relaxation before any cuts. Since ham must be a whole number, x₂ ≤ 3.33 is really x₂ ≤ 3 — a valid cut that removes no integer point, but slices off the fractional corner and shrinks the relaxation's optimum from 33.33 down to ${fmt(val)}, a step closer to the true integer optimum.`
+    });
+  }
+})();
+
+// ---------------------------------------------------------------------------
+// Dijkstra's algorithm: a small weighted graph, stepped through one "settle
+// the closest unvisited node" step at a time. Distances/tree are computed
+// live by running the real algorithm, not hand-placed per step.
+// ---------------------------------------------------------------------------
+(function () {
+  const mount = document.getElementById('dijkstra-graph-root');
+  if (!mount) return;
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+
+  function el(tag, attrs) {
+    const node = document.createElementNS(SVG_NS, tag);
+    for (const k in attrs) node.setAttribute(k, attrs[k]);
+    return node;
+  }
+
+  const nodePos = {
+    A: { x: 30, y: 140 },
+    B: { x: 140, y: 55 },
+    C: { x: 140, y: 225 },
+    D: { x: 250, y: 140 },
+    E: { x: 250, y: 230 },
+    F: { x: 365, y: 140 }
+  };
+  const edgeList = [
+    ['A', 'B', 4], ['A', 'C', 1], ['B', 'C', 2], ['B', 'D', 5],
+    ['C', 'D', 8], ['C', 'E', 10], ['D', 'E', 2], ['D', 'F', 6], ['E', 'F', 3]
+  ];
+  const SOURCE = 'A';
+  const names = Object.keys(nodePos);
+
+  const adj = {};
+  names.forEach(n => { adj[n] = []; });
+  edgeList.forEach(([u, v, w]) => { adj[u].push([v, w]); adj[v].push([u, w]); });
+
+  // Run the real algorithm once, recording a snapshot after each "settle"
+  // step so the UI can step through exactly what Dijkstra itself computed.
+  function runDijkstra() {
+    const dist = {}, prev = {}, visited = {};
+    names.forEach(n => { dist[n] = Infinity; prev[n] = null; visited[n] = false; });
+    dist[SOURCE] = 0;
+    const steps = [];
+    for (let i = 0; i < names.length; i++) {
+      let u = null, best = Infinity;
+      names.forEach(n => { if (!visited[n] && dist[n] < best) { best = dist[n]; u = n; } });
+      if (u === null) break;
+      visited[u] = true;
+      const relaxed = [];
+      adj[u].forEach(([v, w]) => {
+        if (!visited[v] && dist[u] + w < dist[v]) {
+          relaxed.push({ node: v, from: dist[v], to: dist[u] + w });
+          dist[v] = dist[u] + w;
+          prev[v] = u;
+        }
+      });
+      steps.push({ settled: u, dist: { ...dist }, prev: { ...prev }, visited: { ...visited }, relaxed });
+    }
+    return steps;
+  }
+
+  const steps = runDijkstra();
+  let stepIdx = -1; // -1 = nothing settled yet
+
+  const svg = el('svg', { viewBox: '0 0 400 260', role: 'img', 'aria-label': "Dijkstra's algorithm step-through" });
+  mount.appendChild(svg);
+
+  const controls = document.createElement('div');
+  controls.className = 'dijkstra-controls';
+  const slider = document.createElement('input');
+  slider.type = 'range';
+  slider.min = '0';
+  slider.max = String(steps.length);
+  slider.value = '0';
+  controls.appendChild(slider);
+  mount.parentNode.insertBefore(controls, mount.nextSibling);
+
+  const caption = document.createElement('p');
+  mount.parentNode.insertBefore(caption, controls.nextSibling);
+
+  function fmtD(d) { return d === Infinity ? '∞' : String(d); }
+
+  function render() {
+    svg.innerHTML = '';
+    const cur = stepIdx >= 0 ? steps[stepIdx] : null;
+    const dist = cur ? cur.dist : Object.fromEntries(names.map(n => [n, n === SOURCE ? 0 : Infinity]));
+    const prev = cur ? cur.prev : {};
+    const visited = cur ? cur.visited : Object.fromEntries(names.map(n => [n, false]));
+
+    // plain edges, underneath everything
+    edgeList.forEach(([u, v, w]) => {
+      const p1 = nodePos[u], p2 = nodePos[v];
+      svg.appendChild(el('line', { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, stroke: '#ccc', 'stroke-width': '1.5' }));
+      const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
+      svg.appendChild(el('rect', { x: mx - 7, y: my - 8, width: 14, height: 13, fill: '#fff' }));
+      const wl = el('text', { x: mx, y: my + 3, 'font-size': '11', fill: '#888', 'text-anchor': 'middle' });
+      wl.textContent = w;
+      svg.appendChild(wl);
+    });
+
+    // shortest-path tree so far: solid black to settled nodes, dashed gray to
+    // frontier nodes whose distance is only tentative
+    names.forEach(n => {
+      if (!prev[n]) return;
+      const p1 = nodePos[prev[n]], p2 = nodePos[n];
+      svg.appendChild(el('line', {
+        x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y,
+        stroke: '#1a1a1a', 'stroke-width': visited[n] ? '2.5' : '2',
+        'stroke-dasharray': visited[n] ? 'none' : '4,3'
+      }));
+    });
+
+    // nodes on top
+    names.forEach(n => {
+      const p = nodePos[n];
+      const isSettled = visited[n];
+      const isCurrent = cur && cur.settled === n;
+      const isFrontier = !isSettled && dist[n] < Infinity;
+      svg.appendChild(el('circle', {
+        cx: p.x, cy: p.y, r: 16,
+        fill: isSettled ? '#1a1a1a' : '#fff',
+        stroke: isCurrent ? '#c0392b' : (isFrontier ? '#1a1a1a' : '#ccc'),
+        'stroke-width': isCurrent ? '3' : '1.5'
+      }));
+      const label = el('text', { x: p.x, y: p.y + 4, 'font-size': '13', 'font-weight': '600', fill: isSettled ? '#fff' : '#1a1a1a', 'text-anchor': 'middle' });
+      label.textContent = n;
+      svg.appendChild(label);
+      const dl = el('text', { x: p.x, y: p.y + 30, 'font-size': '11', fill: isSettled ? '#1a1a1a' : '#999', 'text-anchor': 'middle' });
+      dl.textContent = fmtD(dist[n]);
+      svg.appendChild(dl);
+    });
+
+    // caption + controls
+    if (!cur) {
+      caption.textContent = `Every node starts unreached except the source, A (distance 0). Drag the slider to settle the closest unvisited node, one step at a time.`;
+    } else {
+      const parts = cur.relaxed.map(r => `${r.node}: ${fmtD(r.from)} → ${r.to}`);
+      const relaxedText = parts.length ? ` Relaxed ${parts.join(', ')}.` : ' No shorter paths found through it.';
+      caption.textContent = `Step ${stepIdx + 1}: settle ${cur.settled} at distance ${cur.dist[cur.settled]} (the closest unvisited node).${relaxedText}`;
+    }
+    slider.value = String(stepIdx + 1);
+  }
+
+  slider.addEventListener('input', () => {
+    stepIdx = Number(slider.value) - 1;
+    render();
+  });
+
+  render();
 })();
 
 // ---------------------------------------------------------------------------
