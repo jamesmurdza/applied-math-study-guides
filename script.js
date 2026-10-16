@@ -136,7 +136,8 @@ if (window.renderMathInElement) {
   }
 
   function renderLPGraph(container, config) {
-    const { xMax, yMax, constraints, objective, varNames, integer } = config;
+    const { xMax, yMax, constraints, objective, varNames, varColors, integer } = config;
+    const colors = varColors || ['#1a1a1a', '#1a1a1a'];
     const scale = 40, padL = 50, padR = 25, padT = 20, padB = 30;
     const width = padL + xMax * scale + padR;
     const height = padT + yMax * scale + padB;
@@ -184,10 +185,10 @@ if (window.renderMathInElement) {
     }
 
     // axis variable labels
-    const xLabel = el('text', { x: originX + xMax * scale + 15, y: o.y + 4, 'font-size': '12', fill: '#1a1a1a' });
+    const xLabel = el('text', { x: originX + xMax * scale + 15, y: o.y + 4, 'font-size': '12', 'font-weight': '600', fill: colors[0] });
     xLabel.textContent = varNames[0];
     svg.appendChild(xLabel);
-    const yLabel = el('text', { x: o.x, y: padT - 10, 'font-size': '12', fill: '#1a1a1a', 'text-anchor': 'middle' });
+    const yLabel = el('text', { x: o.x, y: padT - 10, 'font-size': '12', 'font-weight': '600', fill: colors[1], 'text-anchor': 'middle' });
     yLabel.textContent = varNames[1];
     svg.appendChild(yLabel);
 
@@ -275,6 +276,7 @@ if (window.renderMathInElement) {
       xMax: 8,
       yMax: 7,
       varNames: ['x₁', 'x₂'],
+      varColors: ['#e64980', '#3b6bd6'],
       objective: { a: 5, b: 4 },
       constraints: [
         { a: 2, b: 4, c: 24, color: '#1a1a1a', label: 'milk: 2x₁ + 4x₂ ≤ 24' },
@@ -291,6 +293,7 @@ if (window.renderMathInElement) {
       yMax: 5,
       integer: true,
       varNames: ['x₁', 'x₂'],
+      varColors: ['#2f9e44', '#c2525c'],
       objective: { a: 7, b: 10 },
       constraints: [
         { a: 0.7, b: 0.9, c: 3, color: '#1a1a1a', label: 'budget: 0.7x₁ + 0.9x₂ ≤ €3' }
