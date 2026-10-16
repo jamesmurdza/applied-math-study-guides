@@ -1,12 +1,22 @@
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+function activateTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
 
-    tab.classList.add('active');
-    document.getElementById(tab.dataset.tab).classList.add('active');
-  });
+  tab.classList.add('active');
+  document.getElementById(tab.dataset.tab).classList.add('active');
+  localStorage.setItem('activeTab', tab.dataset.tab);
+}
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => activateTab(tab));
 });
+
+// Restore whichever tab was active before the last refresh, if any.
+const savedTab = localStorage.getItem('activeTab');
+if (savedTab) {
+  const tabToRestore = document.querySelector(`.tab[data-tab="${savedTab}"]`);
+  if (tabToRestore) activateTab(tabToRestore);
+}
 
 if (window.renderMathInElement) {
   renderMathInElement(document.body, {
