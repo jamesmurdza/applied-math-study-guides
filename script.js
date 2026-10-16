@@ -1,22 +1,26 @@
-function activateTab(tab) {
+function activateTab(tab, updateHash) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
 
   tab.classList.add('active');
   document.getElementById(tab.dataset.tab).classList.add('active');
-  localStorage.setItem('activeTab', tab.dataset.tab);
+  if (updateHash) location.hash = tab.dataset.tab;
 }
 
 document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => activateTab(tab));
+  tab.addEventListener('click', () => activateTab(tab, true));
 });
 
-// Restore whichever tab was active before the last refresh, if any.
-const savedTab = localStorage.getItem('activeTab');
-if (savedTab) {
-  const tabToRestore = document.querySelector(`.tab[data-tab="${savedTab}"]`);
-  if (tabToRestore) activateTab(tabToRestore);
+// Tab state lives in the URL hash — shareable/bookmarkable, and gives
+// back/forward button support for free.
+function activateFromHash() {
+  const id = location.hash.slice(1);
+  const tab = id && document.querySelector(`.tab[data-tab="${id}"]`);
+  if (tab) activateTab(tab, false);
 }
+
+window.addEventListener('hashchange', activateFromHash);
+activateFromHash();
 
 if (window.renderMathInElement) {
   renderMathInElement(document.body, {
