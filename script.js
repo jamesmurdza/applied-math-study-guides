@@ -365,7 +365,16 @@ if (window.renderMathInElement) {
 
     let best = bestCont, bestVal = bestContVal;
 
-    if (integer) {
+    // Lattice dots can be shown independently of whether the chart's "best"
+    // point is the integer optimum (ILP topic) or a continuous one (Gomory,
+    // which wants the dots visible but still reports the cut's LP optimum).
+    const showLattice = config.showLattice !== undefined ? config.showLattice : integer;
+    let pts = null;
+    if (showLattice || integer) {
+      pts = latticePoints(effectiveConstraints, xMax, yMax);
+    }
+
+    if (showLattice) {
       // lattice points outside the feasible region — drawn first (so feasible
       // points and markers sit on top) and very faded, just to show the grid
       // continuing past the boundary.
@@ -376,13 +385,14 @@ if (window.renderMathInElement) {
       });
 
       // lattice points inside the feasible region
-      const pts = latticePoints(effectiveConstraints, xMax, yMax);
       pts.forEach(p => {
         const s = toScreen(p.x, p.y);
         svg.appendChild(el('circle', { cx: s.x.toFixed(1), cy: s.y.toFixed(1), r: 2.5, fill: '#1a1a1a', 'fill-opacity': '0.35' }));
         hoverTargets.push({ x: s.x, y: s.y, r: 6, title: pointTitle(p) });
       });
+    }
 
+    if (integer) {
       // true integer optimum = best lattice point
       let bestInt = pts[0], bestIntVal = -Infinity;
       pts.forEach(p => {
@@ -561,6 +571,7 @@ if (window.renderMathInElement) {
         { a: 0.7, b: 0.9, c: 3 }
       ],
       cut: { a: 0, b: 1, c: 3, color: '#c0392b', label: 'cut: x₂ ≤ 3' },
+      showLattice: true,
       optimalLabel: 'after cut',
       referencePoint: { x: 3, y: 1, label: 'integer optimum = 31' },
       caption: (best, val) => `The faint dashed outline is the LP relaxation before any cuts. Since ham must be a whole number, x₂ ≤ 3.33 is really x₂ ≤ 3 — a valid cut that removes no integer point, but slices off the fractional corner and shrinks the relaxation's optimum from 33.33 down to ${fmt(val)}, a step closer to the true integer optimum.`
@@ -636,14 +647,12 @@ if (window.renderMathInElement) {
 
   const controls = document.createElement('div');
   controls.className = 'dijkstra-controls';
-  const stepBtn = document.createElement('button');
-  stepBtn.textContent = 'Step →';
-  const resetBtn = document.createElement('button');
-  resetBtn.textContent = 'Reset ↺';
-  const counter = document.createElement('span');
-  controls.appendChild(stepBtn);
-  controls.appendChild(resetBtn);
-  controls.appendChild(counter);
+  const slider = document.createElement('input');
+  slider.type = 'range';
+  slider.min = '0';
+  slider.max = String(steps.length);
+  slider.value = '0';
+  controls.appendChild(slider);
   mount.parentNode.insertBefore(controls, mount.nextSibling);
 
   const caption = document.createElement('p');
@@ -703,21 +712,19 @@ if (window.renderMathInElement) {
 
     // caption + controls
     if (!cur) {
-      caption.textContent = `Every node starts unreached except the source, A (distance 0). Press "Step" to settle the closest unvisited node.`;
+      caption.textContent = `Every node starts unreached except the source, A (distance 0). Drag the slider to settle the closest unvisited node, one step at a time.`;
     } else {
       const parts = cur.relaxed.map(r => `${r.node}: ${fmtD(r.from)} → ${r.to}`);
       const relaxedText = parts.length ? ` Relaxed ${parts.join(', ')}.` : ' No shorter paths found through it.';
       caption.textContent = `Step ${stepIdx + 1}: settle ${cur.settled} at distance ${cur.dist[cur.settled]} (the closest unvisited node).${relaxedText}`;
     }
-    counter.textContent = `${Math.max(stepIdx + 1, 0)} / ${steps.length} nodes settled`;
-    stepBtn.disabled = stepIdx >= steps.length - 1;
-    resetBtn.disabled = stepIdx < 0;
+    slider.value = String(stepIdx + 1);
   }
 
-  stepBtn.addEventListener('click', () => {
-    if (stepIdx < steps.length - 1) { stepIdx++; render(); }
+  slider.addEventListener('input', () => {
+    stepIdx = Number(slider.value) - 1;
+    render();
   });
-  resetBtn.addEventListener('click', () => { stepIdx = -1; render(); });
 
   render();
 })();

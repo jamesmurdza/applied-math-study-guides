@@ -359,26 +359,25 @@
             <h2>Getting a Dual from a Primal</h2>
             <p>Every primal has a dual: a max problem's dual is a min problem, one dual variable per primal constraint and one dual constraint per primal variable.</p>
             <div class="lp-graph">
-              <svg viewBox="0 0 220 220" role="img" aria-label="Primal and dual values converging to a common optimum">
-                <line x1="110" y1="12" x2="110" y2="208" stroke="#333" stroke-width="1.5"></line>
-                <polygon points="110,8 105,18 115,18" fill="#333"></polygon>
+              <svg viewBox="0 0 260 220" role="img" aria-label="Primal and dual values converging to a common optimum">
+                <line x1="70" y1="108" x2="190" y2="108" stroke="#ccc" stroke-width="1" stroke-dasharray="3,3"></line>
 
-                <line x1="78" y1="196" x2="78" y2="118" stroke="#e64980" stroke-width="2"></line>
-                <polygon points="78,110 72,122 84,122" fill="#e64980"></polygon>
-                <circle cx="78" cy="196" r="3" fill="#e64980"></circle>
-                <circle cx="78" cy="168" r="3" fill="#e64980"></circle>
-                <circle cx="78" cy="144" r="3" fill="#e64980"></circle>
+                <line x1="70" y1="186" x2="70" y2="116" stroke="#e64980" stroke-width="2"></line>
+                <polygon points="70,108 64,120 76,120" fill="#e64980"></polygon>
+                <circle cx="70" cy="186" r="3" fill="#e64980"></circle>
+                <circle cx="70" cy="160" r="3" fill="#e64980"></circle>
+                <circle cx="70" cy="136" r="3" fill="#e64980"></circle>
+                <text x="70" y="205" font-size="11" fill="#e64980" text-anchor="middle">primal (max)</text>
 
-                <line x1="142" y1="24" x2="142" y2="100" stroke="#3b6bd6" stroke-width="2"></line>
-                <polygon points="142,108 136,96 148,96" fill="#3b6bd6"></polygon>
-                <circle cx="142" cy="24" r="3" fill="#3b6bd6"></circle>
-                <circle cx="142" cy="52" r="3" fill="#3b6bd6"></circle>
-                <circle cx="142" cy="78" r="3" fill="#3b6bd6"></circle>
+                <line x1="190" y1="28" x2="190" y2="98" stroke="#3b6bd6" stroke-width="2"></line>
+                <polygon points="190,108 184,96 196,96" fill="#3b6bd6"></polygon>
+                <circle cx="190" cy="28" r="3" fill="#3b6bd6"></circle>
+                <circle cx="190" cy="54" r="3" fill="#3b6bd6"></circle>
+                <circle cx="190" cy="80" r="3" fill="#3b6bd6"></circle>
+                <text x="190" y="18" font-size="11" fill="#3b6bd6" text-anchor="middle">dual (min)</text>
 
-                <circle cx="110" cy="110" r="4" fill="#1a1a1a"></circle>
-                <text x="118" y="106" font-size="11" fill="#1a1a1a">z* (optimal)</text>
-                <text x="78" y="210" font-size="11" fill="#e64980" text-anchor="middle">primal (max)</text>
-                <text x="142" y="16" font-size="11" fill="#3b6bd6" text-anchor="middle">dual (min)</text>
+                <circle cx="130" cy="108" r="4" fill="#1a1a1a"></circle>
+                <text x="130" y="128" font-size="11" fill="#1a1a1a" text-anchor="middle">z* (optimal)</text>
               </svg>
               <p>Weak duality keeps the primal's rising values below the dual's falling ones at every step; strong duality is the special fact that, at the optimum, they meet exactly.</p>
             </div>
@@ -416,22 +415,22 @@
             <h2>Complexity and NP-Completeness</h2>
             <p>P is every problem solvable quickly; NP is every problem whose solution can be checked quickly; NP-complete problems are the hardest problems in NP, each able to encode any other via a reduction.</p>
             <div class="lp-graph">
-              <svg viewBox="0 0 300 190" role="img" aria-label="Venn diagram of P inside NP, with NP-complete as a subset">
-                <ellipse cx="150" cy="95" rx="140" ry="80" fill="none" stroke="#333" stroke-width="1.5"></ellipse>
-                <text x="22" y="30" font-size="12" fill="#333">NP</text>
+              <svg viewBox="0 0 340 230" role="img" aria-label="Venn diagram of P inside NP, with NP-complete as a subset">
+                <ellipse cx="170" cy="115" rx="160" ry="100" fill="none" stroke="#333" stroke-width="1.5"></ellipse>
+                <text x="28" y="38" font-size="12" fill="#333">NP</text>
 
-                <circle cx="95" cy="105" r="48" fill="#3b6bd6" fill-opacity="0.08" stroke="#3b6bd6" stroke-width="1.5"></circle>
-                <text x="95" y="109" font-size="12" fill="#3b6bd6" text-anchor="middle">P</text>
+                <circle cx="100" cy="130" r="58" fill="#3b6bd6" fill-opacity="0.08" stroke="#3b6bd6" stroke-width="1.5"></circle>
+                <text x="100" y="134" font-size="12" fill="#3b6bd6" text-anchor="middle">P</text>
 
-                <circle cx="205" cy="95" r="45" fill="#c0392b" fill-opacity="0.08" stroke="#c0392b" stroke-width="1.5"></circle>
-                <text x="205" y="60" font-size="11" fill="#c0392b" text-anchor="middle">NP-complete</text>
+                <circle cx="240" cy="110" r="58" fill="#c0392b" fill-opacity="0.08" stroke="#c0392b" stroke-width="1.5"></circle>
+                <text x="240" y="72" font-size="11" fill="#c0392b" text-anchor="middle">NP-complete</text>
 
-                <circle cx="188" cy="92" r="3" fill="#1a1a1a"></circle>
-                <text x="166" y="104" font-size="10" fill="#1a1a1a">SAT</text>
-                <circle cx="224" cy="110" r="3" fill="#1a1a1a"></circle>
-                <text x="206" y="130" font-size="10" fill="#1a1a1a">vertex cover</text>
-                <line x1="190" y1="94" x2="221" y2="109" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3,3"></line>
-                <text x="178" y="122" font-size="9" fill="#555">reduces to</text>
+                <circle cx="222" cy="100" r="3" fill="#1a1a1a"></circle>
+                <text x="198" y="104" font-size="10" fill="#1a1a1a" text-anchor="end">SAT</text>
+                <circle cx="262" cy="130" r="3" fill="#1a1a1a"></circle>
+                <text x="262" y="150" font-size="10" fill="#1a1a1a" text-anchor="middle">vertex cover</text>
+                <line x1="222" y1="100" x2="262" y2="130" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3,3"></line>
+                <text x="228" y="92" font-size="9" fill="#555">reduces to</text>
               </svg>
               <p>If any single NP-complete problem (like SAT) turns out to be solvable quickly, a reduction lets every problem in NP ride along and be solved quickly too — that's exactly the open question "does P = NP?".</p>
             </div>
