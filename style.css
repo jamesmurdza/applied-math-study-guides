@@ -261,14 +261,35 @@ body {
   margin-top: 20px;
   padding-top: 20px;
   border-top: 1px solid #eee;
-  overflow-x: auto;
 }
 
 .tableau-phase {
-  margin: 0 0 10px;
-  font-size: 0.8rem;
+  margin: 24px 0 12px;
+  font-size: 0.85rem;
   font-weight: 600;
-  color: #555;
+  color: #1a1a1a;
+}
+
+.tableau-phase:first-child {
+  margin-top: 0;
+}
+
+.tableau-step {
+  margin-top: 20px;
+}
+
+.tableau-step:first-child {
+  margin-top: 0;
+}
+
+.tableau-step-label {
+  margin: 0 0 8px;
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.tableau-scroll {
+  overflow-x: auto;
 }
 
 .tableau {
@@ -307,15 +328,9 @@ body {
   font-weight: 700;
 }
 
-.tableau-controls {
-  margin-top: 14px;
-}
-
-.tableau-controls input[type="range"] {
-  width: 100%;
-  max-width: 420px;
-  display: block;
-  accent-color: #1a1a1a;
+.tableau-caption {
+  margin-top: 10px;
+  font-size: 0.9rem;
 }
 
 .chart-tooltip {

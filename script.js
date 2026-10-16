@@ -689,34 +689,31 @@ if (window.renderMathInElement) {
 
   function mountTableau(mount, frames, varNames, objectiveLabel, numStructural, phaseAt) {
     if (!mount) return;
-    let idx = 0;
+    mount.innerHTML = '';
+    let lastPhase = null;
 
-    const controls = document.createElement('div');
-    controls.className = 'tableau-controls';
-    const slider = document.createElement('input');
-    slider.type = 'range';
-    slider.min = '0';
-    slider.max = String(frames.length - 1);
-    slider.value = '0';
-    controls.appendChild(slider);
-    mount.parentNode.insertBefore(controls, mount.nextSibling);
-
-    const caption = document.createElement('p');
-    mount.parentNode.insertBefore(caption, controls.nextSibling);
-
-    function render() {
-      const frame = frames[idx];
+    frames.forEach((frame, idx) => {
       const numCols = frame.tableau[0].length - 1;
       const numRows = frame.tableau.length - 1;
 
-      mount.innerHTML = '';
-
       if (phaseAt) {
-        const label = document.createElement('p');
-        label.className = 'tableau-phase';
-        label.textContent = `Phase ${phaseAt(idx)}`;
-        mount.appendChild(label);
+        const phase = phaseAt(idx);
+        if (phase !== lastPhase) {
+          const label = document.createElement('p');
+          label.className = 'tableau-phase';
+          label.textContent = `Phase ${phase}`;
+          mount.appendChild(label);
+          lastPhase = phase;
+        }
       }
+
+      const step = document.createElement('div');
+      step.className = 'tableau-step';
+
+      const stepLabel = document.createElement('p');
+      stepLabel.className = 'tableau-step-label';
+      stepLabel.textContent = frame.pivot ? `Step ${idx + 1}` : `Step ${idx + 1} — optimal`;
+      step.appendChild(stepLabel);
 
       const table = document.createElement('table');
       table.className = 'tableau';
@@ -773,8 +770,13 @@ if (window.renderMathInElement) {
       tbody.appendChild(zRow);
       table.appendChild(tbody);
 
-      mount.appendChild(table);
+      const scrollBox = document.createElement('div');
+      scrollBox.className = 'tableau-scroll';
+      scrollBox.appendChild(table);
+      step.appendChild(scrollBox);
 
+      const caption = document.createElement('p');
+      caption.className = 'tableau-caption';
       // Phase one's objective tracks the artificial variable, not the real
       // objective — "profit = 0" there would misleadingly read as a bad
       // outcome, so its optimal frame gets its own wording instead.
@@ -785,15 +787,10 @@ if (window.renderMathInElement) {
       } else {
         caption.textContent = pivotCaption(frame, varNames, objectiveLabel, numStructural);
       }
-      slider.value = String(idx);
-    }
+      step.appendChild(caption);
 
-    slider.addEventListener('input', () => {
-      idx = Number(slider.value);
-      render();
+      mount.appendChild(step);
     });
-
-    render();
   }
 
   // --- Simplex (single phase): the pink-peppermint / blueberry LP ----------
