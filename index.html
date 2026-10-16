@@ -348,7 +348,8 @@
           </div>
           <div class="topic">
             <h2>Simplex</h2>
-            <p>Placeholder text.</p>
+            <p>The simplex method never looks inside the feasible region — it starts at a corner and walks along the edges toward a better one.</p>
+            <div class="lp-graph" id="simplex-graph-root"></div>
           </div>
           <div class="topic">
             <h2>Two-Phase Simplex</h2>
@@ -356,23 +357,84 @@
           </div>
           <div class="topic">
             <h2>Getting a Dual from a Primal</h2>
-            <p>Placeholder text.</p>
+            <p>Every primal has a dual: a max problem's dual is a min problem, one dual variable per primal constraint and one dual constraint per primal variable.</p>
+            <div class="lp-graph">
+              <svg viewBox="0 0 220 220" role="img" aria-label="Primal and dual values converging to a common optimum">
+                <line x1="110" y1="12" x2="110" y2="208" stroke="#333" stroke-width="1.5"></line>
+                <polygon points="110,8 105,18 115,18" fill="#333"></polygon>
+
+                <line x1="78" y1="196" x2="78" y2="118" stroke="#e64980" stroke-width="2"></line>
+                <polygon points="78,110 72,122 84,122" fill="#e64980"></polygon>
+                <circle cx="78" cy="196" r="3" fill="#e64980"></circle>
+                <circle cx="78" cy="168" r="3" fill="#e64980"></circle>
+                <circle cx="78" cy="144" r="3" fill="#e64980"></circle>
+
+                <line x1="142" y1="24" x2="142" y2="100" stroke="#3b6bd6" stroke-width="2"></line>
+                <polygon points="142,108 136,96 148,96" fill="#3b6bd6"></polygon>
+                <circle cx="142" cy="24" r="3" fill="#3b6bd6"></circle>
+                <circle cx="142" cy="52" r="3" fill="#3b6bd6"></circle>
+                <circle cx="142" cy="78" r="3" fill="#3b6bd6"></circle>
+
+                <circle cx="110" cy="110" r="4" fill="#1a1a1a"></circle>
+                <text x="118" y="106" font-size="11" fill="#1a1a1a">z* (optimal)</text>
+                <text x="78" y="210" font-size="11" fill="#e64980" text-anchor="middle">primal (max)</text>
+                <text x="142" y="16" font-size="11" fill="#3b6bd6" text-anchor="middle">dual (min)</text>
+              </svg>
+              <p>Weak duality keeps the primal's rising values below the dual's falling ones at every step; strong duality is the special fact that, at the optimum, they meet exactly.</p>
+            </div>
           </div>
           <div class="topic">
             <h2>Complementary Slackness</h2>
-            <p>Placeholder text.</p>
+            <p>At the optimum, a primal variable and its matching dual constraint can't both be slack — for each pair, at least one of the two must be exactly zero.</p>
+            <div class="lp-graph">
+              <table class="cs-table">
+                <thead>
+                  <tr><th>Primal</th><th>Dual</th><th>Rule</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><span class="var-mint">x₁</span> &gt; 0</td><td>dual constraint 1</td><td>binds exactly (zero slack)</td></tr>
+                  <tr><td>primal constraint 1</td><td>y₁ &gt; 0</td><td>binds exactly (zero slack)</td></tr>
+                  <tr><td>primal constraint 2 slack</td><td>y₂ = 0</td><td>unused dual variable is zero</td></tr>
+                </tbody>
+              </table>
+              <p class="math">$$\textcolor{#e64980}{x_1} \textcolor{#7B4B8C}{>} 0 \implies \text{dual constraint 1 binds}, \qquad y_2 \textcolor{#7B4B8C}{>} 0 \implies \text{primal constraint 2 binds}$$</p>
+            </div>
           </div>
           <div class="topic">
             <h2>Dijkstra's Algorithm</h2>
-            <p>Placeholder text.</p>
+            <p>Dijkstra grows a shortest-path tree one node at a time, always settling the closest unvisited node next.</p>
+            <div class="lp-graph">
+              <div class="dijkstra-graph" id="dijkstra-graph-root"></div>
+            </div>
           </div>
           <div class="topic">
             <h2>Gomory Cutting Planes</h2>
-            <p>Placeholder text.</p>
+            <p>A Gomory cut adds a valid inequality — one that every integer point already satisfies — that slices a fractional corner off the LP relaxation, shrinking it toward the true integer hull.</p>
+            <div class="lp-graph" id="gomory-graph-root"></div>
           </div>
           <div class="topic">
             <h2>Complexity and NP-Completeness</h2>
-            <p>Placeholder text.</p>
+            <p>P is every problem solvable quickly; NP is every problem whose solution can be checked quickly; NP-complete problems are the hardest problems in NP, each able to encode any other via a reduction.</p>
+            <div class="lp-graph">
+              <svg viewBox="0 0 300 190" role="img" aria-label="Venn diagram of P inside NP, with NP-complete as a subset">
+                <ellipse cx="150" cy="95" rx="140" ry="80" fill="none" stroke="#333" stroke-width="1.5"></ellipse>
+                <text x="22" y="30" font-size="12" fill="#333">NP</text>
+
+                <circle cx="95" cy="105" r="48" fill="#3b6bd6" fill-opacity="0.08" stroke="#3b6bd6" stroke-width="1.5"></circle>
+                <text x="95" y="109" font-size="12" fill="#3b6bd6" text-anchor="middle">P</text>
+
+                <circle cx="205" cy="95" r="45" fill="#c0392b" fill-opacity="0.08" stroke="#c0392b" stroke-width="1.5"></circle>
+                <text x="205" y="60" font-size="11" fill="#c0392b" text-anchor="middle">NP-complete</text>
+
+                <circle cx="188" cy="92" r="3" fill="#1a1a1a"></circle>
+                <text x="166" y="104" font-size="10" fill="#1a1a1a">SAT</text>
+                <circle cx="224" cy="110" r="3" fill="#1a1a1a"></circle>
+                <text x="206" y="130" font-size="10" fill="#1a1a1a">vertex cover</text>
+                <line x1="190" y1="94" x2="221" y2="109" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3,3"></line>
+                <text x="178" y="122" font-size="9" fill="#555">reduces to</text>
+              </svg>
+              <p>If any single NP-complete problem (like SAT) turns out to be solvable quickly, a reduction lets every problem in NP ride along and be solved quickly too — that's exactly the open question "does P = NP?".</p>
+            </div>
           </div>
         </div>
       </section>
