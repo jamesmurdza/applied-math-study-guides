@@ -119,6 +119,14 @@ if (window.renderMathInElement) {
     return node;
   }
 
+  // Native <title> tooltip — no extra markup/CSS, just the browser default.
+  function withTitle(node, text) {
+    const title = el('title', {});
+    title.textContent = text;
+    node.appendChild(title);
+    return node;
+  }
+
   function isFeasible(x, y, constraints) {
     if (x < -1e-9 || y < -1e-9) return false;
     return constraints.every(({ a, b, c }) => a * x + b * y <= c + 1e-9);
@@ -138,6 +146,8 @@ if (window.renderMathInElement) {
   function renderLPGraph(container, config) {
     const { xMax, yMax, constraints, objective, varNames, varColors, integer } = config;
     const colors = varColors || ['#1a1a1a', '#1a1a1a'];
+    const objectiveLabel = config.objectiveLabel || 'value';
+    const pointTitle = (p) => `(${fmt(p.x)}, ${fmt(p.y)}): ${objectiveLabel} = ${fmt(objective.a * p.x + objective.b * p.y)}`;
     const scale = 40, padL = 50, padR = 25, padT = 20, padB = 30;
     const width = padL + xMax * scale + padR;
     const height = padT + yMax * scale + padB;
@@ -174,6 +184,18 @@ if (window.renderMathInElement) {
       points: polyPts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' '),
       fill: `url(#${gradId})`
     }));
+
+    // invisible hover targets on each vertex (continuous mode has no visible
+    // dots otherwise) — purely for the native tooltip, no visual change
+    if (!integer) {
+      poly.forEach(p => {
+        const s = toScreen(p.x, p.y);
+        svg.appendChild(withTitle(
+          el('circle', { cx: s.x.toFixed(1), cy: s.y.toFixed(1), r: 8, fill: '#000', 'fill-opacity': '0' }),
+          pointTitle(p)
+        ));
+      });
+    }
 
     // each constraint's full boundary line, dashed gray, for context
     constraints.forEach(cons => {
@@ -228,6 +250,11 @@ if (window.renderMathInElement) {
       pts.forEach(p => {
         const s = toScreen(p.x, p.y);
         svg.appendChild(el('circle', { cx: s.x.toFixed(1), cy: s.y.toFixed(1), r: 2.5, fill: '#1a1a1a', 'fill-opacity': '0.35' }));
+        // slightly larger invisible hit target, same tooltip approach as the continuous vertices
+        svg.appendChild(withTitle(
+          el('circle', { cx: s.x.toFixed(1), cy: s.y.toFixed(1), r: 6, fill: '#000', 'fill-opacity': '0' }),
+          pointTitle(p)
+        ));
       });
 
       // true integer optimum = best lattice point
@@ -241,7 +268,10 @@ if (window.renderMathInElement) {
       // hollow marker for the (generally non-integer, and possibly worse-looking) LP relaxation optimum
       if (Math.abs(bestCont.x - bestInt.x) > 1e-6 || Math.abs(bestCont.y - bestInt.y) > 1e-6) {
         const cs = toScreen(bestCont.x, bestCont.y);
-        svg.appendChild(el('circle', { cx: cs.x.toFixed(1), cy: cs.y.toFixed(1), r: 4, fill: 'none', stroke: '#1a1a1a', 'stroke-width': '1.5', 'stroke-dasharray': '2,2' }));
+        svg.appendChild(withTitle(
+          el('circle', { cx: cs.x.toFixed(1), cy: cs.y.toFixed(1), r: 4, fill: 'none', stroke: '#1a1a1a', 'stroke-width': '1.5', 'stroke-dasharray': '2,2' }),
+          pointTitle(bestCont)
+        ));
         const clabel = el('text', {
           x: (cs.x + 10).toFixed(1), y: (cs.y - 8).toFixed(1),
           'font-size': '10', fill: '#888'
@@ -252,7 +282,10 @@ if (window.renderMathInElement) {
     }
 
     const bs = toScreen(best.x, best.y);
-    svg.appendChild(el('circle', { cx: bs.x.toFixed(1), cy: bs.y.toFixed(1), r: 4, fill: '#1a1a1a' }));
+    svg.appendChild(withTitle(
+      el('circle', { cx: bs.x.toFixed(1), cy: bs.y.toFixed(1), r: 4, fill: '#1a1a1a' }),
+      pointTitle(best)
+    ));
     const label = el('text', {
       x: (bs.x + 10).toFixed(1), y: (bs.y - 8).toFixed(1),
       'font-size': '11', fill: '#1a1a1a'
@@ -285,6 +318,7 @@ if (window.renderMathInElement) {
       varNames: ['x₁', 'x₂'],
       varColors: ['#e64980', '#3b6bd6'],
       objective: { a: 5, b: 4 },
+      objectiveLabel: 'profit',
       constraints: [
         { a: 2, b: 4, c: 24, color: '#1a1a1a', label: 'milk: 2x₁ + 4x₂ ≤ 24' },
         { a: 1, b: 0, c: 6, color: '#e64980', label: 'peppermint extract: x₁ ≤ 6' },
@@ -302,6 +336,7 @@ if (window.renderMathInElement) {
       varNames: ['x₁', 'x₂'],
       varColors: ['#2f9e44', '#c2525c'],
       objective: { a: 7, b: 10 },
+      objectiveLabel: 'protein',
       constraints: [
         { a: 0.7, b: 0.9, c: 3, color: '#1a1a1a', label: 'budget: 0.7x₁ + 0.9x₂ ≤ €3' }
       ]
