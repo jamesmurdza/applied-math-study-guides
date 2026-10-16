@@ -257,6 +257,82 @@ body {
   accent-color: #1a1a1a;
 }
 
+.tableau-wrap {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.tableau-phase {
+  margin: 24px 0 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.tableau-phase:first-child {
+  margin-top: 0;
+}
+
+.tableau-step {
+  margin-top: 20px;
+}
+
+.tableau-step:first-child {
+  margin-top: 0;
+}
+
+.tableau-step-label {
+  margin: 0 0 8px;
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.tableau-scroll {
+  overflow-x: auto;
+}
+
+.tableau {
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.tableau th,
+.tableau td {
+  text-align: right;
+  padding: 6px 12px 6px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.tableau thead th {
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.tableau tbody th {
+  text-align: left;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.tableau tbody tr:last-child th,
+.tableau tbody tr:last-child td {
+  border-bottom: none;
+  border-top: 1px solid #ccc;
+  font-weight: 600;
+}
+
+.pivot-cell {
+  color: #c0392b;
+  font-weight: 700;
+}
+
+.tableau-caption {
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
 .chart-tooltip {
   display: none;
   position: fixed;
