@@ -146,22 +146,22 @@ if (window.renderMathInElement) {
 
     const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img', 'aria-label': 'Feasible region graph' });
 
-    // feasible polygon
+    // feasible polygon — fill only, no outline
     const poly = feasibleRegion(constraints, xMax, yMax);
     const polyPts = poly.map(p => toScreen(p.x, p.y));
     svg.appendChild(el('polygon', {
       points: polyPts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' '),
-      fill: '#1a1a1a', 'fill-opacity': '0.06', stroke: '#1a1a1a', 'stroke-opacity': '0.5', 'stroke-width': '1.5'
+      fill: '#1a1a1a', 'fill-opacity': '0.06'
     }));
 
-    // each constraint's full boundary line, dashed/faded, for context
+    // each constraint's full boundary line, dashed gray, for context
     constraints.forEach(cons => {
       const seg = clipLineToBox(cons.a, cons.b, cons.c, xMax, yMax);
       if (!seg) return;
       const s1 = toScreen(seg.x1, seg.y1), s2 = toScreen(seg.x2, seg.y2);
       svg.appendChild(el('line', {
         x1: s1.x.toFixed(1), y1: s1.y.toFixed(1), x2: s2.x.toFixed(1), y2: s2.y.toFixed(1),
-        stroke: cons.color, 'stroke-width': '1.5', 'stroke-dasharray': '5,4', 'stroke-opacity': '0.6'
+        stroke: '#999', 'stroke-width': '1.5', 'stroke-dasharray': '5,4'
       }));
     });
 
