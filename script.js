@@ -180,11 +180,14 @@ if (window.renderMathInElement) {
   }
 
   function renderLPGraph(container, config) {
-    const { xMax, yMax, constraints, objective, varNames, varColors, integer } = config;
+    const { xMax, yMax, constraints, objective, varNames, varColors, integer, axisLabels } = config;
     const colors = varColors || ['#1a1a1a', '#1a1a1a'];
     const objectiveLabel = config.objectiveLabel || 'value';
     const pointTitle = (p) => `(${fmt(p.x)}, ${fmt(p.y)}): ${objectiveLabel} = ${fmt(objective.a * p.x + objective.b * p.y)}`;
-    const scale = 40, padL = 50, padR = 25, padT = 20, padB = 30;
+    // Extra left/bottom room is needed to fit the descriptive axis titles
+    // (rotated beside the y-axis, centered under the x-axis) without
+    // crowding the tick numbers.
+    const scale = 40, padL = axisLabels ? 64 : 50, padR = 25, padT = 20, padB = axisLabels ? 46 : 30;
     const width = padL + xMax * scale + padR;
     const height = padT + yMax * scale + padB;
     const originX = padL, originY = height - padB;
@@ -274,13 +277,21 @@ if (window.renderMathInElement) {
       svg.appendChild(t);
     }
 
-    // axis variable labels
-    const xLabel = el('text', { x: originX + xMax * scale + 15, y: o.y + 4, 'font-size': '12', 'font-weight': '600', fill: colors[0] });
-    xLabel.textContent = varNames[0];
-    svg.appendChild(xLabel);
-    const yLabel = el('text', { x: o.x, y: padT - 10, 'font-size': '12', 'font-weight': '600', fill: colors[1], 'text-anchor': 'middle' });
-    yLabel.textContent = varNames[1];
-    svg.appendChild(yLabel);
+    // axis titles — descriptive name for each variable (e.g. "pink peppermint
+    // ice cream, x₁ (l)"), centered under the x-axis and rotated beside the y-axis.
+    const xTitle = el('text', {
+      x: originX + (xMax * scale) / 2, y: height - 6,
+      'font-size': '11', 'font-weight': '600', fill: colors[0], 'text-anchor': 'middle'
+    });
+    xTitle.textContent = axisLabels ? axisLabels[0] : varNames[0];
+    svg.appendChild(xTitle);
+    const yTitleY = originY - (yMax * scale) / 2;
+    const yTitle = el('text', {
+      x: 14, y: yTitleY, 'font-size': '11', 'font-weight': '600', fill: colors[1],
+      'text-anchor': 'middle', transform: `rotate(-90, 14, ${yTitleY.toFixed(1)})`
+    });
+    yTitle.textContent = axisLabels ? axisLabels[1] : varNames[1];
+    svg.appendChild(yTitle);
 
     // continuous LP-relaxation optimum = polygon point maximizing the objective
     let bestCont = poly[0], bestContVal = -Infinity;
@@ -385,6 +396,7 @@ if (window.renderMathInElement) {
       yMax: 7,
       varNames: ['x₁', 'x₂'],
       varColors: ['#e64980', '#3b6bd6'],
+      axisLabels: ['pink peppermint ice cream, x₁ (l)', 'blueberry ice cream, x₂ (l)'],
       objective: { a: 5, b: 4 },
       objectiveLabel: 'profit',
       constraints: [
@@ -403,6 +415,7 @@ if (window.renderMathInElement) {
       integer: true,
       varNames: ['x₁', 'x₂'],
       varColors: ['#2f9e44', '#c2525c'],
+      axisLabels: ['green eggs, x₁', 'ham, x₂'],
       objective: { a: 7, b: 10 },
       objectiveLabel: 'protein',
       constraints: [
