@@ -189,12 +189,22 @@ if (window.renderMathInElement) {
     const poly = feasibleRegion(constraints, xMax, yMax);
     const polyPts = poly.map(p => toScreen(p.x, p.y));
 
-    let worst = poly[0], worstVal = Infinity, bestForGrad = poly[0], bestForGradVal = -Infinity;
+    // Find the range of objective values across the polygon, but place the
+    // gradient's two endpoints ON the true objective-vector line (through the
+    // origin), not at whichever vertices happen to be extreme — the chord
+    // between two extreme vertices is generally NOT parallel to (a, b).
+    let worstVal = Infinity, bestForGradVal = -Infinity;
     poly.forEach(p => {
       const v = objective.a * p.x + objective.b * p.y;
-      if (v < worstVal) { worstVal = v; worst = p; }
-      if (v > bestForGradVal) { bestForGradVal = v; bestForGrad = p; }
+      if (v < worstVal) worstVal = v;
+      if (v > bestForGradVal) bestForGradVal = v;
     });
+    const gradMag = Math.hypot(objective.a, objective.b) || 1;
+    const gradDirX = objective.a / gradMag, gradDirY = objective.b / gradMag;
+    // Point on the objective-direction line whose objective value equals v
+    // is (v/gradMag)*dir, since a*(t*dirX)+b*(t*dirY) = t*gradMag.
+    const worst = { x: (worstVal / gradMag) * gradDirX, y: (worstVal / gradMag) * gradDirY };
+    const bestForGrad = { x: (bestForGradVal / gradMag) * gradDirX, y: (bestForGradVal / gradMag) * gradDirY };
     const gradId = `objGrad-${container.id || Math.random().toString(36).slice(2)}`;
     const defs = el('defs', {});
     const wScreen = toScreen(worst.x, worst.y), bScreen = toScreen(bestForGrad.x, bestForGrad.y);
