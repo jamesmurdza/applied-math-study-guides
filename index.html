@@ -177,13 +177,13 @@
           </div>
           <div class="topic">
             <h2>Integer Linear Programming (ILP) Formulation</h2>
-            <p>Example: a breakfast budget — pick whole <span class="var-egg">eggs (x₁)</span> and slices of <span class="var-toast">peanut butter toast (x₂)</span> to maximize protein without busting a €3 budget.</p>
+            <p>Example: a breakfast budget — pick <span class="var-egg">green eggs (x₁)</span> and slices of <span class="var-ham">ham (x₂)</span> to maximize protein without busting a €3 budget.</p>
             <p>The goal is to maximize total protein from breakfast.</p>
-            <p class="math">$$\max z = 7\textcolor{#c9870f}{x_1} + 10\textcolor{#8b5a2b}{x_2}$$</p>
-            <p>Eggs and toast each cost money, and the morning budget is fixed.</p>
-            <p class="math">$$0.7\textcolor{#c9870f}{x_1} + 0.9\textcolor{#8b5a2b}{x_2} \leq 3$$</p>
-            <p>You can only buy a whole number of eggs or toast slices — no fractions, which is what makes this an integer program.</p>
-            <p class="math">$$\textcolor{#c9870f}{x_1}, \textcolor{#8b5a2b}{x_2} \in \mathbb{Z}_{\geq 0}$$</p>
+            <p class="math">$$\max z = 7\textcolor{#2f9e44}{x_1} + 10\textcolor{#c2525c}{x_2}$$</p>
+            <p>Green eggs and ham each cost money, and the morning budget is fixed.</p>
+            <p class="math">$$0.7\textcolor{#2f9e44}{x_1} + 0.9\textcolor{#c2525c}{x_2} \leq 3$$</p>
+            <p>You can only buy a whole number of eggs or ham slices — no fractions, which is what makes this an integer program.</p>
+            <p class="math">$$\textcolor{#2f9e44}{x_1}, \textcolor{#c2525c}{x_2} \in \mathbb{Z}_{\geq 0}$$</p>
 
             <div class="lp-graph" id="ilp-graph-root"></div>
           </div>
