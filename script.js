@@ -131,6 +131,27 @@ if (window.renderMathInElement) {
     }));
   }
 
+  // Small HTML legend placed under a chart: one swatch + label per item.
+  // item.type is 'line' | 'dashed' | 'fill' | 'dot'; item.color sets the
+  // swatch's color via currentColor so the CSS stays shape-only.
+  function renderLegend(container, items) {
+    const legend = document.createElement('div');
+    legend.className = 'chart-legend';
+    items.forEach(item => {
+      const entry = document.createElement('span');
+      entry.className = 'chart-legend-item';
+      const swatch = document.createElement('span');
+      swatch.className = `chart-legend-swatch ${item.type}`;
+      swatch.style.color = item.color;
+      entry.appendChild(swatch);
+      const label = document.createElement('span');
+      label.textContent = item.label;
+      entry.appendChild(label);
+      legend.appendChild(entry);
+    });
+    container.appendChild(legend);
+  }
+
   // Custom on-page tooltip — a single shared floating element, shown/moved/
   // hidden via mouse events. More reliable than a native <title> tooltip
   // (no hover delay, works the same everywhere, and is actually verifiable).
@@ -1046,7 +1067,7 @@ if (window.renderMathInElement) {
     const xMin = -4, xMax = 4;
     const zCrit = 1.645, zObs = 2.10;
     const normalPdf = x => Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
-    const width = 380, height = 190, padL = 16, padR = 16, padT = 18, padB = 10;
+    const width = 380, height = 190, padL = 16, padR = 20, padT = 18, padB = 24;
     const plotW = width - padL - padR, plotH = height - padT - padB;
     const yMax = normalPdf(0) * 1.15;
     const toScreen = (x, y) => ({
@@ -1070,6 +1091,21 @@ if (window.renderMathInElement) {
     // x axis
     const o = toScreen(xMin, 0), oR = toScreen(xMax, 0);
     svg.appendChild(el('line', { x1: o.x, y1: o.y, x2: oR.x, y2: oR.y, stroke: '#333' }));
+
+    // y axis — drawn through z = 0 (the distribution's center), not the
+    // plot's left edge, since that's the chart's natural reference point
+    const zeroPt = toScreen(0, 0), topPt = toScreen(0, yMax);
+    svg.appendChild(el('line', { x1: zeroPt.x, y1: zeroPt.y, x2: topPt.x, y2: topPt.y, stroke: '#333' }));
+    const zeroTick = el('text', { x: zeroPt.x, y: zeroPt.y + 15, 'font-size': '10.5', fill: '#555', 'text-anchor': 'middle' });
+    zeroTick.textContent = '0';
+    svg.appendChild(zeroTick);
+
+    const xAxisLabel = el('text', { x: width - 4, y: o.y + 4, 'font-size': '11', fill: '#555', 'text-anchor': 'end' });
+    xAxisLabel.textContent = 'z';
+    svg.appendChild(xAxisLabel);
+    const yAxisLabel = el('text', { x: padL, y: padT + 10, 'font-size': '11', fill: '#555', 'text-anchor': 'start' });
+    yAxisLabel.textContent = 'f(z)';
+    svg.appendChild(yAxisLabel);
 
     // critical value marker
     const cs = toScreen(zCrit, normalPdf(zCrit));
@@ -1098,6 +1134,11 @@ if (window.renderMathInElement) {
 
     container.innerHTML = '';
     container.appendChild(svg);
+    renderLegend(container, [
+      { type: 'line', color: '#1a1a1a', label: 'null distribution' },
+      { type: 'fill', color: '#c92a2a', label: 'rejection region' },
+      { type: 'dot', color: '#1a1a1a', label: 'observed statistic' }
+    ]);
     const caption = document.createElement('p');
     caption.textContent = `The shaded tail is the rejection region, sized to hold exactly α = 0.05 of the area under the null distribution. The observed statistic falls at z = ${zObs}, past the critical value z* = ${zCrit} — inside the rejection region, so H₀ is rejected.`;
     container.appendChild(caption);
@@ -1109,7 +1150,7 @@ if (window.renderMathInElement) {
     const n = 10, k = 7;
     const likelihood = theta => Math.pow(theta, k) * Math.pow(1 - theta, n - k);
     const thetaHat = k / n;
-    const width = 380, height = 170, padL = 16, padR = 16, padT = 20, padB = 24;
+    const width = 380, height = 170, padL = 30, padR = 22, padT = 20, padB = 24;
     const plotW = width - padL - padR, plotH = height - padT - padB;
     const pts = sample(likelihood, xMin, xMax, 200);
     const maxY = Math.max(...pts.map(p => p.y));
@@ -1121,8 +1162,16 @@ if (window.renderMathInElement) {
     const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img', 'aria-label': 'Likelihood curve peaked at the MLE' });
     svg.appendChild(el('path', { d: pathFor(pts, toScreen), fill: 'none', stroke: '#0b7285', 'stroke-width': '1.75' }));
 
-    const o = toScreen(xMin, 0), oR = toScreen(xMax, 0);
+    const o = toScreen(xMin, 0), oR = toScreen(xMax, 0), oT = toScreen(xMin, maxY);
     svg.appendChild(el('line', { x1: o.x, y1: o.y, x2: oR.x, y2: oR.y, stroke: '#333' }));
+    svg.appendChild(el('line', { x1: o.x, y1: o.y, x2: oT.x, y2: oT.y, stroke: '#333' }));
+
+    const xAxisLabel = el('text', { x: width - 4, y: o.y + 4, 'font-size': '11', fill: '#555', 'text-anchor': 'end' });
+    xAxisLabel.textContent = 'θ';
+    svg.appendChild(xAxisLabel);
+    const yAxisLabel = el('text', { x: o.x, y: oT.y - 6, 'font-size': '11', fill: '#555', 'text-anchor': 'start' });
+    yAxisLabel.textContent = 'L(θ)';
+    svg.appendChild(yAxisLabel);
 
     const peak = toScreen(thetaHat, maxY);
     const peakBase = toScreen(thetaHat, 0);
@@ -1141,6 +1190,10 @@ if (window.renderMathInElement) {
 
     container.innerHTML = '';
     container.appendChild(svg);
+    renderLegend(container, [
+      { type: 'line', color: '#0b7285', label: 'likelihood L(θ)' },
+      { type: 'dot', color: '#0b7285', label: 'MLE θ̂' }
+    ]);
     const caption = document.createElement('p');
     caption.textContent = `With 7 heads in 10 flips, the likelihood L(θ) = θ⁷(1−θ)³ peaks at θ̂ = 0.7 — the value that makes this exact data most probable.`;
     container.appendChild(caption);
@@ -1180,6 +1233,7 @@ if (window.renderMathInElement) {
 
     const oY = padT + plotH;
     svg.appendChild(el('line', { x1: padL, y1: oY, x2: padL + plotW, y2: oY, stroke: '#333' }));
+    svg.appendChild(el('line', { x1: padL, y1: oY, x2: padL, y2: padT, stroke: '#333' }));
     [0, 1].forEach(v => {
       const sx = padL + (v - xMin) / (xMax - xMin) * plotW;
       const t = el('text', { x: sx, y: oY + 16, 'font-size': '10.5', fill: '#555', 'text-anchor': 'middle' });
@@ -1187,8 +1241,20 @@ if (window.renderMathInElement) {
       svg.appendChild(t);
     });
 
+    const xAxisLabel = el('text', { x: width - 4, y: oY + 4, 'font-size': '11', fill: '#555', 'text-anchor': 'end' });
+    xAxisLabel.textContent = 'θ';
+    svg.appendChild(xAxisLabel);
+    const yAxisLabel = el('text', { x: padL, y: padT + 10, 'font-size': '11', fill: '#555', 'text-anchor': 'start' });
+    yAxisLabel.textContent = 'density';
+    svg.appendChild(yAxisLabel);
+
     container.innerHTML = '';
     container.appendChild(svg);
+    renderLegend(container, [
+      { type: 'dashed', color: '#868e96', label: 'prior' },
+      { type: 'dashed', color: '#e8590c', label: 'likelihood' },
+      { type: 'line', color: '#0b7285', label: 'posterior' }
+    ]);
     const caption = document.createElement('p');
     caption.innerHTML = `Starting from a <span class="var-prior">prior</span> centered on "fair" and updating with the <span class="var-likelihood">likelihood</span> of 7 heads in 10 flips produces a <span class="var-posterior">posterior</span> peaked near 0.67 — pulled toward the data, but not all the way to the data's own peak at 0.7.`;
     container.appendChild(caption);

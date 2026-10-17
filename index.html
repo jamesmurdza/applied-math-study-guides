@@ -471,6 +471,13 @@
 
         <div class="topics">
           <div class="topic">
+            <h2>Regression models</h2>
+            <p>A regression model treats the response as a deterministic trend plus random noise, rather than an exact function of the predictors.</p>
+            <p class="math">$$Y_i = \textcolor{#0b7285}{\beta_0} + \textcolor{#0b7285}{\beta_1} x_i + \varepsilon_i, \quad \varepsilon_i \textcolor{#7B4B8C}{\sim} N(0, \sigma^2)$$</p>
+            <p>Fitting the model means choosing the coefficients that make the residuals — the leftover noise — as small as possible.</p>
+            <p class="math">$$(\hat{\textcolor{#0b7285}{\beta_0}}, \hat{\textcolor{#0b7285}{\beta_1}}) = \textcolor{#7B4B8C}{\arg\min_{\beta_0,\beta_1}} \sum_{i=1}^{n} (y_i - \beta_0 - \beta_1 x_i)^2$$</p>
+          </div>
+          <div class="topic">
             <h2>MLEs</h2>
             <p>Maximum likelihood picks whichever parameter value makes the observed data most probable.</p>
             <p class="math">$$\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}} = \textcolor{#7B4B8C}{\arg\max_{\theta}}\ L(\theta) = \textcolor{#7B4B8C}{\arg\max_{\theta}} \prod_{i=1}^{n} f(x_i; \theta)$$</p>
@@ -517,14 +524,7 @@
             <p>Because that distribution is known regardless of the true parameter, a pivotal quantity can be inverted directly into a confidence interval.</p>
           </div>
           <div class="topic">
-            <h2>(Stochastic) Regression models</h2>
-            <p>A stochastic regression model treats the response as a deterministic trend plus random noise, rather than an exact function of the predictors.</p>
-            <p class="math">$$Y_i = \textcolor{#0b7285}{\beta_0} + \textcolor{#0b7285}{\beta_1} x_i + \varepsilon_i, \quad \varepsilon_i \textcolor{#7B4B8C}{\sim} N(0, \sigma^2)$$</p>
-            <p>Fitting the model means choosing the coefficients that make the residuals — the leftover noise — as small as possible.</p>
-            <p class="math">$$(\hat{\textcolor{#0b7285}{\beta_0}}, \hat{\textcolor{#0b7285}{\beta_1}}) = \textcolor{#7B4B8C}{\arg\min_{\beta_0,\beta_1}} \sum_{i=1}^{n} (y_i - \beta_0 - \beta_1 x_i)^2$$</p>
-          </div>
-          <div class="topic">
-            <h2>Fisher information???</h2>
+            <h2>Fisher information</h2>
             <p>Fisher information measures how sharply the log-likelihood curves at the true parameter — more curvature means the data pins the parameter down more precisely.</p>
             <p class="math">$$I(\textcolor{#0b7285}{\theta}) = -E\!\left[\frac{\partial^2}{\partial \textcolor{#0b7285}{\theta}^2} \log f(X; \textcolor{#0b7285}{\theta})\right]$$</p>
             <p>It bounds how precise any unbiased estimator can possibly be, and approximates how precise the MLE actually is once the sample is large.</p>
