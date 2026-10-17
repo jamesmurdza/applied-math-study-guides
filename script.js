@@ -1046,7 +1046,7 @@ if (window.renderMathInElement) {
     const xMin = -4, xMax = 4;
     const zCrit = 1.645, zObs = 2.10;
     const normalPdf = x => Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
-    const width = 380, height = 190, padL = 16, padR = 16, padT = 18, padB = 10;
+    const width = 380, height = 190, padL = 16, padR = 20, padT = 18, padB = 24;
     const plotW = width - padL - padR, plotH = height - padT - padB;
     const yMax = normalPdf(0) * 1.15;
     const toScreen = (x, y) => ({
@@ -1070,6 +1070,21 @@ if (window.renderMathInElement) {
     // x axis
     const o = toScreen(xMin, 0), oR = toScreen(xMax, 0);
     svg.appendChild(el('line', { x1: o.x, y1: o.y, x2: oR.x, y2: oR.y, stroke: '#333' }));
+
+    // y axis — drawn through z = 0 (the distribution's center), not the
+    // plot's left edge, since that's the chart's natural reference point
+    const zeroPt = toScreen(0, 0), topPt = toScreen(0, yMax);
+    svg.appendChild(el('line', { x1: zeroPt.x, y1: zeroPt.y, x2: topPt.x, y2: topPt.y, stroke: '#333' }));
+    const zeroTick = el('text', { x: zeroPt.x, y: zeroPt.y + 15, 'font-size': '10.5', fill: '#555', 'text-anchor': 'middle' });
+    zeroTick.textContent = '0';
+    svg.appendChild(zeroTick);
+
+    const xAxisLabel = el('text', { x: width - 4, y: o.y + 4, 'font-size': '11', fill: '#555', 'text-anchor': 'end' });
+    xAxisLabel.textContent = 'z';
+    svg.appendChild(xAxisLabel);
+    const yAxisLabel = el('text', { x: padL, y: padT + 10, 'font-size': '11', fill: '#555', 'text-anchor': 'start' });
+    yAxisLabel.textContent = 'f(z)';
+    svg.appendChild(yAxisLabel);
 
     // critical value marker
     const cs = toScreen(zCrit, normalPdf(zCrit));
@@ -1188,12 +1203,20 @@ if (window.renderMathInElement) {
 
     const oY = padT + plotH;
     svg.appendChild(el('line', { x1: padL, y1: oY, x2: padL + plotW, y2: oY, stroke: '#333' }));
+    svg.appendChild(el('line', { x1: padL, y1: oY, x2: padL, y2: padT, stroke: '#333' }));
     [0, 1].forEach(v => {
       const sx = padL + (v - xMin) / (xMax - xMin) * plotW;
       const t = el('text', { x: sx, y: oY + 16, 'font-size': '10.5', fill: '#555', 'text-anchor': 'middle' });
       t.textContent = v;
       svg.appendChild(t);
     });
+
+    const xAxisLabel = el('text', { x: width - 4, y: oY + 4, 'font-size': '11', fill: '#555', 'text-anchor': 'end' });
+    xAxisLabel.textContent = 'θ';
+    svg.appendChild(xAxisLabel);
+    const yAxisLabel = el('text', { x: padL, y: padT + 10, 'font-size': '11', fill: '#555', 'text-anchor': 'start' });
+    yAxisLabel.textContent = 'density';
+    svg.appendChild(yAxisLabel);
 
     container.innerHTML = '';
     container.appendChild(svg);
