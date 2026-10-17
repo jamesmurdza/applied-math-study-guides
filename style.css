@@ -169,9 +169,7 @@ body {
 }
 
 .lp-graph {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid #eee;
+  margin-top: 28px;
 }
 
 .lp-graph svg {
@@ -187,9 +185,7 @@ body {
 }
 
 .stat-chart {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #eee;
+  margin-top: 24px;
 }
 
 .stat-chart svg {
@@ -209,8 +205,7 @@ body {
 .cs-table th,
 .cs-table td {
   text-align: left;
-  padding: 6px 10px 6px 0;
-  border-bottom: 1px solid #eee;
+  padding: 7px 10px 7px 0;
   color: #555;
 }
 
