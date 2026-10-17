@@ -443,6 +443,15 @@
             <p>Now the origin is infeasible, so simplex has nowhere obvious to start. Phase one ignores profit and just hunts for any feasible corner, using an artificial variable to patch the constraint; phase two then optimizes real profit from there.</p>
             <div class="lp-graph" id="two-phase-graph-root"></div>
             <p>The minimum-order line slices the corner nearest the origin off the feasible region, so (0, 0) is no longer a valid start. Phase one jumps straight to (2, 0) instead; phase two then walks (2, 0) → (6, 0) → (6, 3) to the same optimum, a profit of 42.</p>
+            <p>The procedure, building on ordinary simplex:</p>
+            <ol>
+              <li>For any constraint that isn't already ≤ with a non-negative right-hand side, add a surplus variable and an artificial variable to force an equality.</li>
+              <li>Phase one: temporarily minimize the sum of the artificial variables, using the same entering/leaving/pivot rules as ordinary simplex, starting from the tableau where the artificials are basic.</li>
+              <li>If phase one reaches zero, every artificial variable has left the basis (or sits at zero) — a feasible corner of the real region has been found. If it can't reach zero, the original problem is infeasible.</li>
+              <li>Drop the artificial variables' columns, restore the real objective row, and recompute it against the current, now-feasible basis.</li>
+              <li>Phase two: run ordinary simplex from there, pivoting on the real objective until every coefficient is non-negative.</li>
+            </ol>
+            <p>The same walk, numerically, now in two phases:</p>
             <div class="tableau-wrap" id="two-phase-tableau-root"></div>
           </div>
           <div class="topic">
