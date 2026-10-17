@@ -241,6 +241,8 @@
           </div>
           <div class="topic">
             <h2>Completeness and Compactness</h2>
+            <p>A sequence is Cauchy when its own terms eventually get arbitrarily close to each other, with no need to already know the limit.</p>
+            <p class="math">$$\textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#7B4B8C}{\exists} N \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{\mathbb{N}} \text{ s.t. } \textcolor{#7B4B8C}{\forall} m,n \textcolor{#7B4B8C}{\geq} N,\ \textcolor{#4078F2}{d}(x_m,x_n) \textcolor{#7B4B8C}{<} \varepsilon$$</p>
             <p>A complete space contains the limits of all its Cauchy sequences, leaving no "gaps" to converge into.</p>
             <p class="math">$$(\textcolor{#C18401}{X},\textcolor{#4078F2}{d}) \text{ complete} \textcolor{#7B4B8C}{\iff} \text{every Cauchy sequence } (x_n) \text{ in } \textcolor{#C18401}{X} \text{ converges to some } x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X}$$</p>
 
@@ -287,6 +289,44 @@
                 </svg>
                 <p><strong>Contains its limit</strong></p>
                 <p class="math">$$\sqrt{2} \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{\mathbb{R}}$$</p>
+              </div>
+            </div>
+
+            <p>A space is compact when every sequence inside it has a subsequence that converges to a point still inside the space.</p>
+            <p class="math">$$\textcolor{#C18401}{X} \text{ compact} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} (x_n) \text{ in } \textcolor{#C18401}{X},\ \textcolor{#7B4B8C}{\exists} \text{ subsequence } (x_{n_k}) \text{ s.t. } x_{n_k} \textcolor{#7B4B8C}{\to} x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X}$$</p>
+
+            <div class="set-examples">
+              <div class="set-card">
+                <svg class="wide" viewBox="0 0 210 90" role="img" aria-label="A sequence converging to a point inside the closed interval">
+                  <line x1="10" y1="45" x2="190" y2="45" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="20" y1="45" x2="170" y2="45" stroke="#C18401" stroke-width="2.5"></line>
+                  <circle cx="20" cy="45" r="3.5" fill="#C18401"></circle>
+                  <circle cx="170" cy="45" r="3.5" fill="#C18401"></circle>
+                  <circle cx="38" cy="45" r="3" fill="#999"></circle>
+                  <circle cx="70" cy="45" r="3" fill="#999"></circle>
+                  <circle cx="98" cy="45" r="3" fill="#999"></circle>
+                  <circle cx="120" cy="45" r="3" fill="#999"></circle>
+                  <circle cx="136" cy="45" r="3" fill="#C18401"></circle>
+                  <circle cx="146" cy="45" r="3" fill="#C18401"></circle>
+                </svg>
+                <p><strong>Compact</strong></p>
+                <p class="math">$$x_n \textcolor{#7B4B8C}{=} 1 \textcolor{#7B4B8C}{-} \tfrac{1}{n} \textcolor{#7B4B8C}{\to} 1 \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{[0,1]}$$</p>
+              </div>
+              <div class="set-card">
+                <svg class="wide" viewBox="0 0 210 90" role="img" aria-label="A sequence converging to a point outside the open interval">
+                  <line x1="10" y1="45" x2="190" y2="45" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="20" y1="45" x2="170" y2="45" stroke="#C18401" stroke-width="2.5" stroke-dasharray="5,4"></line>
+                  <circle cx="20" cy="45" r="4" fill="#fff" stroke="#C18401" stroke-width="1.5"></circle>
+                  <circle cx="170" cy="45" r="4" fill="#fff" stroke="#C18401" stroke-width="1.5"></circle>
+                  <circle cx="152" cy="45" r="3" fill="#999"></circle>
+                  <circle cx="120" cy="45" r="3" fill="#999"></circle>
+                  <circle cx="92" cy="45" r="3" fill="#999"></circle>
+                  <circle cx="70" cy="45" r="3" fill="#999"></circle>
+                  <circle cx="54" cy="45" r="3" fill="#C18401"></circle>
+                  <circle cx="44" cy="45" r="3" fill="#C18401"></circle>
+                </svg>
+                <p><strong>Not compact</strong></p>
+                <p class="math">$$x_n \textcolor{#7B4B8C}{=} \tfrac{1}{n+1} \textcolor{#7B4B8C}{\to} 0 \textcolor{#7B4B8C}{\notin} \textcolor{#C18401}{(0,1)}$$</p>
               </div>
             </div>
           </div>
