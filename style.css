@@ -187,6 +187,14 @@ body {
   font-size: 0.85rem;
 }
 
+/* Matches the bordered-card look already used for the set-example
+   diagrams (.set-card), for a standalone diagram + caption. */
+.viz-card {
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 14px;
+}
+
 .lp-graph {
   margin-top: 24px;
 }
