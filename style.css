@@ -138,14 +138,6 @@ body {
   margin-top: 24px;
 }
 
-/* For cards whose content needs real width to stay legible (e.g. a
-   number line with six labeled points) — stack instead of halving the
-   available width, since a 2-up grid shrinks the SVG (and its text,
-   which scales with it) well below a readable size on narrow screens. */
-.set-examples.set-examples-single {
-  grid-template-columns: 1fr;
-}
-
 .set-card {
   border: 1px solid #eee;
   border-radius: 6px;
@@ -165,7 +157,7 @@ body {
    160px square size meant for the disk diagrams, or their point labels
    render unreadably small. */
 .set-card svg.wide {
-  max-width: 600px;
+  max-width: 280px;
 }
 
 .set-card p {
