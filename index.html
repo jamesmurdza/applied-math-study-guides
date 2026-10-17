@@ -349,23 +349,8 @@
             <h2>Sequences and Series of Functions</h2>
             <p>Pointwise convergence only asks each individual input to eventually settle, with no control over how fast that happens from one point to the next.</p>
             <p class="math">$$\forall x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X},\quad \textcolor{#4078F2}{f_n}(x) \to \textcolor{#4078F2}{f}(x) \text{ as } n \to \infty$$</p>
-            <p>Uniform convergence requires the entire function, not just each point, to be well-approximated as n grows.</p>
-            <p class="math">$$\textcolor{#4078F2}{f_n} \to \textcolor{#4078F2}{f} \text{ uniformly} \textcolor{#7B4B8C}{\iff} \sup_{x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X}} |\textcolor{#4078F2}{f_n}(x) - \textcolor{#4078F2}{f}(x)| \to 0 \text{ as } n \to \infty$$</p>
 
-            <div class="set-examples">
-              <div class="set-card">
-                <svg viewBox="0 0 200 110" role="img" aria-label="A function sequence staying inside the epsilon tube">
-                  <rect x="10" y="40" width="180" height="30" fill="#7B4B8C" fill-opacity="0.06"></rect>
-                  <line x1="10" y1="40" x2="190" y2="40" stroke="#999" stroke-width="1" stroke-dasharray="3,3"></line>
-                  <line x1="10" y1="70" x2="190" y2="70" stroke="#999" stroke-width="1" stroke-dasharray="3,3"></line>
-                  <line x1="10" y1="55" x2="190" y2="55" stroke="#4078F2" stroke-width="1.5"></line>
-                  <line x1="15" y1="40" x2="15" y2="55" stroke="#777" stroke-width="1"></line>
-                  <text x="19" y="50" font-size="11" fill="#777" font-style="italic">ε</text>
-                  <polyline points="10,55 50,48 90,62 130,47 170,58 190,55" fill="none" stroke="#4078F2" stroke-width="1.5" stroke-dasharray="4,3"></polyline>
-                </svg>
-                <p><strong>Uniform</strong></p>
-                <p>Eventually inside the ε-tube everywhere at once.</p>
-              </div>
+            <div class="set-examples single">
               <div class="set-card">
                 <svg viewBox="0 0 200 110" role="img" aria-label="A function sequence with a spike escaping the epsilon tube">
                   <rect x="10" y="40" width="180" height="30" fill="#7B4B8C" fill-opacity="0.06"></rect>
@@ -378,6 +363,25 @@
                 </svg>
                 <p><strong>Pointwise only</strong></p>
                 <p>A spike escapes the tube no matter how large n is.</p>
+              </div>
+            </div>
+
+            <p>Uniform convergence requires the entire function, not just each point, to be well-approximated as n grows.</p>
+            <p class="math">$$\textcolor{#4078F2}{f_n} \to \textcolor{#4078F2}{f} \text{ uniformly} \textcolor{#7B4B8C}{\iff} \sup_{x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X}} |\textcolor{#4078F2}{f_n}(x) - \textcolor{#4078F2}{f}(x)| \to 0 \text{ as } n \to \infty$$</p>
+
+            <div class="set-examples single">
+              <div class="set-card">
+                <svg viewBox="0 0 200 110" role="img" aria-label="A function sequence staying inside the epsilon tube">
+                  <rect x="10" y="40" width="180" height="30" fill="#7B4B8C" fill-opacity="0.06"></rect>
+                  <line x1="10" y1="40" x2="190" y2="40" stroke="#999" stroke-width="1" stroke-dasharray="3,3"></line>
+                  <line x1="10" y1="70" x2="190" y2="70" stroke="#999" stroke-width="1" stroke-dasharray="3,3"></line>
+                  <line x1="10" y1="55" x2="190" y2="55" stroke="#4078F2" stroke-width="1.5"></line>
+                  <line x1="15" y1="40" x2="15" y2="55" stroke="#777" stroke-width="1"></line>
+                  <text x="19" y="50" font-size="11" fill="#777" font-style="italic">ε</text>
+                  <polyline points="10,55 50,48 90,62 130,47 170,58 190,55" fill="none" stroke="#4078F2" stroke-width="1.5" stroke-dasharray="4,3"></polyline>
+                </svg>
+                <p><strong>Uniform</strong></p>
+                <p>Eventually inside the ε-tube everywhere at once.</p>
               </div>
             </div>
 
