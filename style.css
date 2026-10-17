@@ -151,6 +151,13 @@ body {
   margin: 0 auto;
 }
 
+/* Wide-format cards (number lines, function graphs) need more than the
+   160px square size meant for the disk diagrams, or their point labels
+   render unreadably small. */
+.set-card svg.wide {
+  max-width: 240px;
+}
+
 .set-card p {
   margin-top: 10px;
   font-size: 0.85rem;
