@@ -196,6 +196,7 @@ body {
   max-width: 420px;
   height: auto;
   display: block;
+  margin: 0 auto;
 }
 
 .lp-graph p {
@@ -212,6 +213,7 @@ body {
   max-width: 380px;
   height: auto;
   display: block;
+  margin: 0 auto;
 }
 
 .cs-table {
@@ -219,6 +221,7 @@ body {
   max-width: 420px;
   border-collapse: collapse;
   font-size: 0.85rem;
+  margin: 0 auto;
 }
 
 .cs-table th,
@@ -238,6 +241,7 @@ body {
   max-width: 420px;
   height: auto;
   display: block;
+  margin: 0 auto;
 }
 
 .stat-chart p {
@@ -248,6 +252,7 @@ body {
 .chart-legend {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 8px 16px;
   margin-top: 10px;
   font-size: 0.82rem;
@@ -313,6 +318,7 @@ body {
   width: 100%;
   max-width: 420px;
   display: block;
+  margin: 0 auto;
   accent-color: #1a1a1a;
 }
 
@@ -342,6 +348,7 @@ body {
 .tableau-card {
   width: fit-content;
   max-width: 100%;
+  margin: 0 auto;
   border: 1px solid #e5e5e5;
   border-radius: 8px;
   padding: 16px 18px;
