@@ -470,6 +470,14 @@
           <div class="topic">
             <h2>Gomory Cutting Planes</h2>
             <p>A Gomory cut adds a valid inequality — one that every integer point already satisfies — that slices a fractional corner off the LP relaxation, shrinking it toward the true integer hull.</p>
+            <p>Take the green-eggs-and-ham budget constraint. The Gomory split needs every variable in its row — including the slack — to be integer-valued at integer solutions, so scale away the decimals first.</p>
+            <p class="math">$$0.7\textcolor{#2f9e44}{x_1} + 0.9\textcolor{#c2525c}{x_2} \leq 3 \quad\Longrightarrow\quad 7\textcolor{#2f9e44}{x_1} + 9\textcolor{#c2525c}{x_2} + s_1 = 30$$</p>
+            <p>At the LP optimum, ham (<span class="var-ham">x₂</span>) is the basic variable and it's fractional. Its simplex tableau row:</p>
+            <p class="math">$$\textcolor{#c2525c}{x_2} + \tfrac{7}{9}\textcolor{#2f9e44}{x_1} + \tfrac{1}{9}s_1 = \tfrac{10}{3}$$</p>
+            <p>Gomory's cut keeps only the fractional part of each coefficient and of the right-hand side. Any integer solution still satisfies it, but the current fractional vertex can't — plugging in x₁ = s₁ = 0 gives 0 ≥ ⅓, which is false.</p>
+            <p class="math">$$\tfrac{7}{9}\textcolor{#2f9e44}{x_1} + \tfrac{1}{9}s_1 \geq \tfrac{1}{3} \quad\Longrightarrow\quad 7\textcolor{#2f9e44}{x_1} + s_1 \geq 3$$</p>
+            <p>Substituting the slack back out in terms of the original variables collapses this to a single bound on ham, independent of eggs — exactly the cut drawn below.</p>
+            <p class="math">$$7\textcolor{#2f9e44}{x_1} + (30 - 7\textcolor{#2f9e44}{x_1} - 9\textcolor{#c2525c}{x_2}) \geq 3 \quad\Longrightarrow\quad \textcolor{#c2525c}{x_2} \leq 3$$</p>
             <div class="lp-graph" id="gomory-graph-root"></div>
             <p>The faint dashed outline above is the LP relaxation before any cuts. Since ham must be a whole number, x₂ ≤ 3.33 is really x₂ ≤ 3 — a valid cut that removes no integer point, but slices off the fractional corner and shrinks the relaxation's optimum from 33.33 down to 33, a step closer to the true integer optimum of 31.</p>
           </div>
