@@ -150,10 +150,26 @@ body {
   margin-top: 12px;
 }
 
+.viz {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.viz svg {
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.viz p {
+  margin-top: 10px;
+  font-size: 0.85rem;
+}
+
 .lp-graph {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid #eee;
+  margin-top: 28px;
 }
 
 .lp-graph svg {
@@ -166,6 +182,200 @@ body {
 .lp-graph p {
   margin-top: 14px;
   font-size: 0.9rem;
+}
+
+.stat-chart {
+  margin-top: 24px;
+}
+
+.stat-chart svg {
+  width: 100%;
+  max-width: 380px;
+  height: auto;
+  display: block;
+}
+
+.cs-table {
+  width: 100%;
+  max-width: 420px;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.cs-table th,
+.cs-table td {
+  text-align: left;
+  padding: 7px 10px 7px 0;
+  color: #555;
+}
+
+.cs-table th {
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.dijkstra-graph svg {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  display: block;
+}
+
+.stat-chart p {
+  margin-top: 14px;
+  font-size: 0.9rem;
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-top: 10px;
+  font-size: 0.82rem;
+  color: #555;
+}
+
+.chart-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chart-legend-swatch {
+  display: inline-block;
+  width: 16px;
+  height: 10px;
+  flex: 0 0 auto;
+}
+
+.chart-legend-swatch.line {
+  height: 0;
+  border-top: 2px solid currentColor;
+}
+
+.chart-legend-swatch.dashed {
+  height: 0;
+  border-top: 2px dashed currentColor;
+}
+
+.chart-legend-swatch.fill {
+  background: currentColor;
+  opacity: 0.25;
+  border-radius: 2px;
+}
+
+.chart-legend-swatch.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.var-prior {
+  color: #868e96;
+  font-weight: 600;
+}
+
+.var-likelihood {
+  color: #e8590c;
+  font-weight: 600;
+}
+
+.var-posterior {
+  color: #0b7285;
+  font-weight: 600;
+}
+
+.dijkstra-controls {
+  margin-top: 14px;
+}
+
+.dijkstra-controls input[type="range"] {
+  width: 100%;
+  max-width: 420px;
+  display: block;
+  accent-color: #1a1a1a;
+}
+
+.tableau-wrap {
+  margin-top: 28px;
+}
+
+.tableau-phase {
+  margin: 28px 0 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.tableau-phase:first-child {
+  margin-top: 0;
+}
+
+.tableau-step {
+  margin-top: 36px;
+}
+
+.tableau-step:first-child {
+  margin-top: 0;
+}
+
+.tableau-card {
+  width: fit-content;
+  max-width: 100%;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 16px 18px;
+}
+
+.tableau-scroll {
+  overflow-x: auto;
+}
+
+.tableau {
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.tableau th,
+.tableau td {
+  text-align: right;
+  padding: 8px 16px 8px 0;
+}
+
+.tableau thead th {
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.tableau tbody th {
+  text-align: left;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.tableau tbody th,
+.tableau thead th:first-child {
+  padding-right: 18px;
+}
+
+.tableau tbody tr:last-child th,
+.tableau tbody tr:last-child td {
+  font-weight: 600;
+}
+
+.pivot-cell {
+  color: #c0392b;
+  font-weight: 700;
+  background: rgba(192, 57, 43, 0.07);
+  border-radius: 4px;
+}
+
+.tableau-caption {
+  margin-top: 18px;
+  font-size: 0.9rem;
+  color: #555;
 }
 
 .chart-tooltip {

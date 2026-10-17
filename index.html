@@ -33,6 +33,24 @@
             <p class="math">$$\textcolor{#4078F2}{d}(x,y) \textcolor{#7B4B8C}{=} \textcolor{#4078F2}{d}(y,x)$$</p>
             <p>Going through a third point never shortens the direct route.</p>
             <p class="math">$$\textcolor{#4078F2}{d}(x,z) \textcolor{#7B4B8C}{\leq} \textcolor{#4078F2}{d}(x,y) + \textcolor{#4078F2}{d}(y,z)$$</p>
+
+            <div class="viz">
+              <svg viewBox="0 0 220 150" role="img" aria-label="Triangle inequality diagram">
+                <line x1="40" y1="120" x2="175" y2="95" stroke="#999" stroke-width="1.5"></line>
+                <line x1="175" y1="95" x2="115" y2="25" stroke="#999" stroke-width="1.5"></line>
+                <line x1="40" y1="120" x2="115" y2="25" stroke="#C18401" stroke-width="2" stroke-dasharray="5,4"></line>
+                <circle cx="40" cy="120" r="3" fill="#1a1a1a"></circle>
+                <circle cx="175" cy="95" r="3" fill="#1a1a1a"></circle>
+                <circle cx="115" cy="25" r="3" fill="#1a1a1a"></circle>
+                <text x="26" y="134" font-size="12" fill="#555">x</text>
+                <text x="183" y="92" font-size="12" fill="#555">y</text>
+                <text x="110" y="15" font-size="12" fill="#555">z</text>
+                <text x="80" y="118" font-size="10" fill="#777">d(x,y)</text>
+                <text x="150" y="53" font-size="10" fill="#777">d(y,z)</text>
+                <text x="18" y="85" font-size="10" fill="#C18401">d(x,z)</text>
+              </svg>
+              <p>The direct route <strong>x → z</strong> (dashed) is never longer than detouring through <strong>y</strong>.</p>
+            </div>
           </div>
           <div class="topic">
             <h2>Open and Closed Sets</h2>
@@ -130,26 +148,188 @@
             <h2>Sequences and Convergence</h2>
             <p>A sequence converges when its terms get and stay arbitrarily close to a single limit point.</p>
             <p class="math">$$x_n \to x \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#7B4B8C}{\exists} N \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{\mathbb{N}} \text{ s.t. } \textcolor{#7B4B8C}{\forall} n \textcolor{#7B4B8C}{\geq} N,\ \textcolor{#4078F2}{d}(x_n, x) \textcolor{#7B4B8C}{<} \varepsilon$$</p>
+
+            <div class="viz">
+              <svg viewBox="0 0 220 120" role="img" aria-label="Sequence converging into an epsilon band around the limit">
+                <line x1="15" y1="55" x2="205" y2="55" stroke="#ccc" stroke-width="1"></line>
+                <rect x="150" y="35" width="40" height="40" fill="#7B4B8C" fill-opacity="0.08"></rect>
+                <line x1="150" y1="35" x2="150" y2="75" stroke="#999" stroke-width="1" stroke-dasharray="3,3"></line>
+                <line x1="190" y1="35" x2="190" y2="75" stroke="#999" stroke-width="1" stroke-dasharray="3,3"></line>
+                <text x="139" y="26" font-size="11" fill="#777" font-style="italic">ε</text>
+                <text x="193" y="26" font-size="11" fill="#777" font-style="italic">ε</text>
+                <circle cx="170" cy="55" r="3.5" fill="#1a1a1a"></circle>
+                <text x="166" y="28" font-size="11" fill="#555">x</text>
+                <circle cx="25" cy="55" r="3" fill="#999"></circle>
+                <text x="19" y="46" font-size="9" fill="#999">x₁</text>
+                <circle cx="65" cy="55" r="3" fill="#999"></circle>
+                <text x="59" y="46" font-size="9" fill="#999">x₂</text>
+                <circle cx="105" cy="55" r="3" fill="#999"></circle>
+                <text x="99" y="46" font-size="9" fill="#999">x₃</text>
+                <circle cx="138" cy="55" r="3" fill="#999"></circle>
+                <text x="131" y="46" font-size="9" fill="#999">x₄</text>
+                <circle cx="156" cy="55" r="3" fill="#C18401"></circle>
+                <text x="149" y="46" font-size="9" fill="#C18401">x₅</text>
+                <circle cx="184" cy="55" r="3" fill="#C18401"></circle>
+                <text x="188" y="46" font-size="9" fill="#C18401">x₆</text>
+                <line x1="156" y1="75" x2="156" y2="92" stroke="#999" stroke-width="1"></line>
+                <text x="151" y="104" font-size="10" fill="#777">N</text>
+              </svg>
+              <p>Terms with index past <strong>N</strong> stay within ε of the limit <strong>x</strong>.</p>
+            </div>
           </div>
           <div class="topic">
             <h2>Continuity</h2>
             <p>A function is continuous when small changes in input produce arbitrarily small changes in output.</p>
             <p class="math">$$\textcolor{#4078F2}{f} \text{ continuous at } x_0 \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#7B4B8C}{\exists}\, \delta \textcolor{#7B4B8C}{>} 0 \text{ s.t. } \textcolor{#4078F2}{d}(x,x_0) \textcolor{#7B4B8C}{<} \delta \textcolor{#7B4B8C}{\implies} \textcolor{#4078F2}{d}(\textcolor{#4078F2}{f}(x), \textcolor{#4078F2}{f}(x_0)) \textcolor{#7B4B8C}{<} \varepsilon$$</p>
+
+            <div class="viz">
+              <svg viewBox="0 0 260 220" role="img" aria-label="Epsilon-delta diagram for continuity">
+                <rect x="120" y="20" width="60" height="170" fill="#7B4B8C" fill-opacity="0.06"></rect>
+                <rect x="50" y="75" width="190" height="50" fill="#7B4B8C" fill-opacity="0.06"></rect>
+                <line x1="120" y1="20" x2="120" y2="190" stroke="#999" stroke-width="1" stroke-dasharray="3,3"></line>
+                <line x1="180" y1="20" x2="180" y2="190" stroke="#999" stroke-width="1" stroke-dasharray="3,3"></line>
+                <line x1="50" y1="75" x2="240" y2="75" stroke="#999" stroke-width="1" stroke-dasharray="3,3"></line>
+                <line x1="50" y1="125" x2="240" y2="125" stroke="#999" stroke-width="1" stroke-dasharray="3,3"></line>
+                <text x="131" y="15" font-size="11" fill="#777" font-style="italic">δ</text>
+                <text x="161" y="15" font-size="11" fill="#777" font-style="italic">δ</text>
+                <text x="244" y="91" font-size="11" fill="#777" font-style="italic">ε</text>
+                <text x="244" y="116" font-size="11" fill="#777" font-style="italic">ε</text>
+                <line x1="50" y1="190" x2="240" y2="190" stroke="#999" stroke-width="1.5"></line>
+                <line x1="50" y1="190" x2="50" y2="20" stroke="#999" stroke-width="1.5"></line>
+                <polyline points="50,175 90,150 120,125 150,100 180,75 210,55 240,40" fill="none" stroke="#4078F2" stroke-width="2"></polyline>
+                <line x1="150" y1="190" x2="150" y2="100" stroke="#999" stroke-width="1" stroke-dasharray="2,2"></line>
+                <line x1="50" y1="100" x2="150" y2="100" stroke="#999" stroke-width="1" stroke-dasharray="2,2"></line>
+                <circle cx="150" cy="100" r="3.5" fill="#4078F2"></circle>
+                <text x="140" y="205" font-size="11" fill="#555">x₀</text>
+                <text x="8" y="104" font-size="11" fill="#555">f(x₀)</text>
+              </svg>
+              <p>Keeping <strong>x</strong> within δ of <strong>x₀</strong> (vertical band) keeps <strong>f(x)</strong> within ε of <strong>f(x₀)</strong> (horizontal band).</p>
+            </div>
           </div>
           <div class="topic">
-            <h2>Boundedness and Total Boundedness</h2>
+            <h2>Boundedness</h2>
+            <p>A set is bounded when it fits entirely inside some ball of finite radius.</p>
+            <p class="math">$$\textcolor{#C18401}{A} \text{ bounded} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\exists}\, x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X},\ \textcolor{#7B4B8C}{\exists}\, r \textcolor{#7B4B8C}{>} 0 \text{ s.t. } \textcolor{#C18401}{A} \textcolor{#7B4B8C}{\subseteq} \textcolor{#C18401}{B}(x, r)$$</p>
             <p>Total boundedness strengthens boundedness by requiring a set to be coverable by finitely many small balls.</p>
             <p class="math">$$\textcolor{#C18401}{A} \text{ totally bounded} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#C18401}{A} \textcolor{#7B4B8C}{\subseteq} \textcolor{#7B4B8C}{\bigcup}_{i=1}^{n} \textcolor{#C18401}{B}(x_i, \varepsilon) \text{ for some finite } x_1, \dots, x_n$$</p>
+
+            <div class="set-examples">
+              <div class="set-card">
+                <svg viewBox="0 0 160 160" role="img" aria-label="A bounded set inside one large ball">
+                  <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
+                  <circle cx="80" cy="80" r="65" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="4,4"></circle>
+                  <ellipse cx="80" cy="80" rx="40" ry="28" fill="#C18401" fill-opacity="0.15" stroke="#C18401" stroke-width="2"></ellipse>
+                </svg>
+                <p><strong>Bounded</strong></p>
+              </div>
+              <div class="set-card">
+                <svg viewBox="0 0 160 160" role="img" aria-label="The same set covered by finitely many small balls">
+                  <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
+                  <ellipse cx="80" cy="80" rx="40" ry="28" fill="#C18401" fill-opacity="0.15" stroke="#C18401" stroke-width="2"></ellipse>
+                  <circle cx="60" cy="66" r="27" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="3,3"></circle>
+                  <circle cx="100" cy="66" r="27" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="3,3"></circle>
+                  <circle cx="60" cy="94" r="27" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="3,3"></circle>
+                  <circle cx="100" cy="94" r="27" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="3,3"></circle>
+                  <line x1="60" y1="66" x2="60" y2="39" stroke="#777" stroke-width="1"></line>
+                  <text x="64" y="50" font-size="11" fill="#777" font-style="italic">ε</text>
+                </svg>
+                <p><strong>Totally bounded</strong></p>
+              </div>
+            </div>
           </div>
           <div class="topic">
             <h2>Completeness and Compactness</h2>
             <p>A complete space contains the limits of all its Cauchy sequences, leaving no "gaps" to converge into.</p>
             <p class="math">$$(\textcolor{#C18401}{X},\textcolor{#4078F2}{d}) \text{ complete} \textcolor{#7B4B8C}{\iff} \text{every Cauchy sequence } (x_n) \text{ in } \textcolor{#C18401}{X} \text{ converges to some } x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X}$$</p>
+
+            <div class="set-examples">
+              <div class="set-card">
+                <svg viewBox="0 0 200 90" role="img" aria-label="A Cauchy sequence of rationals with no rational limit">
+                  <line x1="10" y1="45" x2="158" y2="45" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="172" y1="45" x2="190" y2="45" stroke="#ccc" stroke-width="1"></line>
+                  <circle cx="20" cy="45" r="3" fill="#999"></circle>
+                  <text x="15" y="36" font-size="9" fill="#999">x₁</text>
+                  <circle cx="55" cy="45" r="3" fill="#999"></circle>
+                  <text x="50" y="36" font-size="9" fill="#999">x₂</text>
+                  <circle cx="90" cy="45" r="3" fill="#999"></circle>
+                  <text x="85" y="36" font-size="9" fill="#999">x₃</text>
+                  <circle cx="120" cy="45" r="3" fill="#999"></circle>
+                  <text x="115" y="36" font-size="9" fill="#999">x₄</text>
+                  <circle cx="140" cy="45" r="3" fill="#999"></circle>
+                  <text x="135" y="36" font-size="9" fill="#999">x₅</text>
+                  <circle cx="155" cy="45" r="3" fill="#999"></circle>
+                  <text x="150" y="36" font-size="9" fill="#999">x₆</text>
+                  <circle cx="165" cy="45" r="5" fill="none" stroke="#999" stroke-width="2" stroke-dasharray="2,2"></circle>
+                  <text x="161" y="68" font-size="9" fill="#999">√2</text>
+                </svg>
+                <p><strong>Missing its limit</strong></p>
+                <p class="math">$$\sqrt{2} \textcolor{#7B4B8C}{\notin} \textcolor{#C18401}{\mathbb{Q}}$$</p>
+              </div>
+              <div class="set-card">
+                <svg viewBox="0 0 200 90" role="img" aria-label="The same sequence converging to a real limit">
+                  <line x1="10" y1="45" x2="190" y2="45" stroke="#ccc" stroke-width="1"></line>
+                  <circle cx="20" cy="45" r="3" fill="#999"></circle>
+                  <text x="15" y="36" font-size="9" fill="#999">x₁</text>
+                  <circle cx="55" cy="45" r="3" fill="#999"></circle>
+                  <text x="50" y="36" font-size="9" fill="#999">x₂</text>
+                  <circle cx="90" cy="45" r="3" fill="#999"></circle>
+                  <text x="85" y="36" font-size="9" fill="#999">x₃</text>
+                  <circle cx="120" cy="45" r="3" fill="#999"></circle>
+                  <text x="115" y="36" font-size="9" fill="#999">x₄</text>
+                  <circle cx="140" cy="45" r="3" fill="#999"></circle>
+                  <text x="135" y="36" font-size="9" fill="#999">x₅</text>
+                  <circle cx="155" cy="45" r="3" fill="#999"></circle>
+                  <text x="150" y="36" font-size="9" fill="#999">x₆</text>
+                  <circle cx="165" cy="45" r="4" fill="#C18401"></circle>
+                  <text x="161" y="68" font-size="9" fill="#C18401">√2</text>
+                </svg>
+                <p><strong>Contains its limit</strong></p>
+                <p class="math">$$\sqrt{2} \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{\mathbb{R}}$$</p>
+              </div>
+            </div>
           </div>
           <div class="topic">
             <h2>Sequences and Series of Functions</h2>
+            <p>Pointwise convergence only asks each individual input to eventually settle, with no control over how fast that happens from one point to the next.</p>
+            <p class="math">$$\forall x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X},\quad \textcolor{#4078F2}{f_n}(x) \to \textcolor{#4078F2}{f}(x) \text{ as } n \to \infty$$</p>
             <p>Uniform convergence requires the entire function, not just each point, to be well-approximated as n grows.</p>
             <p class="math">$$\textcolor{#4078F2}{f_n} \to \textcolor{#4078F2}{f} \text{ uniformly} \textcolor{#7B4B8C}{\iff} \sup_{x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X}} |\textcolor{#4078F2}{f_n}(x) - \textcolor{#4078F2}{f}(x)| \to 0 \text{ as } n \to \infty$$</p>
+
+            <div class="set-examples">
+              <div class="set-card">
+                <svg viewBox="0 0 200 110" role="img" aria-label="A function sequence staying inside the epsilon tube">
+                  <rect x="10" y="40" width="180" height="30" fill="#7B4B8C" fill-opacity="0.06"></rect>
+                  <line x1="10" y1="40" x2="190" y2="40" stroke="#999" stroke-width="1" stroke-dasharray="3,3"></line>
+                  <line x1="10" y1="70" x2="190" y2="70" stroke="#999" stroke-width="1" stroke-dasharray="3,3"></line>
+                  <line x1="10" y1="55" x2="190" y2="55" stroke="#4078F2" stroke-width="1.5"></line>
+                  <line x1="15" y1="40" x2="15" y2="55" stroke="#777" stroke-width="1"></line>
+                  <text x="19" y="50" font-size="11" fill="#777" font-style="italic">ε</text>
+                  <polyline points="10,55 50,48 90,62 130,47 170,58 190,55" fill="none" stroke="#4078F2" stroke-width="1.5" stroke-dasharray="4,3"></polyline>
+                </svg>
+                <p><strong>Uniform</strong></p>
+                <p>Eventually inside the ε-tube everywhere at once.</p>
+              </div>
+              <div class="set-card">
+                <svg viewBox="0 0 200 110" role="img" aria-label="A function sequence with a spike escaping the epsilon tube">
+                  <rect x="10" y="40" width="180" height="30" fill="#7B4B8C" fill-opacity="0.06"></rect>
+                  <line x1="10" y1="40" x2="190" y2="40" stroke="#999" stroke-width="1" stroke-dasharray="3,3"></line>
+                  <line x1="10" y1="70" x2="190" y2="70" stroke="#999" stroke-width="1" stroke-dasharray="3,3"></line>
+                  <line x1="10" y1="55" x2="190" y2="55" stroke="#4078F2" stroke-width="1.5"></line>
+                  <line x1="15" y1="40" x2="15" y2="55" stroke="#777" stroke-width="1"></line>
+                  <text x="19" y="50" font-size="11" fill="#777" font-style="italic">ε</text>
+                  <polyline points="10,55 70,55 90,55 100,10 110,55 130,55 190,55" fill="none" stroke="#4078F2" stroke-width="1.5" stroke-dasharray="4,3"></polyline>
+                </svg>
+                <p><strong>Pointwise only</strong></p>
+                <p>A spike escapes the tube no matter how large n is.</p>
+              </div>
+            </div>
+
+            <p>A series of functions converges uniformly when its partial sums converge uniformly to the same limit function.</p>
+            <p class="math">$$\textstyle\sum_{n=1}^{N} \textcolor{#4078F2}{f_n} \to \textcolor{#4078F2}{f} \text{ uniformly as } N \to \infty$$</p>
+            <p>The Weierstrass M-test gets uniform convergence for free: bound each term by a constant, and if those constants are summable, so is the series — uniformly.</p>
+            <p class="math">$$\Big(\forall n,\ \forall x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X},\ |\textcolor{#4078F2}{f_n}(x)| \le M_n\Big) \wedge \sum_{n=1}^{\infty} M_n < \infty \quad \textcolor{#7B4B8C}{\implies} \quad \sum_{n=1}^{\infty} \textcolor{#4078F2}{f_n} \text{ converges uniformly}$$</p>
           </div>
         </div>
       </section>
@@ -189,31 +369,98 @@
           </div>
           <div class="topic">
             <h2>Simplex</h2>
-            <p>Placeholder text.</p>
+            <p>The simplex method never looks inside the feasible region — it starts at a corner and walks along the edges toward a better one.</p>
+            <div class="lp-graph" id="simplex-graph-root"></div>
+            <p>The same walk, numerically: the tableau starts with every slack basic, then pivots one variable in and one out per step.</p>
+            <div class="tableau-wrap" id="simplex-tableau-root"></div>
           </div>
           <div class="topic">
             <h2>Two-Phase Simplex</h2>
-            <p>Placeholder text.</p>
+            <p>Add a minimum order to the same ice cream line: at least 2 liters total must be made, or it isn't worth running the machine.</p>
+            <p class="math">$$\textcolor{#e64980}{x_1} + \textcolor{#3b6bd6}{x_2} \geq 2$$</p>
+            <p>Now the origin is infeasible, so simplex has nowhere obvious to start. Phase one ignores profit and just hunts for any feasible corner, using an artificial variable to patch the constraint; phase two then optimizes real profit from there.</p>
+            <div class="lp-graph" id="two-phase-graph-root"></div>
+            <div class="tableau-wrap" id="two-phase-tableau-root"></div>
           </div>
           <div class="topic">
             <h2>Getting a Dual from a Primal</h2>
-            <p>Placeholder text.</p>
+            <p>Every primal has a dual: a max problem's dual is a min problem, one dual variable per primal constraint and one dual constraint per primal variable.</p>
+            <div class="lp-graph">
+              <svg viewBox="0 0 260 220" role="img" aria-label="Primal and dual values converging to a common optimum">
+                <line x1="70" y1="108" x2="190" y2="108" stroke="#ccc" stroke-width="1" stroke-dasharray="3,3"></line>
+
+                <line x1="70" y1="186" x2="70" y2="116" stroke="#e64980" stroke-width="2"></line>
+                <polygon points="70,108 64,120 76,120" fill="#e64980"></polygon>
+                <circle cx="70" cy="186" r="3" fill="#e64980"></circle>
+                <circle cx="70" cy="160" r="3" fill="#e64980"></circle>
+                <circle cx="70" cy="136" r="3" fill="#e64980"></circle>
+                <text x="70" y="205" font-size="11" fill="#e64980" text-anchor="middle">primal (max)</text>
+
+                <line x1="190" y1="28" x2="190" y2="98" stroke="#3b6bd6" stroke-width="2"></line>
+                <polygon points="190,108 184,96 196,96" fill="#3b6bd6"></polygon>
+                <circle cx="190" cy="28" r="3" fill="#3b6bd6"></circle>
+                <circle cx="190" cy="54" r="3" fill="#3b6bd6"></circle>
+                <circle cx="190" cy="80" r="3" fill="#3b6bd6"></circle>
+                <text x="190" y="18" font-size="11" fill="#3b6bd6" text-anchor="middle">dual (min)</text>
+
+                <circle cx="130" cy="108" r="4" fill="#1a1a1a"></circle>
+                <text x="130" y="128" font-size="11" fill="#1a1a1a" text-anchor="middle">z* (optimal)</text>
+              </svg>
+              <p>Weak duality keeps the primal's rising values below the dual's falling ones at every step; strong duality is the special fact that, at the optimum, they meet exactly.</p>
+            </div>
           </div>
           <div class="topic">
             <h2>Complementary Slackness</h2>
-            <p>Placeholder text.</p>
+            <p>At the optimum, a primal variable and its matching dual constraint can't both be slack — for each pair, at least one of the two must be exactly zero.</p>
+            <div class="lp-graph">
+              <table class="cs-table">
+                <thead>
+                  <tr><th>Primal</th><th>Dual</th><th>Rule</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><span class="var-mint">x₁</span> &gt; 0</td><td>dual constraint 1</td><td>binds exactly (zero slack)</td></tr>
+                  <tr><td>primal constraint 1</td><td>y₁ &gt; 0</td><td>binds exactly (zero slack)</td></tr>
+                  <tr><td>primal constraint 2 slack</td><td>y₂ = 0</td><td>unused dual variable is zero</td></tr>
+                </tbody>
+              </table>
+              <p class="math">$$\textcolor{#e64980}{x_1} \textcolor{#7B4B8C}{>} 0 \implies \text{dual constraint 1 binds}, \qquad y_2 \textcolor{#7B4B8C}{>} 0 \implies \text{primal constraint 2 binds}$$</p>
+            </div>
           </div>
           <div class="topic">
             <h2>Dijkstra's Algorithm</h2>
-            <p>Placeholder text.</p>
+            <p>Dijkstra grows a shortest-path tree one node at a time, always settling the closest unvisited node next.</p>
+            <div class="lp-graph">
+              <div class="dijkstra-graph" id="dijkstra-graph-root"></div>
+            </div>
           </div>
           <div class="topic">
             <h2>Gomory Cutting Planes</h2>
-            <p>Placeholder text.</p>
+            <p>A Gomory cut adds a valid inequality — one that every integer point already satisfies — that slices a fractional corner off the LP relaxation, shrinking it toward the true integer hull.</p>
+            <div class="lp-graph" id="gomory-graph-root"></div>
           </div>
           <div class="topic">
             <h2>Complexity and NP-Completeness</h2>
-            <p>Placeholder text.</p>
+            <p>P is every problem solvable quickly; NP is every problem whose solution can be checked quickly; NP-complete problems are the hardest problems in NP, each able to encode any other via a reduction.</p>
+            <div class="lp-graph">
+              <svg viewBox="0 0 340 230" role="img" aria-label="Venn diagram of P inside NP, with NP-complete as a subset">
+                <ellipse cx="170" cy="115" rx="160" ry="100" fill="none" stroke="#333" stroke-width="1.5"></ellipse>
+                <text x="28" y="38" font-size="12" fill="#333">NP</text>
+
+                <circle cx="100" cy="130" r="58" fill="#3b6bd6" fill-opacity="0.08" stroke="#3b6bd6" stroke-width="1.5"></circle>
+                <text x="100" y="134" font-size="12" fill="#3b6bd6" text-anchor="middle">P</text>
+
+                <circle cx="240" cy="110" r="58" fill="#c0392b" fill-opacity="0.08" stroke="#c0392b" stroke-width="1.5"></circle>
+                <text x="240" y="72" font-size="11" fill="#c0392b" text-anchor="middle">NP-complete</text>
+
+                <circle cx="222" cy="100" r="3" fill="#1a1a1a"></circle>
+                <text x="198" y="104" font-size="10" fill="#1a1a1a" text-anchor="end">SAT</text>
+                <circle cx="262" cy="130" r="3" fill="#1a1a1a"></circle>
+                <text x="262" y="150" font-size="10" fill="#1a1a1a" text-anchor="middle">vertex cover</text>
+                <line x1="222" y1="100" x2="262" y2="130" stroke="#1a1a1a" stroke-width="1" stroke-dasharray="3,3"></line>
+                <text x="228" y="92" font-size="9" fill="#555">reduces to</text>
+              </svg>
+              <p>If any single NP-complete problem (like SAT) turns out to be solvable quickly, a reduction lets every problem in NP ride along and be solved quickly too — that's exactly the open question "does P = NP?".</p>
+            </div>
           </div>
         </div>
       </section>
@@ -224,36 +471,64 @@
 
         <div class="topics">
           <div class="topic">
+            <h2>Regression models</h2>
+            <p>A regression model treats the response as a deterministic trend plus random noise, rather than an exact function of the predictors.</p>
+            <p class="math">$$Y_i = \textcolor{#0b7285}{\beta_0} + \textcolor{#0b7285}{\beta_1} x_i + \varepsilon_i, \quad \varepsilon_i \textcolor{#7B4B8C}{\sim} N(0, \sigma^2)$$</p>
+            <p>Fitting the model means choosing the coefficients that make the residuals — the leftover noise — as small as possible.</p>
+            <p class="math">$$(\hat{\textcolor{#0b7285}{\beta_0}}, \hat{\textcolor{#0b7285}{\beta_1}}) = \textcolor{#7B4B8C}{\arg\min_{\beta_0,\beta_1}} \sum_{i=1}^{n} (y_i - \beta_0 - \beta_1 x_i)^2$$</p>
+          </div>
+          <div class="topic">
             <h2>MLEs</h2>
-            <p>Placeholder text.</p>
+            <p>Maximum likelihood picks whichever parameter value makes the observed data most probable.</p>
+            <p class="math">$$\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}} = \textcolor{#7B4B8C}{\arg\max_{\theta}}\ L(\theta) = \textcolor{#7B4B8C}{\arg\max_{\theta}} \prod_{i=1}^{n} f(x_i; \theta)$$</p>
+            <p>Products are awkward to differentiate, so in practice the log-likelihood is maximized instead — it has the same maximizer, with easier calculus.</p>
+            <p class="math">$$\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}} = \textcolor{#7B4B8C}{\arg\max_{\theta}}\ \ell(\theta), \quad \ell(\theta) = \sum_{i=1}^{n} \log f(x_i;\theta)$$</p>
+
+            <div class="stat-chart" id="mle-chart-root"></div>
           </div>
           <div class="topic">
             <h2>Bayesian inference</h2>
-            <p>Placeholder text.</p>
+            <p>Bayesian inference treats the parameter itself as random, updating a prior belief into a posterior once data is observed.</p>
+            <p class="math">$$\pi(\textcolor{#0b7285}{\theta} \mid x) \textcolor{#7B4B8C}{\propto} f(x \mid \textcolor{#0b7285}{\theta})\, \pi(\textcolor{#0b7285}{\theta})$$</p>
+            <p>In words: the posterior is proportional to the likelihood times the prior — the data reshapes belief, it doesn't replace it.</p>
+
+            <div class="stat-chart" id="bayes-chart-root"></div>
           </div>
           <div class="topic">
             <h2>Method of moments</h2>
-            <p>Placeholder text.</p>
+            <p>Method of moments estimates parameters by matching the sample's moments to the distribution's theoretical moments.</p>
+            <p class="math">$$E[X^k] = \frac{1}{n}\sum_{i=1}^{n} X_i^k, \quad k = 1, 2, \dots$$</p>
+            <p>Solving these equations for the unknown parameters, one per moment used, gives the method-of-moments estimator.</p>
+            <p class="math">$$\text{solve for } \textcolor{#0b7285}{\theta} \text{ using as many moments as there are parameters}$$</p>
           </div>
           <div class="topic">
             <h2>Hypothesis testing</h2>
-            <p>Placeholder text.</p>
+            <p>A hypothesis test rejects the null hypothesis when the observed data would be too unlikely if the null were actually true.</p>
+            <p class="math">$$\textcolor{#7B4B8C}{\text{reject } H_0} \textcolor{#7B4B8C}{\iff} \text{test statistic} \textcolor{#7B4B8C}{\in} \text{rejection region}$$</p>
+            <p>The rejection region is sized so that, if H₀ is actually true, the test wrongly rejects it only a small fraction of the time.</p>
+            <p class="math">$$P(\textcolor{#7B4B8C}{\text{reject } H_0} \mid H_0 \text{ true}) = \textcolor{#c92a2a}{\alpha}$$</p>
+
+            <div class="stat-chart" id="hyp-chart-root"></div>
           </div>
           <div class="topic">
             <h2>Likelihood ratio</h2>
-            <p>Placeholder text.</p>
+            <p>The likelihood ratio compares how well the data is explained by the best-fitting restricted (null) model versus the best-fitting unrestricted model.</p>
+            <p class="math">$$\Lambda = \frac{\sup_{\theta \in \Theta_0} L(\theta)}{\sup_{\theta \in \Theta} L(\theta)}$$</p>
+            <p>A ratio near 1 means restricting to H₀ barely hurt the fit; a ratio near 0 means the unrestricted model fits much better.</p>
+            <p class="math">$$-2\log \Lambda \ \xrightarrow{d}\ \chi^2_{k}$$</p>
           </div>
           <div class="topic">
             <h2>Pivotal quantities</h2>
-            <p>Placeholder text.</p>
+            <p>A pivotal quantity is built from both the data and the parameter, yet its own distribution never depends on the parameter's value.</p>
+            <p class="math">$$\frac{\bar{X} - \textcolor{#0b7285}{\mu}}{S/\sqrt{n}} \textcolor{#7B4B8C}{\sim} t_{n-1} \quad \text{for every value of } \textcolor{#0b7285}{\mu}$$</p>
+            <p>Because that distribution is known regardless of the true parameter, a pivotal quantity can be inverted directly into a confidence interval.</p>
           </div>
           <div class="topic">
-            <h2>(Stochastic) Regression models</h2>
-            <p>Placeholder text.</p>
-          </div>
-          <div class="topic">
-            <h2>Fisher information???</h2>
-            <p>Placeholder text.</p>
+            <h2>Fisher information</h2>
+            <p>Fisher information measures how sharply the log-likelihood curves at the true parameter — more curvature means the data pins the parameter down more precisely.</p>
+            <p class="math">$$I(\textcolor{#0b7285}{\theta}) = -E\!\left[\frac{\partial^2}{\partial \textcolor{#0b7285}{\theta}^2} \log f(X; \textcolor{#0b7285}{\theta})\right]$$</p>
+            <p>It bounds how precise any unbiased estimator can possibly be, and approximates how precise the MLE actually is once the sample is large.</p>
+            <p class="math">$$\text{Var}(\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}}) \approx \frac{1}{I(\textcolor{#0b7285}{\theta})}$$</p>
           </div>
         </div>
       </section>
