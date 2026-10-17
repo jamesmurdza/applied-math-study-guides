@@ -231,6 +231,51 @@ body {
   font-size: 0.9rem;
 }
 
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-top: 10px;
+  font-size: 0.82rem;
+  color: #555;
+}
+
+.chart-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chart-legend-swatch {
+  display: inline-block;
+  width: 16px;
+  height: 10px;
+  flex: 0 0 auto;
+}
+
+.chart-legend-swatch.line {
+  height: 0;
+  border-top: 2px solid currentColor;
+}
+
+.chart-legend-swatch.dashed {
+  height: 0;
+  border-top: 2px dashed currentColor;
+}
+
+.chart-legend-swatch.fill {
+  background: currentColor;
+  opacity: 0.25;
+  border-radius: 2px;
+}
+
+.chart-legend-swatch.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
 .var-prior {
   color: #868e96;
   font-weight: 600;

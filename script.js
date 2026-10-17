@@ -131,6 +131,27 @@ if (window.renderMathInElement) {
     }));
   }
 
+  // Small HTML legend placed under a chart: one swatch + label per item.
+  // item.type is 'line' | 'dashed' | 'fill' | 'dot'; item.color sets the
+  // swatch's color via currentColor so the CSS stays shape-only.
+  function renderLegend(container, items) {
+    const legend = document.createElement('div');
+    legend.className = 'chart-legend';
+    items.forEach(item => {
+      const entry = document.createElement('span');
+      entry.className = 'chart-legend-item';
+      const swatch = document.createElement('span');
+      swatch.className = `chart-legend-swatch ${item.type}`;
+      swatch.style.color = item.color;
+      entry.appendChild(swatch);
+      const label = document.createElement('span');
+      label.textContent = item.label;
+      entry.appendChild(label);
+      legend.appendChild(entry);
+    });
+    container.appendChild(legend);
+  }
+
   // Custom on-page tooltip — a single shared floating element, shown/moved/
   // hidden via mouse events. More reliable than a native <title> tooltip
   // (no hover delay, works the same everywhere, and is actually verifiable).
@@ -1113,6 +1134,11 @@ if (window.renderMathInElement) {
 
     container.innerHTML = '';
     container.appendChild(svg);
+    renderLegend(container, [
+      { type: 'line', color: '#1a1a1a', label: 'null distribution' },
+      { type: 'fill', color: '#c92a2a', label: 'rejection region' },
+      { type: 'dot', color: '#1a1a1a', label: 'observed statistic' }
+    ]);
     const caption = document.createElement('p');
     caption.textContent = `The shaded tail is the rejection region, sized to hold exactly α = 0.05 of the area under the null distribution. The observed statistic falls at z = ${zObs}, past the critical value z* = ${zCrit} — inside the rejection region, so H₀ is rejected.`;
     container.appendChild(caption);
@@ -1164,6 +1190,10 @@ if (window.renderMathInElement) {
 
     container.innerHTML = '';
     container.appendChild(svg);
+    renderLegend(container, [
+      { type: 'line', color: '#0b7285', label: 'likelihood L(θ)' },
+      { type: 'dot', color: '#0b7285', label: 'MLE θ̂' }
+    ]);
     const caption = document.createElement('p');
     caption.textContent = `With 7 heads in 10 flips, the likelihood L(θ) = θ⁷(1−θ)³ peaks at θ̂ = 0.7 — the value that makes this exact data most probable.`;
     container.appendChild(caption);
@@ -1220,6 +1250,11 @@ if (window.renderMathInElement) {
 
     container.innerHTML = '';
     container.appendChild(svg);
+    renderLegend(container, [
+      { type: 'dashed', color: '#868e96', label: 'prior' },
+      { type: 'dashed', color: '#e8590c', label: 'likelihood' },
+      { type: 'line', color: '#0b7285', label: 'posterior' }
+    ]);
     const caption = document.createElement('p');
     caption.innerHTML = `Starting from a <span class="var-prior">prior</span> centered on "fair" and updating with the <span class="var-likelihood">likelihood</span> of 7 heads in 10 flips produces a <span class="var-posterior">posterior</span> peaked near 0.67 — pulled toward the data, but not all the way to the data's own peak at 0.7.`;
     container.appendChild(caption);
