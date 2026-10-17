@@ -492,13 +492,6 @@
             </div>
           </div>
           <div class="topic">
-            <h2>Dijkstra's Algorithm</h2>
-            <p>Dijkstra grows a shortest-path tree one node at a time, always settling the closest unvisited node next.</p>
-            <div class="lp-graph">
-              <div class="dijkstra-graph" id="dijkstra-graph-root"></div>
-            </div>
-          </div>
-          <div class="topic">
             <h2>Gomory Cutting Planes</h2>
             <p>A Gomory cut adds a valid inequality — one that every integer point already satisfies — that slices a fractional corner off the LP relaxation, shrinking it toward the true integer hull.</p>
             <p>Take the green-eggs-and-ham budget constraint. The Gomory split needs every variable in its row — including the slack — to be integer-valued at integer solutions, so scale away the decimals first.</p>
@@ -511,6 +504,13 @@
             <p class="math">$$7\textcolor{#2f9e44}{x_1} + (30 - 7\textcolor{#2f9e44}{x_1} - 9\textcolor{#c2525c}{x_2}) \geq 3 \quad\Longrightarrow\quad \textcolor{#c2525c}{x_2} \leq 3$$</p>
             <div class="lp-graph" id="gomory-graph-root"></div>
             <p>The faint dashed outline above is the LP relaxation before any cuts. Since ham must be a whole number, x₂ ≤ 3.33 is really x₂ ≤ 3 — a valid cut that removes no integer point, but slices off the fractional corner and shrinks the relaxation's optimum from 33.33 down to 33, a step closer to the true integer optimum of 31.</p>
+          </div>
+          <div class="topic">
+            <h2>Dijkstra's Algorithm</h2>
+            <p>Dijkstra grows a shortest-path tree one node at a time, always settling the closest unvisited node next.</p>
+            <div class="lp-graph">
+              <div class="dijkstra-graph" id="dijkstra-graph-root"></div>
+            </div>
           </div>
           <div class="topic">
             <h2>Complexity and NP-Completeness</h2>
