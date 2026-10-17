@@ -80,19 +80,13 @@ body {
   margin-bottom: 40px;
 }
 
-/* A divider between each main section (topic), not just whitespace — the
-   first topic skips it since the intro-to-topics gap above already reads
-   as a clear break. */
-.topic + .topic {
-  padding-top: 40px;
-  border-top: 1px solid #e5e5e5;
-}
-
 .topic h2 {
   font-size: 1.1rem;
   font-weight: 600;
   color: #1a1a1a;
-  margin: 0 0 10px;
+  margin: 0 0 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e5e5;
 }
 
 /* Any paragraph that isn't the first child gets the standard flow gap —
