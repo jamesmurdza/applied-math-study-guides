@@ -320,7 +320,6 @@ body {
 .tableau tbody th,
 .tableau thead th:first-child {
   padding-right: 18px;
-  border-right: 1px solid #eee;
 }
 
 .tableau tbody tr:last-child th,
