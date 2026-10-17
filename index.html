@@ -208,7 +208,7 @@
             <p>A set is bounded when it fits entirely inside some ball of finite radius.</p>
             <p class="math">$$\textcolor{#C18401}{A} \text{ bounded} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\exists}\, x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X},\ \textcolor{#7B4B8C}{\exists}\, r \textcolor{#7B4B8C}{>} 0 \text{ s.t. } \textcolor{#C18401}{A} \textcolor{#7B4B8C}{\subseteq} \textcolor{#C18401}{B}(x, r)$$</p>
 
-            <div class="set-examples">
+            <div class="set-examples single">
               <div class="set-card">
                 <svg viewBox="0 0 160 160" role="img" aria-label="A bounded set inside one large ball">
                   <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
@@ -218,6 +218,12 @@
                 </svg>
                 <p><strong>Bounded</strong></p>
               </div>
+            </div>
+
+            <p>Total boundedness strengthens boundedness by requiring a set to be coverable by finitely many small balls.</p>
+            <p class="math">$$\textcolor{#C18401}{A} \text{ totally bounded} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#C18401}{A} \textcolor{#7B4B8C}{\subseteq} \textcolor{#7B4B8C}{\bigcup}_{i=1}^{n} \textcolor{#C18401}{B}(x_i, \varepsilon) \text{ for some finite } x_1, \dots, x_n$$</p>
+
+            <div class="set-examples single">
               <div class="set-card">
                 <svg viewBox="0 0 160 160" role="img" aria-label="The same set covered by finitely many small balls">
                   <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
@@ -233,9 +239,6 @@
                 <p><strong>Totally bounded</strong></p>
               </div>
             </div>
-
-            <p>Total boundedness strengthens boundedness by requiring a set to be coverable by finitely many small balls.</p>
-            <p class="math">$$\textcolor{#C18401}{A} \text{ totally bounded} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#C18401}{A} \textcolor{#7B4B8C}{\subseteq} \textcolor{#7B4B8C}{\bigcup}_{i=1}^{n} \textcolor{#C18401}{B}(x_i, \varepsilon) \text{ for some finite } x_1, \dots, x_n$$</p>
           </div>
           <div class="topic">
             <h2>Completeness and Compactness</h2>

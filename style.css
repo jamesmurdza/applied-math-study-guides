@@ -154,6 +154,13 @@ body {
   margin-top: 24px;
 }
 
+/* A lone card right after its own equation, rather than paired in the
+   usual two-column grid — keep it from stretching full width. */
+.set-examples.single {
+  grid-template-columns: minmax(0, 220px);
+  justify-content: center;
+}
+
 .set-card {
   border: 1px solid #eee;
   border-radius: 6px;
