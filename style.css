@@ -169,9 +169,7 @@ body {
 }
 
 .lp-graph {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid #eee;
+  margin-top: 28px;
 }
 
 .lp-graph svg {
@@ -187,9 +185,7 @@ body {
 }
 
 .stat-chart {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #eee;
+  margin-top: 24px;
 }
 
 .stat-chart svg {
@@ -209,8 +205,7 @@ body {
 .cs-table th,
 .cs-table td {
   text-align: left;
-  padding: 6px 10px 6px 0;
-  border-bottom: 1px solid #eee;
+  padding: 7px 10px 7px 0;
   color: #555;
 }
 
@@ -258,14 +253,12 @@ body {
 }
 
 .tableau-wrap {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid #eee;
+  margin-top: 28px;
 }
 
 .tableau-phase {
-  margin: 24px 0 12px;
-  font-size: 0.85rem;
+  margin: 28px 0 14px;
+  font-size: 0.95rem;
   font-weight: 600;
   color: #1a1a1a;
 }
@@ -275,17 +268,19 @@ body {
 }
 
 .tableau-step {
-  margin-top: 20px;
+  margin-top: 36px;
 }
 
 .tableau-step:first-child {
   margin-top: 0;
 }
 
-.tableau-step-label {
-  margin: 0 0 8px;
-  font-size: 0.8rem;
-  color: #999;
+.tableau-card {
+  width: fit-content;
+  max-width: 100%;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 16px 18px;
 }
 
 .tableau-scroll {
@@ -294,15 +289,14 @@ body {
 
 .tableau {
   border-collapse: collapse;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   white-space: nowrap;
 }
 
 .tableau th,
 .tableau td {
   text-align: right;
-  padding: 6px 12px 6px 0;
-  border-bottom: 1px solid #eee;
+  padding: 8px 16px 8px 0;
 }
 
 .tableau thead th {
@@ -316,21 +310,27 @@ body {
   color: #1a1a1a;
 }
 
+.tableau tbody th,
+.tableau thead th:first-child {
+  padding-right: 18px;
+}
+
 .tableau tbody tr:last-child th,
 .tableau tbody tr:last-child td {
-  border-bottom: none;
-  border-top: 1px solid #ccc;
   font-weight: 600;
 }
 
 .pivot-cell {
   color: #c0392b;
   font-weight: 700;
+  background: rgba(192, 57, 43, 0.07);
+  border-radius: 4px;
 }
 
 .tableau-caption {
-  margin-top: 10px;
+  margin-top: 18px;
   font-size: 0.9rem;
+  color: #555;
 }
 
 .chart-tooltip {
