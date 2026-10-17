@@ -1048,6 +1048,30 @@ if (window.renderMathInElement) {
     return node;
   }
 
+  // Small HTML legend placed under a chart: one swatch + label per item.
+  // item.type is 'line' | 'dashed' | 'fill' | 'dot'; item.color sets the
+  // swatch's color via currentColor so the CSS stays shape-only.
+  // (Duplicated from the earlier IIFE, which has its own private copy —
+  // this file is split into self-contained sections with no shared
+  // module scope, so each section keeps its own helpers.)
+  function renderLegend(container, items) {
+    const legend = document.createElement('div');
+    legend.className = 'chart-legend';
+    items.forEach(item => {
+      const entry = document.createElement('span');
+      entry.className = 'chart-legend-item';
+      const swatch = document.createElement('span');
+      swatch.className = `chart-legend-swatch ${item.type}`;
+      swatch.style.color = item.color;
+      entry.appendChild(swatch);
+      const label = document.createElement('span');
+      label.textContent = item.label;
+      entry.appendChild(label);
+      legend.appendChild(entry);
+    });
+    container.appendChild(legend);
+  }
+
   function sample(fn, xMin, xMax, n) {
     const pts = [];
     for (let i = 0; i <= n; i++) {

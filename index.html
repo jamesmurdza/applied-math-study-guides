@@ -425,6 +425,9 @@
           <div class="topic">
             <h2>Getting a Dual from a Primal</h2>
             <p>Every primal has a dual: a max problem's dual is a min problem, one dual variable per primal constraint and one dual constraint per primal variable.</p>
+            <p>Take the ice cream factory's LP: swap max for min, turn each primal constraint's right-hand side (24, 6, 5) into a dual objective coefficient, and each primal objective coefficient (5, 4) into a dual constraint's right-hand side.</p>
+            <p class="math">$$\min\ 24y_1 + 6y_2 + 5y_3 \quad \text{s.t.} \quad 2y_1 + y_2 \geq 5,\ \ 4y_1 + y_3 \geq 4,\ \ y_1, y_2, y_3 \geq 0$$</p>
+            <p>Solving it lands on y₁ = 1, y₂ = 3, y₃ = 0 — a dual objective of 24(1) + 6(3) + 5(0) = 42, exactly matching the primal's optimal profit.</p>
             <p>Weak duality keeps the primal's rising values below the dual's falling ones at every step; strong duality is the special fact that, at the optimum, they meet exactly.</p>
           </div>
           <div class="topic">
@@ -437,11 +440,11 @@
                 </thead>
                 <tbody>
                   <tr><td><span class="var-mint">x₁</span> &gt; 0</td><td>dual constraint 1</td><td>binds exactly (zero slack)</td></tr>
-                  <tr><td>primal constraint 1</td><td>y₁ &gt; 0</td><td>binds exactly (zero slack)</td></tr>
-                  <tr><td>primal constraint 2 slack</td><td>y₂ = 0</td><td>unused dual variable is zero</td></tr>
+                  <tr><td><span class="var-berry">x₂</span> &gt; 0</td><td>dual constraint 2</td><td>binds exactly (zero slack)</td></tr>
+                  <tr><td>blueberries constraint slack</td><td>y₃ = 0</td><td>unused dual variable is zero</td></tr>
                 </tbody>
               </table>
-              <p class="math">$$\textcolor{#e64980}{x_1} \textcolor{#7B4B8C}{>} 0 \implies \text{dual constraint 1 binds}, \qquad y_2 \textcolor{#7B4B8C}{>} 0 \implies \text{primal constraint 2 binds}$$</p>
+              <p class="math">$$\textcolor{#e64980}{x_1} \textcolor{#7B4B8C}{>} 0 \implies \text{dual constraint 1 binds}, \qquad y_3 = 0 \text{ since blueberries is slack}$$</p>
             </div>
           </div>
           <div class="topic">
