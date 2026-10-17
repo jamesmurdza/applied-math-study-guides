@@ -103,6 +103,22 @@ body {
   margin-top: 0;
 }
 
+.topic > * + ol {
+  margin-top: 16px;
+}
+
+.topic ol {
+  margin: 0;
+  padding-left: 22px;
+  color: #555;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.topic ol li + li {
+  margin-top: 6px;
+}
+
 .topic .math {
   overflow-x: auto;
 }

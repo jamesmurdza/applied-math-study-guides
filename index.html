@@ -421,6 +421,16 @@
           <div class="topic">
             <h2>Simplex</h2>
             <p>The simplex method never looks inside the feasible region — it starts at a corner and walks along the edges toward a better one.</p>
+            <p>The algorithm, as a repeatable procedure:</p>
+            <ol>
+              <li>Add a slack variable to each ≤ constraint, turning it into an equality.</li>
+              <li>Set up the initial tableau with every slack basic and every structural variable at zero.</li>
+              <li>Check optimality: if every coefficient in the objective row is already non-negative, stop — the current corner is optimal.</li>
+              <li>Otherwise, choose the entering variable: the non-basic variable with the most negative objective-row coefficient.</li>
+              <li>Choose the leaving variable with the minimum ratio test: among rows with a positive entry in the entering column, pick the one with the smallest RHS-to-coefficient ratio.</li>
+              <li>Pivot — scale the chosen row so the entering variable's coefficient becomes 1, then clear that column from every other row, including the objective row.</li>
+              <li>Repeat from step 3.</li>
+            </ol>
             <div class="lp-graph" id="simplex-graph-root"></div>
             <p>Simplex starts at a feasible vertex — here, (0, 0) — then repeatedly pivots to an adjacent vertex along the boundary whenever that improves the objective: (0, 0) → (6, 0) → (6, 3). It stops once no neighboring vertex scores higher, landing on the optimum with a profit of 42.</p>
             <p>The same walk, numerically: the tableau starts with every slack basic, then pivots one variable in and one out per step.</p>
