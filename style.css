@@ -275,7 +275,7 @@ body {
 }
 
 .tableau-step {
-  margin-top: 20px;
+  margin-top: 24px;
 }
 
 .tableau-step:first-child {
@@ -285,16 +285,14 @@ body {
 .tableau-card {
   border: 1px solid #e5e5e5;
   border-radius: 8px;
-  padding: 16px 18px;
+  padding: 22px;
 }
 
 .tableau-step-label {
-  margin: 0 0 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
+  margin: 12px 0 0;
+  font-size: 0.8rem;
+  font-weight: 400;
   color: #999;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
 
 .tableau-scroll {

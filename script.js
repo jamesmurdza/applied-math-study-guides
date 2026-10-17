@@ -737,11 +737,6 @@ if (window.renderMathInElement) {
       const card = document.createElement('div');
       card.className = 'tableau-card';
 
-      const stepLabel = document.createElement('p');
-      stepLabel.className = 'tableau-step-label';
-      stepLabel.textContent = frame.pivot ? `Step ${idx + 1}` : `Step ${idx + 1} — optimal`;
-      card.appendChild(stepLabel);
-
       const table = document.createElement('table');
       table.className = 'tableau';
 
@@ -801,6 +796,12 @@ if (window.renderMathInElement) {
       scrollBox.className = 'tableau-scroll';
       scrollBox.appendChild(table);
       card.appendChild(scrollBox);
+
+      const stepLabel = document.createElement('p');
+      stepLabel.className = 'tableau-step-label';
+      stepLabel.textContent = frame.pivot ? `Step ${idx + 1}` : `Step ${idx + 1} — optimal`;
+      card.appendChild(stepLabel);
+
       step.appendChild(card);
 
       const caption = document.createElement('p');
