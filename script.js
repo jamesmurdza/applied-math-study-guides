@@ -507,17 +507,8 @@ if (window.renderMathInElement) {
 
     container.innerHTML = '';
     container.appendChild(svg);
-
-    // caption with the computed optimum and profit filled in
-    const caption = document.createElement('p');
-    if (config.caption) {
-      caption.textContent = config.caption(best, bestVal);
-    } else if (integer) {
-      caption.textContent = `The shaded region is the continuous feasible area; the dots are the integer points inside it. The best integer point is (${varNames[0]}, ${varNames[1]}) = (${fmt(best.x)}, ${fmt(best.y)}), for a value of ${fmt(bestVal)} — not the same as rounding the LP relaxation's optimum.`;
-    } else {
-      caption.textContent = `The shaded region is every feasible production plan. The best one sits at a corner — here, (${varNames[0]}, ${varNames[1]}) = (${fmt(best.x)}, ${fmt(best.y)}), for a profit of ${fmt(bestVal)}.`;
-    }
-    container.appendChild(caption);
+    // No caption appended here — the explanation lives as an ordinary
+    // paragraph in the surrounding HTML instead of a figure caption.
   }
 
   function fmt(n) {
@@ -576,8 +567,7 @@ if (window.renderMathInElement) {
         { a: 1, b: 0, c: 6 },
         { a: 0, b: 1, c: 5 }
       ],
-      path: [{ x: 0, y: 0 }, { x: 6, y: 0 }, { x: 6, y: 3 }],
-      caption: (best, val) => `Simplex starts at a feasible vertex — here, (0, 0) — then repeatedly pivots to an adjacent vertex along the boundary whenever that improves the objective: (0, 0) → (6, 0) → (${fmt(best.x)}, ${fmt(best.y)}). It stops once no neighboring vertex scores higher, landing on the optimum with a profit of ${fmt(val)}.`
+      path: [{ x: 0, y: 0 }, { x: 6, y: 0 }, { x: 6, y: 3 }]
     });
   }
 
@@ -600,8 +590,7 @@ if (window.renderMathInElement) {
         { a: 0, b: 1, c: 5 },
         { a: -1, b: -1, c: -2 }
       ],
-      path: [{ x: 2, y: 0 }, { x: 6, y: 0 }, { x: 6, y: 3 }],
-      caption: (best, val) => `The minimum-order line slices the corner nearest the origin off the feasible region, so (0, 0) is no longer a valid start. Phase one jumps straight to (2, 0) instead; phase two then walks (2, 0) → (6, 0) → (${fmt(best.x)}, ${fmt(best.y)}) to the same optimum, a profit of ${fmt(val)}.`
+      path: [{ x: 2, y: 0 }, { x: 6, y: 0 }, { x: 6, y: 3 }]
     });
   }
 
@@ -624,8 +613,7 @@ if (window.renderMathInElement) {
       cut: { a: 0, b: 1, c: 3, color: '#c0392b', label: 'cut: x₂ ≤ 3' },
       showLattice: true,
       optimalLabel: 'after cut',
-      referencePoint: { x: 3, y: 1, label: 'integer optimum = 31' },
-      caption: (best, val) => `The faint dashed outline is the LP relaxation before any cuts. Since ham must be a whole number, x₂ ≤ 3.33 is really x₂ ≤ 3 — a valid cut that removes no integer point, but slices off the fractional corner and shrinks the relaxation's optimum from 33.33 down to ${fmt(val)}, a step closer to the true integer optimum.`
+      referencePoint: { x: 3, y: 1, label: 'integer optimum = 31' }
     });
   }
 })();
@@ -958,10 +946,13 @@ if (window.renderMathInElement) {
   slider.max = String(steps.length);
   slider.value = '0';
   controls.appendChild(slider);
-  mount.parentNode.insertBefore(controls, mount.nextSibling);
+  const lpWrap = mount.parentNode;
+  lpWrap.parentNode.insertBefore(controls, lpWrap.nextSibling);
 
+  // Plain paragraph, not a figure caption — placed as a sibling of the
+  // graph wrapper (not nested inside it) so it reads as normal topic text.
   const caption = document.createElement('p');
-  mount.parentNode.insertBefore(caption, controls.nextSibling);
+  lpWrap.parentNode.insertBefore(caption, controls.nextSibling);
 
   function fmtD(d) { return d === Infinity ? '∞' : String(d); }
 

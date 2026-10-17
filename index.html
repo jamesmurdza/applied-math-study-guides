@@ -403,6 +403,7 @@
             <p class="math">$$\textcolor{#e64980}{x_1}, \textcolor{#3b6bd6}{x_2} \geq 0$$</p>
 
             <div class="lp-graph" id="lp-graph-root"></div>
+            <p>The shaded region above is every feasible production plan. The best one sits at a corner — here, (x₁, x₂) = (6, 3), for a profit of 42.</p>
           </div>
           <div class="topic">
             <h2>Integer Linear Programming (ILP) Formulation</h2>
@@ -415,11 +416,13 @@
             <p class="math">$$\textcolor{#2f9e44}{x_1}, \textcolor{#c2525c}{x_2} \in \mathbb{Z}_{\geq 0}$$</p>
 
             <div class="lp-graph" id="ilp-graph-root"></div>
+            <p>The shaded region above is the continuous feasible area; the dots are the integer points inside it. The best integer point is (x₁, x₂) = (3, 1), for a value of 31 — not the same as rounding the LP relaxation's optimum of (0, 3.33), which scores 33.33.</p>
           </div>
           <div class="topic">
             <h2>Simplex</h2>
             <p>The simplex method never looks inside the feasible region — it starts at a corner and walks along the edges toward a better one.</p>
             <div class="lp-graph" id="simplex-graph-root"></div>
+            <p>Simplex starts at a feasible vertex — here, (0, 0) — then repeatedly pivots to an adjacent vertex along the boundary whenever that improves the objective: (0, 0) → (6, 0) → (6, 3). It stops once no neighboring vertex scores higher, landing on the optimum with a profit of 42.</p>
             <p>The same walk, numerically: the tableau starts with every slack basic, then pivots one variable in and one out per step.</p>
             <div class="tableau-wrap" id="simplex-tableau-root"></div>
           </div>
@@ -429,6 +432,7 @@
             <p class="math">$$\textcolor{#e64980}{x_1} + \textcolor{#3b6bd6}{x_2} \geq 2$$</p>
             <p>Now the origin is infeasible, so simplex has nowhere obvious to start. Phase one ignores profit and just hunts for any feasible corner, using an artificial variable to patch the constraint; phase two then optimizes real profit from there.</p>
             <div class="lp-graph" id="two-phase-graph-root"></div>
+            <p>The minimum-order line slices the corner nearest the origin off the feasible region, so (0, 0) is no longer a valid start. Phase one jumps straight to (2, 0) instead; phase two then walks (2, 0) → (6, 0) → (6, 3) to the same optimum, a profit of 42.</p>
             <div class="tableau-wrap" id="two-phase-tableau-root"></div>
           </div>
           <div class="topic">
@@ -467,6 +471,7 @@
             <h2>Gomory Cutting Planes</h2>
             <p>A Gomory cut adds a valid inequality — one that every integer point already satisfies — that slices a fractional corner off the LP relaxation, shrinking it toward the true integer hull.</p>
             <div class="lp-graph" id="gomory-graph-root"></div>
+            <p>The faint dashed outline above is the LP relaxation before any cuts. Since ham must be a whole number, x₂ ≤ 3.33 is really x₂ ≤ 3 — a valid cut that removes no integer point, but slices off the fractional corner and shrinks the relaxation's optimum from 33.33 down to 33, a step closer to the true integer optimum of 31.</p>
           </div>
           <div class="topic">
             <h2>Complexity and NP-Completeness</h2>
