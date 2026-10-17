@@ -4,7 +4,13 @@ function activateTab(tab, updateHash) {
 
   tab.classList.add('active');
   document.getElementById(tab.dataset.tab).classList.add('active');
-  if (updateHash) location.hash = tab.dataset.tab;
+  // pushState (not location.hash =) — assigning location.hash is treated
+  // as navigating to that fragment, which makes the browser scroll to the
+  // element with a matching id. pushState just updates the URL.
+  if (updateHash) {
+    const hash = '#' + tab.dataset.tab;
+    if (location.hash !== hash) history.pushState(null, '', hash);
+  }
 }
 
 document.querySelectorAll('.tab').forEach(tab => {
