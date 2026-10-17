@@ -87,8 +87,18 @@ body {
   margin: 0 0 8px;
 }
 
-.topic p + p {
+/* Any paragraph that isn't the first child gets the standard flow gap —
+   including one that follows a figure/chart/table, not just another <p>.
+   (Scoping to "p + p" here missed that case entirely, leaving some
+   paragraphs flush against the element above them.) */
+.topic > * + p {
   margin-top: 14px;
+}
+
+/* ...except directly under a heading, where the heading's own bottom
+   margin already provides the gap. */
+.topic h2 + p {
+  margin-top: 0;
 }
 
 .topic .math {
@@ -123,7 +133,7 @@ body {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
-  margin-top: 16px;
+  margin-top: 20px;
 }
 
 .set-card {
@@ -151,7 +161,7 @@ body {
 }
 
 .viz {
-  margin-top: 16px;
+  margin-top: 20px;
   text-align: center;
 }
 
@@ -164,12 +174,12 @@ body {
 }
 
 .viz p {
-  margin-top: 10px;
+  margin-top: 14px;
   font-size: 0.85rem;
 }
 
 .lp-graph {
-  margin-top: 28px;
+  margin-top: 20px;
 }
 
 .lp-graph svg {
@@ -185,7 +195,7 @@ body {
 }
 
 .stat-chart {
-  margin-top: 24px;
+  margin-top: 20px;
 }
 
 .stat-chart svg {
@@ -298,7 +308,7 @@ body {
 }
 
 .tableau-wrap {
-  margin-top: 28px;
+  margin-top: 20px;
 }
 
 .tableau-phase {
@@ -373,7 +383,7 @@ body {
 }
 
 .tableau-caption {
-  margin-top: 18px;
+  margin-top: 14px;
   font-size: 0.9rem;
   color: #555;
 }
