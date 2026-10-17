@@ -1109,7 +1109,7 @@ if (window.renderMathInElement) {
     const n = 10, k = 7;
     const likelihood = theta => Math.pow(theta, k) * Math.pow(1 - theta, n - k);
     const thetaHat = k / n;
-    const width = 380, height = 170, padL = 16, padR = 16, padT = 20, padB = 24;
+    const width = 380, height = 170, padL = 30, padR = 22, padT = 20, padB = 24;
     const plotW = width - padL - padR, plotH = height - padT - padB;
     const pts = sample(likelihood, xMin, xMax, 200);
     const maxY = Math.max(...pts.map(p => p.y));
@@ -1121,8 +1121,16 @@ if (window.renderMathInElement) {
     const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img', 'aria-label': 'Likelihood curve peaked at the MLE' });
     svg.appendChild(el('path', { d: pathFor(pts, toScreen), fill: 'none', stroke: '#0b7285', 'stroke-width': '1.75' }));
 
-    const o = toScreen(xMin, 0), oR = toScreen(xMax, 0);
+    const o = toScreen(xMin, 0), oR = toScreen(xMax, 0), oT = toScreen(xMin, maxY);
     svg.appendChild(el('line', { x1: o.x, y1: o.y, x2: oR.x, y2: oR.y, stroke: '#333' }));
+    svg.appendChild(el('line', { x1: o.x, y1: o.y, x2: oT.x, y2: oT.y, stroke: '#333' }));
+
+    const xAxisLabel = el('text', { x: width - 4, y: o.y + 4, 'font-size': '11', fill: '#555', 'text-anchor': 'end' });
+    xAxisLabel.textContent = 'θ';
+    svg.appendChild(xAxisLabel);
+    const yAxisLabel = el('text', { x: o.x, y: oT.y - 6, 'font-size': '11', fill: '#555', 'text-anchor': 'start' });
+    yAxisLabel.textContent = 'L(θ)';
+    svg.appendChild(yAxisLabel);
 
     const peak = toScreen(thetaHat, maxY);
     const peakBase = toScreen(thetaHat, 0);
