@@ -288,13 +288,6 @@ body {
   padding: 16px 18px;
 }
 
-.tableau-step-label {
-  margin: 12px 0 0;
-  font-size: 0.8rem;
-  font-weight: 400;
-  color: #999;
-}
-
 .tableau-scroll {
   overflow-x: auto;
 }
