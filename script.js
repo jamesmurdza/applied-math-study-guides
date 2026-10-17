@@ -526,7 +526,7 @@ if (window.renderMathInElement) {
       objective: { a: 5, b: 4 },
       objectiveLabel: 'profit',
       constraints: [
-        { a: 2, b: 4, c: 24, color: '#1a1a1a', label: 'milk: 2x₁ + 4x₂ ≤ 24' },
+        { a: 2, b: 3, c: 24, color: '#1a1a1a', label: 'milk: 2x₁ + 3x₂ ≤ 24' },
         { a: 1, b: 0, c: 6, color: '#e64980', label: 'peppermint extract: x₁ ≤ 6' },
         { a: 0, b: 1, c: 5, color: '#3b6bd6', label: 'blueberries: x₂ ≤ 5' }
       ]
@@ -563,11 +563,11 @@ if (window.renderMathInElement) {
       objective: { a: 5, b: 4 },
       objectiveLabel: 'profit',
       constraints: [
-        { a: 2, b: 4, c: 24 },
+        { a: 2, b: 3, c: 24 },
         { a: 1, b: 0, c: 6 },
         { a: 0, b: 1, c: 5 }
       ],
-      path: [{ x: 0, y: 0 }, { x: 6, y: 0 }, { x: 6, y: 3 }]
+      path: [{ x: 0, y: 0 }, { x: 6, y: 0 }, { x: 6, y: 4 }]
     });
   }
 
@@ -585,12 +585,12 @@ if (window.renderMathInElement) {
       objective: { a: 5, b: 4 },
       objectiveLabel: 'profit',
       constraints: [
-        { a: 2, b: 4, c: 24 },
+        { a: 2, b: 3, c: 24 },
         { a: 1, b: 0, c: 6 },
         { a: 0, b: 1, c: 5 },
         { a: -1, b: -1, c: -2 }
       ],
-      path: [{ x: 2, y: 0 }, { x: 6, y: 0 }, { x: 6, y: 3 }]
+      path: [{ x: 2, y: 0 }, { x: 6, y: 0 }, { x: 6, y: 4 }]
     });
   }
 
@@ -830,10 +830,10 @@ if (window.renderMathInElement) {
   }
 
   // --- Simplex (single phase): the pink-peppermint / blueberry LP ----------
-  // max 5x1 + 4x2 s.t. 2x1+4x2<=24, x1<=6, x2<=5, x1,x2>=0
+  // max 5x1 + 4x2 s.t. 2x1+3x2<=24, x1<=6, x2<=5, x1,x2>=0
   const simplexFrames = runSimplexFrames(
     [
-      { coeffs: [2, 4, 1, 0, 0], rhs: 24 },
+      { coeffs: [2, 3, 1, 0, 0], rhs: 24 },
       { coeffs: [1, 0, 0, 1, 0], rhs: 6 },
       { coeffs: [0, 1, 0, 0, 1], rhs: 5 }
     ],
@@ -848,7 +848,7 @@ if (window.renderMathInElement) {
   // phase 2 then optimizes the real profit from that corner onward.
   const phase1Frames = runSimplexFrames(
     [
-      { coeffs: [2, 4, 1, 0, 0, 0, 0], rhs: 24 },
+      { coeffs: [2, 3, 1, 0, 0, 0, 0], rhs: 24 },
       { coeffs: [1, 0, 0, 1, 0, 0, 0], rhs: 6 },
       { coeffs: [0, 1, 0, 0, 1, 0, 0], rhs: 5 },
       { coeffs: [1, 1, 0, 0, 0, -1, 1], rhs: 2 }
