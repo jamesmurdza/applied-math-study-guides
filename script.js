@@ -758,9 +758,6 @@ if (window.renderMathInElement) {
         }
       }
 
-      const step = document.createElement('div');
-      step.className = 'tableau-step';
-
       const card = document.createElement('div');
       card.className = 'tableau-card';
 
@@ -824,23 +821,23 @@ if (window.renderMathInElement) {
       scrollBox.appendChild(table);
       card.appendChild(scrollBox);
 
-      step.appendChild(card);
+      mount.appendChild(card);
 
-      const caption = document.createElement('p');
-      caption.className = 'tableau-caption';
+      // Plain paragraph, not a "caption" — reads as the ordinary narrative
+      // text explaining each pivot, interwoven with the tables rather than
+      // styled as a smaller note attached underneath them.
+      const explanation = document.createElement('p');
       // Phase one's objective tracks the artificial variable, not the real
       // objective — "profit = 0" there would misleadingly read as a bad
       // outcome, so its optimal frame gets its own wording instead.
       if (phaseAt && phaseAt(idx) === 1 && !frame.pivot) {
         const vals = solutionValues(frame, numStructural);
         const parts = varNames.map((n, i) => `${n} = ${fmt(vals[i])}`).join(', ');
-        caption.textContent = `No artificial variable remains in the basis — a feasible corner is found (${parts}). Phase two now optimizes the real objective from here.`;
+        explanation.textContent = `No artificial variable remains in the basis — a feasible corner is found (${parts}). Phase two now optimizes the real objective from here.`;
       } else {
-        caption.textContent = pivotCaption(frame, varNames, objectiveLabel, numStructural);
+        explanation.textContent = pivotCaption(frame, varNames, objectiveLabel, numStructural);
       }
-      step.appendChild(caption);
-
-      mount.appendChild(step);
+      mount.appendChild(explanation);
     });
   }
 

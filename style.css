@@ -326,8 +326,16 @@ body {
   margin-top: 24px;
 }
 
-/* p.tableau-phase, for the same specificity reason as p.tableau-caption
-   below — a bare class selector was losing to .panel p's "margin: 0". */
+/* The plain explanation paragraphs live inside .tableau-wrap, not
+   directly inside .topic, so the generic ".topic > * + p" flow rule
+   (child combinator) never reaches them — without this they'd sit flush
+   against the card above with no gap, same bug as before in a new spot. */
+.tableau-wrap > p:not(.tableau-phase) {
+  margin-top: 16px;
+}
+
+/* p.tableau-phase (not just .tableau-phase) — a bare class selector loses
+   to .panel p's "margin: 0" on specificity. */
 p.tableau-phase {
   margin: 32px 0 16px;
   font-size: 0.95rem;
@@ -339,21 +347,20 @@ p.tableau-phase:first-child {
   margin-top: 0;
 }
 
-.tableau-step {
-  margin-top: 24px;
-}
-
-.tableau-step:first-child {
-  margin-top: 0;
-}
-
+/* No wrapping step/caption box anymore — each tableau sits directly in
+   the normal flow, with ordinary paragraphs woven in before and after
+   it rather than a smaller "caption" attached underneath. */
 .tableau-card {
   width: fit-content;
   max-width: 100%;
-  margin: 0 auto;
+  margin: 24px auto 0;
   border: 1px solid #e5e5e5;
   border-radius: 8px;
   padding: 16px 18px;
+}
+
+.tableau-card:first-child {
+  margin-top: 0;
 }
 
 .tableau-scroll {
@@ -398,15 +405,6 @@ p.tableau-phase:first-child {
   font-weight: 700;
   background: rgba(192, 57, 43, 0.07);
   border-radius: 4px;
-}
-
-/* p.tableau-caption (not just .tableau-caption) so this beats .panel p's
-   "margin: 0" on specificity — a bare class selector was losing that fight
-   silently, zeroing out the gap below every tableau card. */
-p.tableau-caption {
-  margin-top: 16px;
-  font-size: 0.9rem;
-  color: #555;
 }
 
 .chart-tooltip {
