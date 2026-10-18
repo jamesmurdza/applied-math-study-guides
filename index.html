@@ -147,7 +147,7 @@
           <div class="topic">
             <h2>Convergence</h2>
             <p>A sequence converges when its terms get and stay arbitrarily close to a single limit point.</p>
-            <p class="math">$$x_n \to x \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#7B4B8C}{\exists} N \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{\mathbb{N}} \text{ s.t. } \textcolor{#7B4B8C}{\forall} n \textcolor{#7B4B8C}{\geq} N,\ \textcolor{#4078F2}{d}(x_n, x) \textcolor{#7B4B8C}{<} \varepsilon$$</p>
+            <p class="math">$$x_n \to x \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#7B4B8C}{\exists} N \textcolor{#7B4B8C}{\geq} 1 \text{ s.t. } \textcolor{#7B4B8C}{\forall} n \textcolor{#7B4B8C}{\geq} N,\ \textcolor{#4078F2}{d}(x, x_n) \textcolor{#7B4B8C}{<} \varepsilon$$</p>
 
             <div class="viz viz-card">
               <svg viewBox="0 0 250 100" role="img" aria-label="Sequence converging to a limit marked by a notch, bounded by dashed epsilon lines">
@@ -177,7 +177,7 @@
           <div class="topic">
             <h2>Continuity</h2>
             <p>A function is continuous when small changes in input produce arbitrarily small changes in output.</p>
-            <p class="math">$$\textcolor{#4078F2}{f} \text{ continuous at } x_0 \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#7B4B8C}{\exists}\, \delta \textcolor{#7B4B8C}{>} 0 \text{ s.t. } \textcolor{#4078F2}{d}(x,x_0) \textcolor{#7B4B8C}{<} \delta \textcolor{#7B4B8C}{\implies} \textcolor{#4078F2}{\rho}(\textcolor{#4078F2}{f}(x), \textcolor{#4078F2}{f}(x_0)) \textcolor{#7B4B8C}{<} \varepsilon$$</p>
+            <p class="math">$$\textcolor{#4078F2}{f} \text{ continuous at } x_0 \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#7B4B8C}{\exists}\, \delta \textcolor{#7B4B8C}{>} 0 \text{ s.t. } \textcolor{#4078F2}{d}(x_0,x) \textcolor{#7B4B8C}{<} \delta \textcolor{#7B4B8C}{\implies} \textcolor{#4078F2}{\rho}(\textcolor{#4078F2}{f}(x_0), \textcolor{#4078F2}{f}(x)) \textcolor{#7B4B8C}{<} \varepsilon$$</p>
             <p><strong>d</strong> measures distance in the input space, <strong>ρ</strong> measures distance in the output space — they can be different metrics on different spaces. In ℝ, both just mean |x − y|.</p>
 
             <div class="viz">
@@ -246,7 +246,7 @@
           <div class="topic">
             <h2>Completeness</h2>
             <p>A sequence is Cauchy when its own terms eventually get arbitrarily close to each other, with no need to already know the limit.</p>
-            <p class="math">$$\textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#7B4B8C}{\exists} N \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{\mathbb{N}} \text{ s.t. } \textcolor{#7B4B8C}{\forall} m,n \textcolor{#7B4B8C}{\geq} N,\ \textcolor{#4078F2}{d}(x_m,x_n) \textcolor{#7B4B8C}{<} \varepsilon$$</p>
+            <p class="math">$$\textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#7B4B8C}{\exists} N \textcolor{#7B4B8C}{\geq} 1 \text{ s.t. } \textcolor{#7B4B8C}{\forall} m,n \textcolor{#7B4B8C}{\geq} N,\ \textcolor{#4078F2}{d}(x_m,x_n) \textcolor{#7B4B8C}{<} \varepsilon$$</p>
             <p>A complete space contains the limits of all its Cauchy sequences, leaving no "gaps" to converge into.</p>
             <p class="math">$$(\textcolor{#C18401}{X},\textcolor{#4078F2}{d}) \text{ complete} \textcolor{#7B4B8C}{\iff} \text{every Cauchy sequence } (x_n) \text{ in } \textcolor{#C18401}{X} \text{ converges to some } x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X}$$</p>
 
