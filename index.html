@@ -55,7 +55,7 @@
           <div class="topic">
             <h2>Open and Closed Sets</h2>
             <p>Open sets are built from balls that fit entirely inside them, while closed sets contain all of their limit points.</p>
-            <p class="math">$$\textcolor{#C18401}{U} \text{ open} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{U},\ \textcolor{#7B4B8C}{\exists}\, \varepsilon \textcolor{#7B4B8C}{>} 0 \text{ s.t. } \textcolor{#C18401}{B}(x,\varepsilon) \textcolor{#7B4B8C}{\subseteq} \textcolor{#C18401}{U}$$</p>
+            <p class="math">$$\textcolor{#C18401}{U} \text{ open} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{U},\ \textcolor{#7B4B8C}{\exists}\, \varepsilon \textcolor{#7B4B8C}{>} 0 \text{ s.t. } \textcolor{#C18401}{B}_\varepsilon(x) \textcolor{#7B4B8C}{\subseteq} \textcolor{#C18401}{U}$$</p>
             <p>A set is closed exactly when its complement is open.</p>
             <p class="math">$$\textcolor{#C18401}{A} \text{ closed} \textcolor{#7B4B8C}{\iff} \textcolor{#C18401}{X} \setminus \textcolor{#C18401}{A} \text{ open}$$</p>
             <p>Equivalently, a closed set contains the limit of every convergent sequence built from its own points.</p>
@@ -209,7 +209,7 @@
             <p>A set is bounded when the largest distance between any two of its points is finite.</p>
             <p class="math">$$\mathrm{diam}(\textcolor{#C18401}{A}) \textcolor{#7B4B8C}{:=} \textcolor{#7B4B8C}{\sup}_{x,y \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{A}} \textcolor{#4078F2}{d}(x,y), \qquad \textcolor{#C18401}{A} \text{ bounded} \textcolor{#7B4B8C}{\iff} \mathrm{diam}(\textcolor{#C18401}{A}) \textcolor{#7B4B8C}{<} \infty$$</p>
             <p>Equivalently, a set is bounded when it fits entirely inside some ball of finite radius.</p>
-            <p class="math">$$\textcolor{#C18401}{A} \text{ bounded} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\exists}\, x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X},\ \textcolor{#7B4B8C}{\exists}\, r \textcolor{#7B4B8C}{>} 0 \text{ s.t. } \textcolor{#C18401}{A} \textcolor{#7B4B8C}{\subseteq} \textcolor{#C18401}{B}(x, r)$$</p>
+            <p class="math">$$\textcolor{#C18401}{A} \text{ bounded} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\exists}\, x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X},\ \textcolor{#7B4B8C}{\exists}\, r \textcolor{#7B4B8C}{>} 0 \text{ s.t. } \textcolor{#C18401}{A} \textcolor{#7B4B8C}{\subseteq} \textcolor{#C18401}{B}_r(x)$$</p>
 
             <div class="set-examples single">
               <div class="set-card">
@@ -224,7 +224,7 @@
             </div>
 
             <p>Total boundedness strengthens boundedness by requiring a set to be coverable by finitely many small balls.</p>
-            <p class="math">$$\textcolor{#C18401}{A} \text{ totally bounded} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#C18401}{A} \textcolor{#7B4B8C}{\subseteq} \textcolor{#7B4B8C}{\bigcup}_{i=1}^{n} \textcolor{#C18401}{B}(x_i, \varepsilon) \text{ for some finite } x_1, \dots, x_n$$</p>
+            <p class="math">$$\textcolor{#C18401}{A} \text{ totally bounded} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#C18401}{A} \textcolor{#7B4B8C}{\subseteq} \textcolor{#7B4B8C}{\bigcup}_{i=1}^{n} \textcolor{#C18401}{B}_\varepsilon(x_i) \text{ for some finite } x_1, \dots, x_n$$</p>
 
             <div class="set-examples single">
               <div class="set-card">
