@@ -425,7 +425,7 @@
             <h2>Sequences and Series of Functions</h2>
             <p><strong>Pointwise convergence</strong> only asks each individual input to eventually settle, with no control over how fast that happens from one point to the next.</p>
             <p class="math">$$\forall x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M},\quad \textcolor{#4078F2}{f_n}(x) \to \textcolor{#4078F2}{f}(x) \text{ as } n \to \infty$$</p>
-            <p>The <strong>N</strong> here is allowed to depend on <strong>x</strong> — nothing requires one N to work for every point at once.</p>
+            <p><strong>N</strong> depends on <strong>x</strong> here — each point is allowed to settle at its own pace.</p>
 
             <div class="viz">
               <svg viewBox="0 -10 200 120" style="width:200px;max-width:200px;" role="img" aria-label="Three snapshots f1, f2, f3 of a function sequence, each with a spike that relocates rather than shrinking">
@@ -447,7 +447,7 @@
 
             <p><strong>Uniform convergence</strong> requires the entire function, not just each point, to be well-approximated as n grows.</p>
             <p class="math">$$\textcolor{#4078F2}{f_n} \to \textcolor{#4078F2}{f} \text{ uniformly} \textcolor{#7B4B8C}{\iff} \sup_{x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M}} |\textcolor{#4078F2}{f_n}(x) - \textcolor{#4078F2}{f}(x)| \to 0 \text{ as } n \to \infty$$</p>
-            <p>Taking the supremum over <strong>x</strong> removes that freedom: the same N must work for every point at once.</p>
+            <p><strong>N</strong> no longer depends on <strong>x</strong> — every point must settle at the same pace.</p>
 
             <div class="viz">
               <svg viewBox="0 -13 200 123" style="width:200px;max-width:200px;" role="img" aria-label="Three snapshots f1, f2, f3 of a function sequence, each wiggling less until the whole function fits the epsilon tube">
