@@ -22,7 +22,7 @@
         <p>The rigorous study of limits, continuity, differentiation, integration, and sequences and series of real numbers.</p>
 
         <div class="topics">
-          <div class="topic">
+          <div class="topic" id="metric-spaces">
             <h2>Metric Spaces</h2>
             <p>A metric space pairs a set with a distance function that formalizes notions like nearness and size.</p>
             <p>Distance is never negative, and never infinite.</p>
@@ -52,14 +52,14 @@
               <p>The direct route <strong>x → z</strong> (dashed) is never longer than detouring through <strong>y</strong>.</p>
             </div>
           </div>
-          <div class="topic">
+          <div class="topic" id="balls">
             <h2>Balls</h2>
             <p>An open ball collects every point within some fixed radius of a center point.</p>
             <p class="math">$$\textcolor{#C18401}{B}_r(x) \textcolor{#7B4B8C}{:=} \{y \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M} \textcolor{#7B4B8C}{:} \textcolor{#4078F2}{d}(x,y) \textcolor{#7B4B8C}{<} r\}$$</p>
             <p>A closed ball additionally includes the points at distance exactly r.</p>
             <p class="math">$$\overline{\textcolor{#C18401}{B}}_r(x) \textcolor{#7B4B8C}{:=} \{y \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M} \textcolor{#7B4B8C}{:} \textcolor{#4078F2}{d}(x,y) \textcolor{#7B4B8C}{\leq} r\}$$</p>
           </div>
-          <div class="topic">
+          <div class="topic" id="convergence-and-cauchy-sequences">
             <h2>Convergence and Cauchy Sequences</h2>
             <p>A sequence converges when its terms get and stay arbitrarily close to a single limit point.</p>
             <p class="math">$$x_n \to x \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#7B4B8C}{\exists} N \textcolor{#7B4B8C}{\geq} 1 \text{ s.t. } \textcolor{#7B4B8C}{\forall} n \textcolor{#7B4B8C}{\geq} N,\ \textcolor{#4078F2}{d}(x, x_n) \textcolor{#7B4B8C}{<} \varepsilon$$</p>
@@ -91,9 +91,9 @@
 
             <p>A sequence is Cauchy when its own terms eventually get arbitrarily close to each other, with no need to already know the limit.</p>
             <p class="math">$$\textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#7B4B8C}{\exists} N \textcolor{#7B4B8C}{\geq} 1 \text{ s.t. } \textcolor{#7B4B8C}{\forall} m,n \textcolor{#7B4B8C}{\geq} N,\ \textcolor{#4078F2}{d}(x_m,x_n) \textcolor{#7B4B8C}{<} \varepsilon$$</p>
-            <p>Every convergent sequence is Cauchy, but the converse only holds once the space is complete.</p>
+            <p>Every convergent sequence is Cauchy, but the converse only holds once the space is <a href="#completeness">complete</a>.</p>
           </div>
-          <div class="topic">
+          <div class="topic" id="open-and-closed-sets">
             <h2>Open and Closed Sets</h2>
             <p>An open set is one in which every point has some ball around it that still lies entirely inside the set.</p>
             <p class="math">$$\textcolor{#C18401}{U} \text{ open} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{U},\ \textcolor{#7B4B8C}{\exists}\, \varepsilon \textcolor{#7B4B8C}{>} 0 \text{ s.t. } \textcolor{#C18401}{B}_\varepsilon(x) \textcolor{#7B4B8C}{\subseteq} \textcolor{#C18401}{U}$$</p>
@@ -185,7 +185,7 @@
               </div>
             </div>
           </div>
-          <div class="topic">
+          <div class="topic" id="dense-sets">
             <h2>Dense Sets</h2>
             <p>A set is dense when every ball in the space contains at least one of its points, no matter how small — so its points can be found arbitrarily close to every point of the space.</p>
             <p class="math">$$\textcolor{#C18401}{A} \text{ dense in } \textcolor{#C18401}{M} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M},\ \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#C18401}{B}_\varepsilon(x) \textcolor{#7B4B8C}{\cap} \textcolor{#C18401}{A} \textcolor{#7B4B8C}{\neq} \varnothing$$</p>
@@ -215,7 +215,7 @@
               <p>No matter how small ε is, some point of <strong>A</strong> (dots) falls within ε of <strong>x</strong> — even though x itself need not be in A.</p>
             </div>
           </div>
-          <div class="topic">
+          <div class="topic" id="continuity">
             <h2>Continuity</h2>
             <p>A function is continuous when small changes in input produce arbitrarily small changes in output.</p>
             <p class="math">$$\textcolor{#4078F2}{f} \text{ continuous at } x_0 \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0\ \textcolor{#7B4B8C}{\exists}\, \delta \textcolor{#7B4B8C}{>} 0 \textcolor{#7B4B8C}{:}\ \textcolor{#4078F2}{d}(x_0,x) \textcolor{#7B4B8C}{<} \delta \textcolor{#7B4B8C}{\implies} \textcolor{#4078F2}{\rho}(\textcolor{#4078F2}{f}(x_0), \textcolor{#4078F2}{f}(x)) \textcolor{#7B4B8C}{<} \varepsilon$$</p>
@@ -245,7 +245,7 @@
               <p>Keeping <strong>x</strong> within δ of <strong>x₀</strong> (vertical band) keeps <strong>f(x)</strong> within ε of <strong>f(x₀)</strong> (horizontal band).</p>
             </div>
           </div>
-          <div class="topic">
+          <div class="topic" id="boundedness">
             <h2>Boundedness</h2>
             <p>A set is bounded when the largest distance between any two of its points is finite.</p>
             <p class="math">$$\mathrm{diam}(\textcolor{#C18401}{A}) \textcolor{#7B4B8C}{:=} \textcolor{#7B4B8C}{\sup}_{x,y \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{A}} \textcolor{#4078F2}{d}(x,y), \qquad \textcolor{#C18401}{A} \text{ bounded} \textcolor{#7B4B8C}{\iff} \mathrm{diam}(\textcolor{#C18401}{A}) \textcolor{#7B4B8C}{<} \infty$$</p>
@@ -286,7 +286,7 @@
               </div>
             </div>
           </div>
-          <div class="topic">
+          <div class="topic" id="completeness">
             <h2>Completeness</h2>
             <p>A complete space contains the limits of all its Cauchy sequences, leaving no "gaps" to converge into.</p>
             <p class="math">$$(\textcolor{#C18401}{X},\textcolor{#4078F2}{d}) \text{ complete} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \text{ Cauchy } (x_n) \text{ in } \textcolor{#C18401}{X},\ \textcolor{#7B4B8C}{\exists}\, x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X} \text{ s.t. } x_n \textcolor{#7B4B8C}{\to} x$$</p>
@@ -339,7 +339,7 @@
               </div>
             </div>
           </div>
-          <div class="topic">
+          <div class="topic" id="compactness">
             <h2>Compactness</h2>
             <p>A space is compact when it has no missing limit points and can always be covered by finitely many arbitrarily small balls — ruling out both "escaping" sequences and infinite spread.</p>
             <p class="math">$$\textcolor{#C18401}{X} \text{ compact} \textcolor{#7B4B8C}{\iff} \textcolor{#C18401}{X} \text{ complete} \textcolor{#7B4B8C}{\wedge} \textcolor{#C18401}{X} \text{ totally bounded}$$</p>
@@ -367,7 +367,7 @@
               </div>
             </div>
           </div>
-          <div class="topic">
+          <div class="topic" id="bolzano-weierstrass">
             <h2>Bolzano&ndash;Weierstrass</h2>
             <p>The Bolzano&ndash;Weierstrass theorem gives an equivalent, sequence-based test for compactness: a space is compact exactly when every sequence inside it has a subsequence that converges to a point still inside the space.</p>
             <p class="math">$$\textcolor{#C18401}{X} \text{ compact} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} (x_n) \text{ in } \textcolor{#C18401}{X},\ \textcolor{#7B4B8C}{\exists} \text{ subsequence } (x_{n_k}) \text{ s.t. } x_{n_k} \textcolor{#7B4B8C}{\to} x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X}$$</p>
@@ -419,7 +419,7 @@
               </div>
             </div>
           </div>
-          <div class="topic">
+          <div class="topic" id="sequences-and-series-of-functions">
             <h2>Sequences and Series of Functions</h2>
             <p>Pointwise convergence only asks each individual input to eventually settle, with no control over how fast that happens from one point to the next.</p>
             <p class="math">$$\forall x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X},\quad \textcolor{#4078F2}{f_n}(x) \to \textcolor{#4078F2}{f}(x) \text{ as } n \to \infty$$</p>
@@ -482,7 +482,7 @@
         <p>The study of finding the best solution from a set of feasible options, often by maximizing or minimizing an objective function.</p>
 
         <div class="topics">
-          <div class="topic">
+          <div class="topic" id="linear-programming-lp-formulation">
             <h2>Linear Programming (LP) Formulation</h2>
             <p>Example: a factory picks liters of <span class="var-mint">pink peppermint (x₁)</span> and <span class="var-berry">blueberry (x₂)</span> ice cream to maximize profit under ingredient limits.</p>
             <p>The factory wants to maximize profit from the liters it produces: $5 profit per liter of peppermint, $4 per liter of blueberry.</p>
@@ -499,7 +499,7 @@
             <div class="lp-graph" id="lp-graph-root"></div>
             <p>The shaded region above is every feasible production plan. The best one sits at a corner — here, (x₁, x₂) = (6, 1.5), for a profit of 36.</p>
           </div>
-          <div class="topic">
+          <div class="topic" id="integer-linear-programming-ilp-formulation">
             <h2>Integer Linear Programming (ILP) Formulation</h2>
             <p>Example: a breakfast budget — pick <span class="var-egg">green eggs (x₁)</span> and slices of <span class="var-ham">ham (x₂)</span> to maximize protein without busting a €3 budget.</p>
             <p>The goal is to maximize total protein from breakfast.</p>
@@ -512,7 +512,7 @@
             <div class="lp-graph" id="ilp-graph-root"></div>
             <p>The shaded region above is the continuous feasible area; the dots are the integer points inside it. The best integer point is (x₁, x₂) = (3, 1), for a value of 31 — not the same as rounding the LP relaxation's optimum of (0, 3.33), which scores 33.33.</p>
           </div>
-          <div class="topic">
+          <div class="topic" id="simplex">
             <h2>Simplex</h2>
             <p>The simplex method never looks inside the feasible region — it starts at a corner and walks along the edges toward a better one.</p>
             <div class="lp-graph" id="simplex-graph-root"></div>
@@ -530,7 +530,7 @@
             <p>The same walk, numerically: the tableau starts with every slack basic, then pivots one variable in and one out per step.</p>
             <div class="tableau-wrap" id="simplex-tableau-root"></div>
           </div>
-          <div class="topic">
+          <div class="topic" id="two-phase-simplex">
             <h2>Two-Phase Simplex</h2>
             <p>Add a minimum order to the same ice cream line: at least 2 liters total must be made, or it isn't worth running the machine.</p>
             <p class="math">$$\textcolor{#e64980}{x_1} + \textcolor{#3b6bd6}{x_2} \geq 2$$</p>
@@ -548,7 +548,7 @@
             <p>The same walk, numerically, now in two phases:</p>
             <div class="tableau-wrap" id="two-phase-tableau-root"></div>
           </div>
-          <div class="topic">
+          <div class="topic" id="getting-a-dual-from-a-primal">
             <h2>Getting a Dual from a Primal</h2>
             <p>Every primal has a dual: a max problem's dual is a min problem, one dual variable per primal constraint and one dual constraint per primal variable.</p>
             <p>Start from the ice cream factory's primal LP:</p>
@@ -568,7 +568,7 @@
             <p>That gives y₁ = 1, y₂ = 2, y₃ = 0 — a dual objective of 24(1) + 6(2) + 5(0) = 24 + 12 = 36, exactly matching the primal's optimal profit.</p>
             <p>Weak duality keeps the primal's rising values below the dual's falling ones at every step; strong duality is the special fact that, at the optimum, they meet exactly.</p>
           </div>
-          <div class="topic">
+          <div class="topic" id="complementary-slackness">
             <h2>Complementary Slackness</h2>
             <p>At the optimum, a primal variable and its matching dual constraint can't both be slack — for each pair, at least one of the two must be exactly zero.</p>
             <div class="lp-graph">
@@ -585,7 +585,7 @@
               <p class="math">$$\textcolor{#e64980}{x_1} \textcolor{#7B4B8C}{>} 0 \implies \text{dual constraint 1 binds}, \qquad y_3 = 0 \text{ since blueberries is slack}$$</p>
             </div>
           </div>
-          <div class="topic">
+          <div class="topic" id="gomory-cutting-planes">
             <h2>Gomory Cutting Planes</h2>
             <p>A Gomory cut adds a valid inequality — one that every integer point already satisfies — that slices a fractional corner off the LP relaxation, shrinking it toward the true integer hull.</p>
             <p>Take the green-eggs-and-ham budget constraint. The Gomory split needs every variable in its row — including the slack — to be integer-valued at integer solutions, so scale away the decimals first.</p>
@@ -599,14 +599,14 @@
             <div class="lp-graph" id="gomory-graph-root"></div>
             <p>The faint dashed outline above is the LP relaxation before any cuts. Since ham must be a whole number, x₂ ≤ 3.33 is really x₂ ≤ 3 — a valid cut that removes no integer point, but slices off the fractional corner and shrinks the relaxation's optimum from 33.33 down to 33, a step closer to the true integer optimum of 31.</p>
           </div>
-          <div class="topic">
+          <div class="topic" id="dijkstras-algorithm">
             <h2>Dijkstra's Algorithm</h2>
             <p>Dijkstra grows a shortest-path tree one node at a time, always settling the closest unvisited node next.</p>
             <div class="lp-graph">
               <div class="dijkstra-graph" id="dijkstra-graph-root"></div>
             </div>
           </div>
-          <div class="topic">
+          <div class="topic" id="complexity-and-np-completeness">
             <h2>Complexity and NP-Completeness</h2>
             <p>P is every problem solvable quickly; NP is every problem whose solution can be checked quickly; NP-complete problems are the hardest problems in NP, each able to encode any other via a reduction.</p>
             <p>If any single NP-complete problem (like SAT) turns out to be solvable quickly, a reduction lets every problem in NP ride along and be solved quickly too — that's exactly the open question "does P = NP?".</p>
@@ -619,7 +619,7 @@
         <p>The discipline of collecting, analyzing, interpreting, and presenting data to uncover patterns and inform decisions.</p>
 
         <div class="topics">
-          <div class="topic">
+          <div class="topic" id="mles">
             <h2>MLEs</h2>
             <p>Maximum likelihood picks whichever parameter value makes the observed data most probable.</p>
             <p class="math">$$\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}} = \textcolor{#7B4B8C}{\arg\max_{\theta}}\ L(\theta) = \textcolor{#7B4B8C}{\arg\max_{\theta}} \prod_{i=1}^{n} f(x_i; \theta)$$</p>
@@ -628,7 +628,7 @@
 
             <div class="stat-chart" id="mle-chart-root"></div>
           </div>
-          <div class="topic">
+          <div class="topic" id="bayesian-inference">
             <h2>Bayesian inference</h2>
             <p>Bayesian inference treats the parameter itself as random, updating a prior belief into a posterior once data is observed.</p>
             <p class="math">$$\pi(\textcolor{#0b7285}{\theta} \mid x) \textcolor{#7B4B8C}{\propto} f(x \mid \textcolor{#0b7285}{\theta})\, \pi(\textcolor{#0b7285}{\theta})$$</p>
@@ -636,14 +636,14 @@
 
             <div class="stat-chart" id="bayes-chart-root"></div>
           </div>
-          <div class="topic">
+          <div class="topic" id="method-of-moments">
             <h2>Method of moments</h2>
             <p>Method of moments estimates parameters by matching the sample's moments to the distribution's theoretical moments.</p>
             <p class="math">$$E[X^k] = \frac{1}{n}\sum_{i=1}^{n} X_i^k, \quad k = 1, 2, \dots$$</p>
             <p>Solving these equations for the unknown parameters, one per moment used, gives the method-of-moments estimator.</p>
             <p class="math">$$\text{solve for } \textcolor{#0b7285}{\theta} \text{ using as many moments as there are parameters}$$</p>
           </div>
-          <div class="topic">
+          <div class="topic" id="hypothesis-testing">
             <h2>Hypothesis testing</h2>
             <p>A hypothesis test rejects the null hypothesis when the observed data would be too unlikely if the null were actually true.</p>
             <p class="math">$$\textcolor{#7B4B8C}{\text{reject } H_0} \textcolor{#7B4B8C}{\iff} \text{test statistic} \textcolor{#7B4B8C}{\in} \text{rejection region}$$</p>
@@ -652,27 +652,27 @@
 
             <div class="stat-chart" id="hyp-chart-root"></div>
           </div>
-          <div class="topic">
+          <div class="topic" id="likelihood-ratio">
             <h2>Likelihood ratio</h2>
             <p>The likelihood ratio compares how well the data is explained by the best-fitting restricted (null) model versus the best-fitting unrestricted model.</p>
             <p class="math">$$\Lambda = \frac{\sup_{\theta \in \Theta_0} L(\theta)}{\sup_{\theta \in \Theta} L(\theta)}$$</p>
             <p>A ratio near 1 means restricting to H₀ barely hurt the fit; a ratio near 0 means the unrestricted model fits much better.</p>
             <p class="math">$$-2\log \Lambda \ \xrightarrow{d}\ \chi^2_{k}$$</p>
           </div>
-          <div class="topic">
+          <div class="topic" id="pivotal-quantities">
             <h2>Pivotal quantities</h2>
             <p>A pivotal quantity is built from both the data and the parameter, yet its own distribution never depends on the parameter's value.</p>
             <p class="math">$$\frac{\bar{X} - \textcolor{#0b7285}{\mu}}{S/\sqrt{n}} \textcolor{#7B4B8C}{\sim} t_{n-1} \quad \text{for every value of } \textcolor{#0b7285}{\mu}$$</p>
             <p>Because that distribution is known regardless of the true parameter, a pivotal quantity can be inverted directly into a confidence interval.</p>
           </div>
-          <div class="topic">
+          <div class="topic" id="regression-models">
             <h2>Regression models</h2>
             <p>A regression model treats the response as a deterministic trend plus random noise, rather than an exact function of the predictors.</p>
             <p class="math">$$Y_i = \textcolor{#0b7285}{\beta_0} + \textcolor{#0b7285}{\beta_1} x_i + \varepsilon_i, \quad \varepsilon_i \textcolor{#7B4B8C}{\sim} N(0, \sigma^2)$$</p>
             <p>Fitting the model means choosing the coefficients that make the residuals — the leftover noise — as small as possible.</p>
             <p class="math">$$(\hat{\textcolor{#0b7285}{\beta_0}}, \hat{\textcolor{#0b7285}{\beta_1}}) = \textcolor{#7B4B8C}{\arg\min_{\beta_0,\beta_1}} \sum_{i=1}^{n} (y_i - \beta_0 - \beta_1 x_i)^2$$</p>
           </div>
-          <div class="topic">
+          <div class="topic" id="fisher-information">
             <h2>Fisher information</h2>
             <p>Fisher information measures how sharply the log-likelihood curves at the true parameter — more curvature means the data pins the parameter down more precisely.</p>
             <p class="math">$$I(\textcolor{#0b7285}{\theta}) = -E\!\left[\frac{\partial^2}{\partial \textcolor{#0b7285}{\theta}^2} \log f(X; \textcolor{#0b7285}{\theta})\right]$$</p>

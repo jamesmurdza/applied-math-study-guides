@@ -107,6 +107,21 @@ body {
   margin-top: 16px;
 }
 
+/* Cross-reference links between topics — subtle by default so they read
+   as text first, link second; the purple on hover matches the color
+   already used for connectives (⟺, ∀, ∃) elsewhere on the page. */
+.topic p a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: #ccc;
+  text-underline-offset: 2px;
+}
+
+.topic p a:hover {
+  color: #7B4B8C;
+  text-decoration-color: #7B4B8C;
+}
+
 .topic ol {
   margin: 0;
   padding-left: 22px;
