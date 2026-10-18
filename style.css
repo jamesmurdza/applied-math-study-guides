@@ -80,6 +80,10 @@ body {
   margin-bottom: 40px;
 }
 
+.topic strong {
+  font-weight: 600;
+}
+
 .topic h2 {
   font-size: 1.1rem;
   font-weight: 600;
