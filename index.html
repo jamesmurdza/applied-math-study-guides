@@ -55,9 +55,9 @@
           <div class="topic" id="balls">
             <h2>Balls</h2>
             <p>An <strong>open ball</strong> collects every point within some fixed radius of a center point.</p>
-            <p class="math">$$\textcolor{#C18401}{B}_r(x) \textcolor{#7B4B8C}{:=} \{y \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X} \textcolor{#7B4B8C}{:} \textcolor{#4078F2}{d}(x,y) \textcolor{#7B4B8C}{<} r\}$$</p>
+            <p class="math">$$\textcolor{#C18401}{B}_r(x) \textcolor{#7B4B8C}{:=} \{y \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M} \textcolor{#7B4B8C}{:} \textcolor{#4078F2}{d}(x,y) \textcolor{#7B4B8C}{<} r\}$$</p>
             <p>A <strong>closed ball</strong> additionally includes the points at distance exactly r.</p>
-            <p class="math">$$\overline{\textcolor{#C18401}{B}}_r(x) \textcolor{#7B4B8C}{:=} \{y \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X} \textcolor{#7B4B8C}{:} \textcolor{#4078F2}{d}(x,y) \textcolor{#7B4B8C}{\leq} r\}$$</p>
+            <p class="math">$$\overline{\textcolor{#C18401}{B}}_r(x) \textcolor{#7B4B8C}{:=} \{y \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M} \textcolor{#7B4B8C}{:} \textcolor{#4078F2}{d}(x,y) \textcolor{#7B4B8C}{\leq} r\}$$</p>
           </div>
           <div class="topic" id="convergence-and-cauchy-sequences">
             <h2>Convergence and Cauchy Sequences</h2>
@@ -100,7 +100,7 @@
             <p>A <strong>closed set</strong> contains the limit of every convergent sequence built from its own points.</p>
             <p class="math">$$\big(\textcolor{#7B4B8C}{\forall} n \textcolor{#7B4B8C}{\in} \mathbb{N},\ x_n \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{A}\big) \textcolor{#7B4B8C}{\wedge} x_n \to x\ \textcolor{#7B4B8C}{\implies}\ x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{A}$$</p>
             <p>A set is closed exactly when its complement is open.</p>
-            <p class="math">$$\textcolor{#C18401}{A} \text{ closed} \textcolor{#7B4B8C}{\iff} \textcolor{#C18401}{X} \setminus \textcolor{#C18401}{A} \text{ open}$$</p>
+            <p class="math">$$\textcolor{#C18401}{A} \text{ closed} \textcolor{#7B4B8C}{\iff} \textcolor{#C18401}{M} \setminus \textcolor{#C18401}{A} \text{ open}$$</p>
 
             <div class="set-examples">
               <div class="set-card">
@@ -188,7 +188,7 @@
           <div class="topic" id="dense-sets">
             <h2>Dense Sets</h2>
             <p>A set is <strong>dense</strong> when every ball in the space contains at least one of its points, no matter how small — so its points can be found arbitrarily close to every point of the space.</p>
-            <p class="math">$$\textcolor{#C18401}{A} \text{ dense in } \textcolor{#C18401}{X} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X},\ \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#C18401}{B}_\varepsilon(x) \textcolor{#7B4B8C}{\cap} \textcolor{#C18401}{A} \textcolor{#7B4B8C}{\neq} \varnothing$$</p>
+            <p class="math">$$\textcolor{#C18401}{A} \text{ dense in } \textcolor{#C18401}{M} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M},\ \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#C18401}{B}_\varepsilon(x) \textcolor{#7B4B8C}{\cap} \textcolor{#C18401}{A} \textcolor{#7B4B8C}{\neq} \varnothing$$</p>
 
             <div class="viz viz-card">
               <svg viewBox="0 0 250 100" style="width:250px;max-width:250px;" role="img" aria-label="Points of A scattered throughout the line, with at least one falling inside every epsilon window around x">
@@ -252,7 +252,7 @@
             <p>A set is <strong>bounded</strong> when the largest distance between any two of its points is finite.</p>
             <p class="math">$$\mathrm{diam}(\textcolor{#C18401}{A}) \textcolor{#7B4B8C}{:=} \textcolor{#7B4B8C}{\sup}_{x,y \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{A}} \textcolor{#4078F2}{d}(x,y), \qquad \textcolor{#C18401}{A} \text{ bounded} \textcolor{#7B4B8C}{\iff} \mathrm{diam}(\textcolor{#C18401}{A}) \textcolor{#7B4B8C}{<} \infty$$</p>
             <p>Equivalently, a set is bounded when it fits entirely inside some ball of finite radius.</p>
-            <p class="math">$$\textcolor{#C18401}{A} \text{ bounded} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\exists}\, x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X},\ \textcolor{#7B4B8C}{\exists}\, r \textcolor{#7B4B8C}{>} 0 \text{ s.t. } \textcolor{#C18401}{A} \textcolor{#7B4B8C}{\subseteq} \textcolor{#C18401}{B}_r(x)$$</p>
+            <p class="math">$$\textcolor{#C18401}{A} \text{ bounded} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\exists}\, x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M},\ \textcolor{#7B4B8C}{\exists}\, r \textcolor{#7B4B8C}{>} 0 \text{ s.t. } \textcolor{#C18401}{A} \textcolor{#7B4B8C}{\subseteq} \textcolor{#C18401}{B}_r(x)$$</p>
 
             <div class="set-examples single" style="grid-template-columns: minmax(0, 240px);">
               <div class="set-card">
@@ -291,9 +291,9 @@
           <div class="topic" id="completeness">
             <h2>Completeness</h2>
             <p>A <strong>complete</strong> space contains the limits of all its Cauchy sequences, leaving no "gaps" to converge into.</p>
-            <p class="math">$$(\textcolor{#C18401}{X},\textcolor{#4078F2}{d}) \text{ complete} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \text{ Cauchy } (x_n) \text{ in } \textcolor{#C18401}{X},\ \textcolor{#7B4B8C}{\exists}\, x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X} \text{ s.t. } x_n \textcolor{#7B4B8C}{\to} x$$</p>
+            <p class="math">$$(\textcolor{#C18401}{M},\textcolor{#4078F2}{d}) \text{ complete} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \text{ Cauchy } (x_n) \text{ in } \textcolor{#C18401}{M},\ \textcolor{#7B4B8C}{\exists}\, x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M} \text{ s.t. } x_n \textcolor{#7B4B8C}{\to} x$$</p>
             <p>Within a complete ambient space, a subset is complete exactly when it is closed.</p>
-            <p class="math">$$\textcolor{#C18401}{A} \textcolor{#7B4B8C}{\subseteq} \textcolor{#C18401}{X},\ \textcolor{#C18401}{X} \text{ complete}\ \textcolor{#7B4B8C}{\implies}\ \big(\textcolor{#C18401}{A} \text{ complete} \textcolor{#7B4B8C}{\iff} \textcolor{#C18401}{A} \text{ closed}\big)$$</p>
+            <p class="math">$$\textcolor{#C18401}{A} \textcolor{#7B4B8C}{\subseteq} \textcolor{#C18401}{M},\ \textcolor{#C18401}{M} \text{ complete}\ \textcolor{#7B4B8C}{\implies}\ \big(\textcolor{#C18401}{A} \text{ complete} \textcolor{#7B4B8C}{\iff} \textcolor{#C18401}{A} \text{ closed}\big)$$</p>
 
             <div class="set-examples">
               <div class="set-card">
@@ -344,7 +344,7 @@
           <div class="topic" id="compactness">
             <h2>Compactness</h2>
             <p>A space is <strong>compact</strong> when it's both complete and totally bounded. In other words, no sequence escapes to a missing limit, and finitely many balls of any size still cover the whole space.</p>
-            <p class="math">$$\textcolor{#C18401}{X} \text{ compact} \textcolor{#7B4B8C}{\iff} \textcolor{#C18401}{X} \text{ complete} \textcolor{#7B4B8C}{\wedge} \textcolor{#C18401}{X} \text{ totally bounded}$$</p>
+            <p class="math">$$\textcolor{#C18401}{M} \text{ compact} \textcolor{#7B4B8C}{\iff} \textcolor{#C18401}{M} \text{ complete} \textcolor{#7B4B8C}{\wedge} \textcolor{#C18401}{M} \text{ totally bounded}$$</p>
 
             <div class="set-examples">
               <div class="set-card">
@@ -372,7 +372,7 @@
           <div class="topic" id="bolzano-weierstrass">
             <h2>Bolzano&ndash;Weierstrass</h2>
             <p>The Bolzano&ndash;Weierstrass theorem gives an equivalent, sequence-based test for compactness: a space is compact exactly when every sequence inside it has a <strong>subsequence</strong> that converges to a point still inside the space.</p>
-            <p class="math">$$\textcolor{#C18401}{X} \text{ compact} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} (x_n) \text{ in } \textcolor{#C18401}{X},\ \textcolor{#7B4B8C}{\exists} \text{ subsequence } (x_{n_k}) \text{ s.t. } x_{n_k} \textcolor{#7B4B8C}{\to} x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X}$$</p>
+            <p class="math">$$\textcolor{#C18401}{M} \text{ compact} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} (x_n) \text{ in } \textcolor{#C18401}{M},\ \textcolor{#7B4B8C}{\exists} \text{ subsequence } (x_{n_k}) \text{ s.t. } x_{n_k} \textcolor{#7B4B8C}{\to} x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M}$$</p>
 
             <div class="set-examples">
               <div class="set-card">
@@ -424,7 +424,7 @@
           <div class="topic" id="sequences-and-series-of-functions">
             <h2>Sequences and Series of Functions</h2>
             <p><strong>Pointwise convergence</strong> only asks each individual input to eventually settle, with no control over how fast that happens from one point to the next.</p>
-            <p class="math">$$\forall x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X},\quad \textcolor{#4078F2}{f_n}(x) \to \textcolor{#4078F2}{f}(x) \text{ as } n \to \infty$$</p>
+            <p class="math">$$\forall x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M},\quad \textcolor{#4078F2}{f_n}(x) \to \textcolor{#4078F2}{f}(x) \text{ as } n \to \infty$$</p>
 
             <div class="set-examples single" style="grid-template-columns: minmax(0, 240px);">
               <div class="set-card">
@@ -448,7 +448,7 @@
             </div>
 
             <p><strong>Uniform convergence</strong> requires the entire function, not just each point, to be well-approximated as n grows.</p>
-            <p class="math">$$\textcolor{#4078F2}{f_n} \to \textcolor{#4078F2}{f} \text{ uniformly} \textcolor{#7B4B8C}{\iff} \sup_{x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X}} |\textcolor{#4078F2}{f_n}(x) - \textcolor{#4078F2}{f}(x)| \to 0 \text{ as } n \to \infty$$</p>
+            <p class="math">$$\textcolor{#4078F2}{f_n} \to \textcolor{#4078F2}{f} \text{ uniformly} \textcolor{#7B4B8C}{\iff} \sup_{x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M}} |\textcolor{#4078F2}{f_n}(x) - \textcolor{#4078F2}{f}(x)| \to 0 \text{ as } n \to \infty$$</p>
 
             <div class="set-examples single" style="grid-template-columns: minmax(0, 240px);">
               <div class="set-card">
@@ -474,7 +474,7 @@
             <p>A <strong>series of functions</strong> converges uniformly when its partial sums converge uniformly to the same limit function.</p>
             <p class="math">$$\textstyle\sum_{n=1}^{N} \textcolor{#4078F2}{f_n} \to \textcolor{#4078F2}{f} \text{ uniformly as } N \to \infty$$</p>
             <p>The <strong>Weierstrass M-test</strong> gets uniform convergence for free: bound each term by a constant, and if those constants are summable, so is the series — uniformly.</p>
-            <p class="math">$$\Big(\forall n,\ \forall x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{X},\ |\textcolor{#4078F2}{f_n}(x)| \le M_n\Big) \wedge \sum_{n=1}^{\infty} M_n < \infty\ \textcolor{#7B4B8C}{\implies}\ \sum_{n=1}^{\infty} \textcolor{#4078F2}{f_n} \text{ converges uniformly}$$</p>
+            <p class="math">$$\Big(\forall n,\ \forall x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M},\ |\textcolor{#4078F2}{f_n}(x)| \le M_n\Big) \wedge \sum_{n=1}^{\infty} M_n < \infty\ \textcolor{#7B4B8C}{\implies}\ \sum_{n=1}^{\infty} \textcolor{#4078F2}{f_n} \text{ converges uniformly}$$</p>
           </div>
         </div>
       </section>
