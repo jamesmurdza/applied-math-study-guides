@@ -175,6 +175,42 @@
             </div>
           </div>
           <div class="topic">
+            <h2>Dense Sets</h2>
+            <p>A set is dense when it gets arbitrarily close to every point of the space — no ball is ever too small to catch one of its points.</p>
+            <p class="math">$$\textcolor{#C18401}{A} \text{ dense in } \textcolor{#C18401}{M} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M},\ \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#C18401}{B}_\varepsilon(x) \textcolor{#7B4B8C}{\cap} \textcolor{#C18401}{A} \textcolor{#7B4B8C}{\neq} \varnothing$$</p>
+
+            <div class="viz viz-card">
+              <svg viewBox="0 0 250 100" role="img" aria-label="Points of A scattered throughout the line, with at least one falling inside every epsilon window around x">
+                <line x1="10" y1="55" x2="235" y2="55" stroke="#ccc" stroke-width="1"></line>
+                <line x1="135" y1="35" x2="135" y2="75" stroke="#7B4B8C" stroke-width="1" stroke-dasharray="3,3"></line>
+                <line x1="165" y1="35" x2="165" y2="75" stroke="#7B4B8C" stroke-width="1" stroke-dasharray="3,3"></line>
+                <text x="135" y="88" font-size="12" fill="#7B4B8C" font-style="italic" text-anchor="middle">ε</text>
+                <text x="165" y="88" font-size="12" fill="#7B4B8C" font-style="italic" text-anchor="middle">ε</text>
+                <line x1="150" y1="50" x2="150" y2="60" stroke="#999" stroke-width="1.5"></line>
+                <text x="150" y="30" font-size="12" fill="#999" text-anchor="middle">x</text>
+                <circle cx="22" cy="55" r="2.5" fill="#1a1a1a"></circle>
+                <circle cx="38" cy="55" r="2.5" fill="#1a1a1a"></circle>
+                <circle cx="55" cy="55" r="2.5" fill="#1a1a1a"></circle>
+                <circle cx="70" cy="55" r="2.5" fill="#1a1a1a"></circle>
+                <circle cx="88" cy="55" r="2.5" fill="#1a1a1a"></circle>
+                <circle cx="105" cy="55" r="2.5" fill="#1a1a1a"></circle>
+                <circle cx="118" cy="55" r="2.5" fill="#1a1a1a"></circle>
+                <circle cx="146" cy="55" r="2.5" fill="#1a1a1a"></circle>
+                <circle cx="183" cy="55" r="2.5" fill="#1a1a1a"></circle>
+                <circle cx="198" cy="55" r="2.5" fill="#1a1a1a"></circle>
+                <circle cx="212" cy="55" r="2.5" fill="#1a1a1a"></circle>
+                <circle cx="225" cy="55" r="2.5" fill="#1a1a1a"></circle>
+              </svg>
+              <p>No matter how small ε is, some point of <strong>A</strong> (dots) falls within ε of <strong>x</strong> — even though x itself need not be in A.</p>
+            </div>
+
+            <p>This is exactly what makes the Completeness topic's √2 example work: ℚ is dense in ℝ, so every real number — including √2 — is a limit of rationals, even though √2 itself isn't one.</p>
+
+            <p>A space is separable when a single countable set is dense enough to approximate every point in it.</p>
+            <p class="math">$$\textcolor{#C18401}{M} \text{ separable} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\exists} \text{ countable } \textcolor{#C18401}{D} \textcolor{#7B4B8C}{\subseteq} \textcolor{#C18401}{M} \text{ dense in } \textcolor{#C18401}{M}$$</p>
+            <p class="math">$$\textcolor{#C18401}{\mathbb{R}} \text{ is separable via } \textcolor{#C18401}{D} \textcolor{#7B4B8C}{=} \textcolor{#C18401}{\mathbb{Q}}$$</p>
+          </div>
+          <div class="topic">
             <h2>Continuity</h2>
             <p>A function is continuous when small changes in input produce arbitrarily small changes in output.</p>
             <p class="math">$$\textcolor{#4078F2}{f} \text{ continuous at } x_0 \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0\ \textcolor{#7B4B8C}{\exists}\, \delta \textcolor{#7B4B8C}{>} 0 \textcolor{#7B4B8C}{:}\ \textcolor{#4078F2}{d}(x_0,x) \textcolor{#7B4B8C}{<} \delta \textcolor{#7B4B8C}{\implies} \textcolor{#4078F2}{\rho}(\textcolor{#4078F2}{f}(x_0), \textcolor{#4078F2}{f}(x)) \textcolor{#7B4B8C}{<} \varepsilon$$</p>
