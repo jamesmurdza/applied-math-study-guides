@@ -189,8 +189,9 @@
             <h2>Dense Sets</h2>
             <p>A set is <strong>dense</strong> when every ball in the space contains at least one of its points, no matter how small — so its points can be found arbitrarily close to every point of the space.</p>
             <p class="math">$$\textcolor{#C18401}{A} \text{ dense in } \textcolor{#C18401}{M} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M},\ \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#C18401}{B}_\varepsilon(x) \textcolor{#7B4B8C}{\cap} \textcolor{#C18401}{A} \textcolor{#7B4B8C}{\neq} \varnothing$$</p>
+            <p><strong>x</strong> ranges over the whole space, not just <strong>A</strong> — even points outside A must have A's points arbitrarily close by.</p>
 
-            <div class="viz viz-card">
+            <div class="viz">
               <svg viewBox="0 0 250 100" style="width:250px;max-width:250px;" role="img" aria-label="Points of A scattered throughout the line, with at least one falling inside every epsilon window around x">
                 <line x1="10" y1="55" x2="235" y2="55" stroke="#ccc" stroke-width="1"></line>
                 <line x1="135" y1="35" x2="135" y2="75" stroke="#7B4B8C" stroke-width="1" stroke-dasharray="3,3"></line>
@@ -212,7 +213,7 @@
                 <circle cx="212" cy="55" r="2.5" fill="#1a1a1a"></circle>
                 <circle cx="225" cy="55" r="2.5" fill="#1a1a1a"></circle>
               </svg>
-              <p>No matter how small ε is, some point of <strong>A</strong> (dots) falls within ε of <strong>x</strong> — even though x itself need not be in A.</p>
+              <p>The dots are points of <strong>A</strong>; every ε-window around <strong>x</strong> still catches one.</p>
             </div>
 
             <p>If a subset <strong>A</strong> of a metric space <strong>X</strong> is both closed and dense in <strong>X</strong>, then <strong>A</strong> = <strong>X</strong>.</p>
@@ -253,39 +254,37 @@
             <p class="math">$$\mathrm{diam}(\textcolor{#C18401}{A}) \textcolor{#7B4B8C}{:=} \textcolor{#7B4B8C}{\sup}_{x,y \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{A}} \textcolor{#4078F2}{d}(x,y), \qquad \textcolor{#C18401}{A} \text{ bounded} \textcolor{#7B4B8C}{\iff} \mathrm{diam}(\textcolor{#C18401}{A}) \textcolor{#7B4B8C}{<} \infty$$</p>
             <p>Equivalently, a set is bounded when it fits entirely inside some ball of finite radius.</p>
             <p class="math">$$\textcolor{#C18401}{A} \text{ bounded} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\exists}\, x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M},\ \textcolor{#7B4B8C}{\exists}\, r \textcolor{#7B4B8C}{>} 0 \text{ s.t. } \textcolor{#C18401}{A} \textcolor{#7B4B8C}{\subseteq} \textcolor{#C18401}{B}_r(x)$$</p>
+            <p><strong>x</strong> can be any point of the space — the ball's center doesn't need to lie in A.</p>
 
-            <div class="set-examples single" style="grid-template-columns: minmax(0, 240px);">
-              <div class="set-card">
-                <svg viewBox="0 0 195 160" style="width:195px;max-width:195px;" role="img" aria-label="A bounded set inside one large ball">
-                  <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
-                  <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
-                  <circle cx="80" cy="80" r="65" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="4,4"></circle>
-                  <ellipse cx="80" cy="80" rx="40" ry="28" fill="#C18401" fill-opacity="0.15" stroke="#C18401" stroke-width="2"></ellipse>
-                  <line x1="165" y1="15" x2="165" y2="80" stroke="#777" stroke-width="1"></line>
-                  <text x="170" y="50" font-size="12" fill="#777" font-style="italic">r</text>
-                </svg>
-                <p><strong>Bounded</strong></p>
-              </div>
+            <div class="viz">
+              <svg viewBox="0 0 195 160" style="width:195px;max-width:195px;" role="img" aria-label="A bounded set inside one large ball">
+                <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
+                <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
+                <circle cx="80" cy="80" r="65" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="4,4"></circle>
+                <ellipse cx="80" cy="80" rx="40" ry="28" fill="#C18401" fill-opacity="0.15" stroke="#C18401" stroke-width="2"></ellipse>
+                <line x1="165" y1="15" x2="165" y2="80" stroke="#777" stroke-width="1"></line>
+                <text x="170" y="50" font-size="12" fill="#777" font-style="italic">r</text>
+              </svg>
+              <p>One ball of radius <strong>r</strong> contains all of <strong>A</strong>.</p>
             </div>
 
             <p><strong>Total boundedness</strong> strengthens boundedness by requiring a set to be coverable by finitely many small balls.</p>
             <p class="math">$$\textcolor{#C18401}{A} \text{ totally bounded} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#C18401}{A} \textcolor{#7B4B8C}{\subseteq} \textcolor{#7B4B8C}{\bigcup}_{i=1}^{n} \textcolor{#C18401}{B}_\varepsilon(x_i) \text{ for some finite } x_1, \dots, x_n$$</p>
+            <p>The number of balls can grow as <strong>ε</strong> shrinks — but it's always finite.</p>
 
-            <div class="set-examples single">
-              <div class="set-card">
-                <svg viewBox="0 0 160 160" style="width:160px;max-width:160px;" role="img" aria-label="The same set covered by finitely many small balls">
-                  <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
-                  <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
-                  <ellipse cx="80" cy="80" rx="40" ry="28" fill="#C18401" fill-opacity="0.15" stroke="#C18401" stroke-width="2"></ellipse>
-                  <circle cx="60" cy="66" r="27" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="3,3"></circle>
-                  <circle cx="100" cy="66" r="27" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="3,3"></circle>
-                  <circle cx="60" cy="94" r="27" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="3,3"></circle>
-                  <circle cx="100" cy="94" r="27" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="3,3"></circle>
-                  <line x1="145" y1="39" x2="145" y2="66" stroke="#777" stroke-width="1"></line>
-                  <text x="150" y="56" font-size="12" fill="#777" font-style="italic">ε</text>
-                </svg>
-                <p><strong>Totally bounded</strong></p>
-              </div>
+            <div class="viz">
+              <svg viewBox="0 0 160 160" style="width:160px;max-width:160px;" role="img" aria-label="The same set covered by finitely many small balls">
+                <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
+                <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
+                <ellipse cx="80" cy="80" rx="40" ry="28" fill="#C18401" fill-opacity="0.15" stroke="#C18401" stroke-width="2"></ellipse>
+                <circle cx="60" cy="66" r="27" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="3,3"></circle>
+                <circle cx="100" cy="66" r="27" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="3,3"></circle>
+                <circle cx="60" cy="94" r="27" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="3,3"></circle>
+                <circle cx="100" cy="94" r="27" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="3,3"></circle>
+                <line x1="145" y1="39" x2="145" y2="66" stroke="#777" stroke-width="1"></line>
+                <text x="150" y="56" font-size="12" fill="#777" font-style="italic">ε</text>
+              </svg>
+              <p>Four balls of radius <strong>ε</strong> already cover all of <strong>A</strong>.</p>
             </div>
           </div>
           <div class="topic" id="completeness">
