@@ -53,6 +53,12 @@
             <p>Solving these equations for the unknown parameters, one per moment used, gives the method-of-moments estimator.</p>
             <p class="math">$$\text{solve for } \textcolor{#0b7285}{\theta} \text{ using as many moments as there are parameters}$$</p>
           </div>
+          <div class="topic" id="bias-and-mse">
+            <h2>Bias and Mean Squared Error</h2>
+            <p><em>Placeholder: definitions — bias is the gap between an estimator's expected value and the true parameter; MSE is the expected squared error, which decomposes into variance plus bias squared.</em></p>
+            <p><em>Placeholder: formula, Bias(θ̂) = E[θ̂] − θ and MSE(θ̂) = Var(θ̂) + Bias(θ̂)².</em></p>
+            <p><em>Placeholder: example comparing the MLE and method-of-moments estimators from above on the same dataset — same bias/MSE calculation, showing why one can be preferable even though both are consistent.</em></p>
+          </div>
           <div class="topic" id="hypothesis-testing">
             <h2>Hypothesis testing</h2>
             <p>A hypothesis test rejects the null hypothesis when the observed data would be too unlikely if the null were actually true.</p>
@@ -61,6 +67,12 @@
             <p class="math">$$P(\textcolor{#7B4B8C}{\text{reject } H_0} \mid H_0 \text{ true}) = \textcolor{#c92a2a}{\alpha}$$</p>
 
             <div class="stat-chart" id="hyp-chart-root"></div>
+          </div>
+          <div class="topic" id="students-t-tests">
+            <h2>Student's t-tests</h2>
+            <p><em>Placeholder: the concrete test built from the general Hypothesis Testing framework above — one-sample, two paired-sample, and two independent-sample cases.</em></p>
+            <p><em>Placeholder: formula, the t statistic for each case and its degrees of freedom.</em></p>
+            <p><em>Placeholder: example — deciding which of the three cases applies to a given dataset, then carrying out the test.</em></p>
           </div>
           <div class="topic" id="likelihood-ratio">
             <h2>Likelihood ratio</h2>
@@ -75,12 +87,24 @@
             <p class="math">$$\frac{\bar{X} - \textcolor{#0b7285}{\mu}}{S/\sqrt{n}} \textcolor{#7B4B8C}{\sim} t_{n-1} \quad \text{for every value of } \textcolor{#0b7285}{\mu}$$</p>
             <p>Because that distribution is known regardless of the true parameter, a pivotal quantity can be inverted directly into a confidence interval.</p>
           </div>
+          <div class="topic" id="confidence-intervals">
+            <h2>Confidence Intervals</h2>
+            <p><em>Placeholder: definition — inverting a pivotal quantity (or a near-pivot, when no exact pivot exists) from the Pivotal Quantities topic above into an interval that traps the true parameter with a given probability.</em></p>
+            <p><em>Placeholder: formula, interval endpoints derived from inverting the pivot's distribution at the desired confidence level.</em></p>
+            <p><em>Placeholder: example — the t-interval for μ built directly from the pivotal quantity shown above.</em></p>
+          </div>
           <div class="topic" id="regression-models">
             <h2>Regression models</h2>
             <p>A regression model treats the response as a deterministic trend plus random noise, rather than an exact function of the predictors.</p>
             <p class="math">$$Y_i = \textcolor{#0b7285}{\beta_0} + \textcolor{#0b7285}{\beta_1} x_i + \varepsilon_i, \quad \varepsilon_i \textcolor{#7B4B8C}{\sim} N(0, \sigma^2)$$</p>
             <p>Fitting the model means choosing the coefficients that make the residuals — the leftover noise — as small as possible.</p>
             <p class="math">$$(\hat{\textcolor{#0b7285}{\beta_0}}, \hat{\textcolor{#0b7285}{\beta_1}}) = \textcolor{#7B4B8C}{\arg\min_{\beta_0,\beta_1}} \sum_{i=1}^{n} (y_i - \beta_0 - \beta_1 x_i)^2$$</p>
+          </div>
+          <div class="topic" id="regression-diagnostics">
+            <h2>Regression Diagnostics</h2>
+            <p><em>Placeholder: checking the assumptions behind the regression model above — linearity, constant variance, normal errors — via residual plots.</em></p>
+            <p><em>Placeholder: formula, R² as the proportion of variance explained.</em></p>
+            <p><em>Placeholder: example — a residual plot showing a violated assumption (e.g. fanning variance) next to a well-behaved one.</em></p>
           </div>
           <div class="topic" id="fisher-information">
             <h2>Fisher information</h2>
