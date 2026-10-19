@@ -52,6 +52,20 @@ page on load, so a new topic appears in it automatically too. It's hidden
 below the 1280px viewport-width breakpoint, where there's no longer room
 for a gutter beside the centered content column.
 
+On pages with enough topics to benefit from it (currently just
+Statistics), topics are grouped under a plain `<h2 class="group-heading">`
+("Parameter Estimation", "Hypothesis Testing", etc.) placed directly in
+`.topics` as a sibling of the `.topic` divs — deliberately *not* nested
+inside a `.topic[id]`. script.js's permalink-icon and TOC-building loops
+both query `.topic[id]` / `.topic[id] h2` specifically, so a heading
+outside that structure is automatically invisible to both: no anchor icon,
+no TOC entry, zero script.js changes needed to support it. It shares the
+`h2` tag with every topic's own heading (visually distinguished instead
+via `.group-heading`'s CSS — small, uppercase, muted) rather than using a
+semantically-more-correct higher-weight tag, since script.js's heading
+queries are hardcoded to `h2` across all three pages and changing that
+site-wide wasn't worth it for one page's grouping.
+
 ## Diagram font size and scaling — 1:1 at normal widths, responsive below that
 
 Every SVG on the site, whether hand-written in a page's `index.html` or
@@ -135,6 +149,19 @@ for (const svg of svgs) {
   const scale = rect.width / vb.width; // should be 1 at 900px+ viewport width
 }
 ```
+
+## No inline math — `$$...$$` display blocks only
+
+`script.js`'s `renderMathInElement` call only registers one delimiter,
+`{ left: '$$', right: '$$', display: true }` — there's no inline `$...$`
+delimiter configured. A single-dollar expression dropped into a `<p>` for
+a quick inline symbol (e.g. "the total is `$I_n(\theta) = n I_1(\theta)$`")
+silently renders as literal, un-rendered LaTeX source text instead of
+math — KaTeX never touches it, and there's no error to catch it. This
+happened once (Statistics' Fisher Information topic). For a symbol or
+short expression inside running prose, use the same plain-Unicode style
+already used throughout (`θ̂`, `μ₀`, `I₁(θ)`, `n·I₁(θ)`) rather than LaTeX
+delimiters; save `$$...$$` for standalone `p.math` display equations.
 
 ## Equations shrink too, the same way diagrams do
 

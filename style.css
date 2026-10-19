@@ -206,6 +206,30 @@ body {
   margin-top: 48px;
 }
 
+/* Section dividers between groups of topics (e.g. "Parameter Estimation").
+   Deliberately a plain h2 living directly in .topics, NOT inside any
+   .topic[id] — script.js's permalink-icon and TOC-building loops both
+   query ".topic[id] h2" / ".topic[id]" specifically, so a group heading
+   here is automatically invisible to both: no anchor icon, no TOC entry,
+   no script.js changes needed. It's a step above a .topic's own h2 in
+   visual weight despite sharing the same tag, for the same reason — not
+   worth restructuring every page's heading levels just for this. */
+.group-heading {
+  margin: 0 0 8px;
+  padding-top: 40px;
+  border-top: 1px solid #eee;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #888;
+}
+
+.topics > .group-heading:first-of-type {
+  padding-top: 0;
+  border-top: none;
+}
+
 .topic {
   margin-bottom: 56px;
 }

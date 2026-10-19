@@ -26,89 +26,112 @@
     <main class="panels">
       <section class="panel" id="statistics">
         <h1>Statistics</h1>
-        <p>The discipline of collecting, analyzing, interpreting, and presenting data to uncover patterns and inform decisions.</p>
+        <p>The discipline of collecting, analyzing, interpreting, and presenting data to uncover patterns and inform decisions. Laid out as a learning path: estimating parameters, judging how good those estimates are, quantifying leftover uncertainty, testing hypotheses, and fitting relationships between variables — each later topic leans on the ones before it, including one running example (10 coin flips, 7 heads) threaded through the first four.</p>
 
         <div class="topics">
+          <h2 class="group-heading">Parameter Estimation</h2>
+          <div class="topic" id="method-of-moments">
+            <h2>Method of Moments</h2>
+            <p>The simplest way to estimate a parameter: match what the sample actually averages to what the model predicts it should average, then solve for the parameter that makes those agree.</p>
+            <p class="math">$$E[X^k] = \frac{1}{n}\sum_{i=1}^{n} X_i^k, \quad k = 1, 2, \dots$$</p>
+            <p>Using k = 1, 2, … moments — one per unknown parameter — gives enough equations to solve for them all.</p>
+            <p>For 10 coin flips with 7 heads, the first moment is just the mean: E[X] = p, so matching it to the sample mean gives p̂ = X̄ = 7/10 = 0.7. This dataset recurs through the rest of this group — and for Bernoulli data, method of moments happens to land on exactly the same estimator as the MLE below. That's a coincidence of this particular model, not a general rule.</p>
+          </div>
           <div class="topic" id="mles">
             <h2>MLEs</h2>
-            <p>Maximum likelihood picks whichever parameter value makes the observed data most probable.</p>
+            <p>A natural question: of every possible parameter value, which one makes the data actually observed the most likely outcome? Maximum likelihood answers it directly.</p>
             <p class="math">$$\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}} = \textcolor{#7B4B8C}{\arg\max_{\theta}}\ L(\theta) = \textcolor{#7B4B8C}{\arg\max_{\theta}} \prod_{i=1}^{n} f(x_i; \theta)$$</p>
-            <p>Products are awkward to differentiate, so in practice the log-likelihood is maximized instead — it has the same maximizer, with easier calculus.</p>
+            <p>Products are awkward to differentiate, so in practice the log-likelihood is maximized instead — log is increasing, so it has the same maximizer, with much easier calculus.</p>
             <p class="math">$$\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}} = \textcolor{#7B4B8C}{\arg\max_{\theta}}\ \ell(\theta), \quad \ell(\theta) = \sum_{i=1}^{n} \log f(x_i;\theta)$$</p>
 
             <div class="stat-chart" id="mle-chart-root"></div>
           </div>
           <div class="topic" id="bayesian-inference">
-            <h2>Bayesian inference</h2>
-            <p>Bayesian inference treats the parameter itself as random, updating a prior belief into a posterior once data is observed.</p>
+            <h2>Bayesian Inference</h2>
+            <p>MLE answers "what explains the data best," treating θ as fixed but unknown. Bayesian inference asks a different question: given what was believed about θ before, how should this data update that belief? Here θ itself is treated as random, with its own distribution.</p>
             <p class="math">$$\pi(\textcolor{#0b7285}{\theta} \mid x) \textcolor{#7B4B8C}{\propto} f(x \mid \textcolor{#0b7285}{\theta})\, \pi(\textcolor{#0b7285}{\theta})$$</p>
-            <p>In words: the posterior is proportional to the likelihood times the prior — the data reshapes belief, it doesn't replace it.</p>
+            <p><strong>π(θ)</strong> is the prior — belief about θ before seeing data; <strong>f(x∣θ)</strong> is the likelihood — how probable the data is for each θ; <strong>π(θ∣x)</strong> is the posterior — updated belief after seeing it. Posterior ∝ likelihood × prior: data reshapes belief, it doesn't replace it.</p>
 
             <div class="stat-chart" id="bayes-chart-root"></div>
           </div>
-          <div class="topic" id="method-of-moments">
-            <h2>Method of moments</h2>
-            <p>Method of moments estimates parameters by matching the sample's moments to the distribution's theoretical moments.</p>
-            <p class="math">$$E[X^k] = \frac{1}{n}\sum_{i=1}^{n} X_i^k, \quad k = 1, 2, \dots$$</p>
-            <p>Solving these equations for the unknown parameters, one per moment used, gives the method-of-moments estimator.</p>
-            <p class="math">$$\text{solve for } \textcolor{#0b7285}{\theta} \text{ using as many moments as there are parameters}$$</p>
-          </div>
+
+          <h2 class="group-heading">Estimator Accuracy</h2>
           <div class="topic" id="bias-and-mse">
             <h2>Bias and Mean Squared Error</h2>
-            <p>An estimator's bias is the gap between its expected value and the true parameter; an unbiased estimator gets the right answer on average, even though any single sample's estimate can still land off target.</p>
+            <p>With several ways to estimate the same parameter above, which one is actually better? Bias measures whether an estimator gets the right answer on average; an unbiased estimator does, even though any single sample's estimate can still land off target.</p>
             <p class="math">$$\text{Bias}(\hat{\textcolor{#0b7285}{\theta}}) = E[\hat{\textcolor{#0b7285}{\theta}}] - \textcolor{#0b7285}{\theta}$$</p>
-            <p>Low bias alone isn't the whole story — an estimator can be perfectly unbiased yet swing wildly from sample to sample. Mean squared error folds both effects into one number, and splits cleanly into variance plus bias squared.</p>
+            <p>But low bias alone isn't the whole story — an estimator can be perfectly unbiased yet swing wildly from sample to sample. Mean squared error folds both effects into one number, splitting cleanly into variance plus bias squared.</p>
             <p class="math">$$\text{MSE}(\hat{\textcolor{#0b7285}{\theta}}) = E[(\hat{\textcolor{#0b7285}{\theta}}-\textcolor{#0b7285}{\theta})^2] = \text{Var}(\hat{\textcolor{#0b7285}{\theta}}) + \text{Bias}(\hat{\textcolor{#0b7285}{\theta}})^2$$</p>
-            <p>Revisiting the 7-heads-in-10-flips example from MLEs and Bayesian inference above: if the true p were 0.7, the MLE p̂ = X/n is unbiased — Bias(p̂) = 0 — with Var(p̂) = p(1−p)/n = 0.021, so MSE(p̂) = 0.021 too. The Bayesian posterior mean (X+2)/(n+4) is biased toward the Beta(2,2) prior's center, Bias ≈ −0.057, but its variance is smaller, Var ≈ 0.011, so MSE ≈ 0.014 — the biased estimator actually wins on MSE here, trading a little bias for a bigger cut in variance.</p>
+            <p>Revisiting the coin-flip data above, hypothetically with true p = 0.7: the MLE p̂ = X/n is unbiased (Bias = 0, Var = p(1−p)/n = 0.021, so MSE = 0.021). The Bayesian posterior mean (X+2)/(n+4) is biased toward the prior's center (Bias ≈ −0.057) but has smaller variance (≈ 0.011), so its MSE (≈ 0.014) actually wins — a little bias bought a bigger cut in variance.</p>
 
             <div class="stat-chart" id="bias-mse-chart-root"></div>
           </div>
+          <div class="topic" id="fisher-information">
+            <h2>Fisher Information</h2>
+            <p>Curvature of the log-likelihood at the true parameter measures how sharply it's pinned down — a sharp peak means small changes in θ make the data much less likely (very informative); a flat peak means many values explain the data almost equally well (uninformative).</p>
+            <p class="math">$$I_1(\textcolor{#0b7285}{\theta}) = -E\!\left[\frac{\partial^2}{\partial \textcolor{#0b7285}{\theta}^2} \log f(X; \textcolor{#0b7285}{\theta})\right]$$</p>
+            <p>That's the information in a single observation; for n independent ones it simply adds up, I<sub>n</sub>(θ) = n·I₁(θ) — not I₁(θ) alone, a common mix-up. This total sets a hard floor on any unbiased estimator's variance (the Cramér–Rao bound), a floor the MLE's own variance approaches as the sample grows — the precise, quantified version of "more data ⇒ less variance" from Bias and Mean Squared Error above.</p>
+            <p class="math">$$\text{Var}(\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}}) \gtrapprox \frac{1}{I_n(\textcolor{#0b7285}{\theta})} = \frac{1}{n\,I_1(\textcolor{#0b7285}{\theta})}$$</p>
+          </div>
+
+          <h2 class="group-heading">Uncertainty and Confidence Intervals</h2>
+          <div class="topic" id="pivotal-quantities">
+            <h2>Pivotal Quantities</h2>
+            <p>A recurring problem: a statistic's distribution usually depends on the very parameter being estimated, which seems circular to work with. A pivotal quantity breaks that circularity — built from the data and the parameter together, yet its own distribution doesn't depend on the parameter's actual value.</p>
+            <p class="math">$$\frac{\bar{X} - \textcolor{#0b7285}{\mu}}{S/\sqrt{n}} \textcolor{#7B4B8C}{\sim} t_{n-1} \quad \text{for every value of } \textcolor{#0b7285}{\mu}$$</p>
+            <p>Because that distribution is known exactly regardless of the true μ, it can be inverted directly into a confidence interval — exactly what Confidence Intervals below does with this one.</p>
+          </div>
+          <div class="topic" id="confidence-intervals">
+            <h2>Confidence Intervals</h2>
+            <p>Inverting a pivotal quantity means asking: which parameter values would make the observed pivot land in its typical range? That range of values is the confidence interval.</p>
+            <p class="math">$$P\!\left(-t^*_{n-1} \le \frac{\bar X - \textcolor{#0b7285}{\mu}}{S/\sqrt{n}} \le t^*_{n-1}\right) = 1-\textcolor{#c92a2a}{\alpha} \quad\Longrightarrow\quad \textcolor{#0b7285}{\mu} \in \bar X \pm t^*_{n-1}\frac{S}{\sqrt{n}}$$</p>
+            <p>"95% confidence" describes the procedure, not this one interval: before the data is collected, 95% of intervals built this way would contain the true μ. Once computed, a specific interval either does or doesn't — there's no probability left to assign to it.</p>
+            <p>Coverage is exact here only because the pivot itself is exact, which for this statistic requires the underlying data to actually be normally distributed — the hidden condition behind "exact." When data isn't normal, or no exact pivot exists, a near-pivot — approximately pivotal via a large-sample (CLT) approximation — serves the same role, with coverage that's only approximate, improving as n grows.</p>
+          </div>
+
+          <h2 class="group-heading">Hypothesis Testing</h2>
           <div class="topic" id="hypothesis-testing">
-            <h2>Hypothesis testing</h2>
+            <h2>Hypothesis Testing</h2>
             <p>A hypothesis test rejects the null hypothesis when the observed data would be too unlikely if the null were actually true.</p>
             <p class="math">$$\textcolor{#7B4B8C}{\text{reject } H_0} \textcolor{#7B4B8C}{\iff} \text{test statistic} \textcolor{#7B4B8C}{\in} \text{rejection region}$$</p>
             <p>The rejection region is sized so that, if H₀ is actually true, the test wrongly rejects it only a small fraction of the time: below, the shaded tail holds exactly α = 0.05 of the area under the null distribution, cut off at the critical value z* = 1.645. The observed statistic falls at z = 2.1 — past z*, inside the rejection region — so H₀ is rejected.</p>
             <p class="math">$$P(\textcolor{#7B4B8C}{\text{reject } H_0} \mid H_0 \text{ true}) = \textcolor{#c92a2a}{\alpha}$$</p>
 
             <div class="stat-chart" id="hyp-chart-root"></div>
+
+            <p>Equivalently: the p-value is the probability, assuming H₀ is true, of a test statistic at least as extreme as the one observed. Reject when p &lt; α — the same decision as checking the rejection region, just expressed as a probability. A small p-value does <strong>not</strong> mean H₀ is unlikely to be true; it means the data would be unlikely <em>if</em> H₀ were true — a statement about the data conditioned on H₀, not a statement about H₀ itself.</p>
           </div>
           <div class="topic" id="students-t-tests">
             <h2>Student's t-tests</h2>
-            <p>The general hypothesis-testing machinery above specializes into a concrete, named test whenever the data is (approximately) normal and the population variance is unknown — estimating that variance from the sample is exactly what turns a z-statistic into a t-statistic. It's the same pivotal quantity as in Pivotal quantities below, used here as a test statistic instead of being inverted into an interval.</p>
+            <p>The general hypothesis-testing machinery above specializes into a concrete, named test whenever the data is (approximately) normal and the population variance is unknown — estimating that variance from the sample is exactly what turns a z-statistic into a t-statistic. It's the same pivotal quantity as in Pivotal Quantities above, used here as a test statistic instead of being inverted into an interval.</p>
             <p class="math">$$T = \frac{\bar X - \textcolor{#0b7285}{\mu_0}}{S/\sqrt{n}} \textcolor{#7B4B8C}{\sim} t_{n-1} \quad \text{under } H_0: \mu = \textcolor{#0b7285}{\mu_0}$$</p>
-            <p>The same statistic form covers three cases, distinguished only by what's compared and how the standard error is built: a <strong>one-sample</strong> test checks a single mean against μ₀ (above); a <strong>paired</strong> test takes differences Dᵢ = Xᵢ − Yᵢ within each pair and reduces to the one-sample test on D̄; a <strong>two-sample</strong> test compares X̄ − Ȳ directly, with the standard error combining both samples' variability.</p>
-            <p class="math">$$T = \frac{\bar X - \bar Y}{S_p\sqrt{\tfrac{1}{n_1}+\tfrac{1}{n_2}}} \textcolor{#7B4B8C}{\sim} t_{n_1+n_2-2}$$</p>
-            <p>Degrees of freedom drop by one for every mean already estimated from the data: n−1 for the one-sample and paired cases, n₁+n₂−2 once two independent sample means and a pooled variance are involved.</p>
+            <p>The same form covers three cases: a <strong>one-sample</strong> test checks a single mean against μ₀ (above); a <strong>paired</strong> test takes differences Dᵢ = Xᵢ − Yᵢ within each pair and reduces to the one-sample test on D̄; a <strong>two-sample</strong> test compares X̄ − Ȳ directly.</p>
+            <p class="math">$$T = \frac{\bar X - \bar Y}{S_p\sqrt{\tfrac{1}{n_1}+\tfrac{1}{n_2}}} \textcolor{#7B4B8C}{\sim} t_{n_1+n_2-2} \quad \text{(pooled, assumes equal variances)}$$</p>
+            <p>That pooled form assumes both populations share the same variance — a real assumption, not automatic. When they don't, <strong>Welch's t-test</strong> is the fix: it uses each sample's own variance in the standard error instead of pooling them, at the cost of an approximate (non-integer) degrees of freedom rather than the exact n₁+n₂−2.</p>
+            <p class="math">$$T = \frac{\bar X - \bar Y}{\sqrt{S_1^2/n_1 \,+\, S_2^2/n_2}} \ \overset{\cdot}{\sim}\ t_{\nu} \quad \text{(Welch–Satterthwaite } \nu\text{, approximate)}$$</p>
+            <p>Welch's reduces to the pooled test when the variances happen to match, but stays valid when they don't — which is why it's the more common default in practice, not the pooled version above.</p>
           </div>
           <div class="topic" id="likelihood-ratio">
-            <h2>Likelihood ratio</h2>
-            <p>The likelihood ratio compares how well the data is explained by the best-fitting restricted (null) model versus the best-fitting unrestricted model.</p>
+            <h2>Likelihood Ratio Test</h2>
+            <p>Another way to test a restriction on the parameter: compare how well the data is explained by the best-fitting model <em>under</em> the restriction against the best-fitting model <em>without</em> it. If forcing the restriction barely hurts the fit, the restriction looks plausible.</p>
             <p class="math">$$\Lambda = \frac{\sup_{\theta \in \Theta_0} L(\theta)}{\sup_{\theta \in \Theta} L(\theta)}$$</p>
-            <p>A ratio near 1 means restricting to H₀ barely hurt the fit; a ratio near 0 means the unrestricted model fits much better.</p>
-            <p class="math">$$-2\log \Lambda \ \xrightarrow{d}\ \chi^2_{k}$$</p>
+            <p>Θ is the full parameter space and Θ₀ ⊂ Θ is the restricted space under H₀, so the numerator can never exceed the denominator and Λ ∈ (0, 1]. A ratio near 1 means restricting to H₀ barely hurt the fit; near 0 means the unrestricted model fits much better.</p>
+            <p class="math">$$-2\log \Lambda \ \xrightarrow{d}\ \chi^2_{k}, \quad k = \dim(\Theta) - \dim(\Theta_0)$$</p>
+            <p>k is the number of parameters the restriction actually pins down — e.g. testing a single coefficient against a specific value gives k = 1. Reject H₀ when −2log Λ is too large to plausibly come from that χ² distribution, the same large-deviation logic as the z- and t-tests above.</p>
           </div>
-          <div class="topic" id="pivotal-quantities">
-            <h2>Pivotal quantities</h2>
-            <p>A pivotal quantity is built from both the data and the parameter, yet its own distribution never depends on the parameter's value.</p>
-            <p class="math">$$\frac{\bar{X} - \textcolor{#0b7285}{\mu}}{S/\sqrt{n}} \textcolor{#7B4B8C}{\sim} t_{n-1} \quad \text{for every value of } \textcolor{#0b7285}{\mu}$$</p>
-            <p>Because that distribution is known regardless of the true parameter, a pivotal quantity can be inverted directly into a confidence interval.</p>
-          </div>
-          <div class="topic" id="confidence-intervals">
-            <h2>Confidence Intervals</h2>
-            <p>Inverting a pivotal quantity means asking which parameter values would make the observed pivot land in its typical range — that set of values is the confidence interval. Because the pivot's own distribution never depends on the parameter, the interval's coverage probability is exact, not approximate.</p>
-            <p class="math">$$P\!\left(-t^*_{n-1} \le \frac{\bar X - \textcolor{#0b7285}{\mu}}{S/\sqrt{n}} \le t^*_{n-1}\right) = 1-\textcolor{#c92a2a}{\alpha} \quad\Longrightarrow\quad \textcolor{#0b7285}{\mu} \in \bar X \pm t^*_{n-1}\frac{S}{\sqrt{n}}$$</p>
-            <p>When no exact pivot exists — the statistic's distribution still depends somewhat on the parameter — a near-pivot built from a large-sample, asymptotically normal approximation serves the same role, at the cost of that coverage probability holding only approximately rather than exactly.</p>
-          </div>
+
+          <h2 class="group-heading">Regression</h2>
           <div class="topic" id="regression-models">
-            <h2>Regression models</h2>
-            <p>A regression model treats the response as a deterministic trend plus random noise, rather than an exact function of the predictors.</p>
+            <h2>Regression Models</h2>
+            <p>A different kind of question from estimation so far: not "what's the best value of a single parameter," but "how does one variable move with another." Regression answers it by treating the response as a deterministic trend plus random noise, not an exact function of the predictor.</p>
             <p class="math">$$Y_i = \textcolor{#0b7285}{\beta_0} + \textcolor{#0b7285}{\beta_1} x_i + \varepsilon_i, \quad \varepsilon_i \textcolor{#7B4B8C}{\sim} N(0, \sigma^2)$$</p>
-            <p>Fitting the model means choosing the coefficients that make the residuals — the leftover noise — as small as possible.</p>
+            <p>Yᵢ is the response and xᵢ the predictor (both observed); β₀, β₁ are the intercept and slope to estimate; εᵢ is leftover randomness, assumed normal with constant variance σ² — an assumption Regression Diagnostics below actually checks, not just asserts.</p>
+            <p>Fitting means choosing the coefficients that make the residuals — the leftover noise once the line is drawn — as small as possible overall.</p>
             <p class="math">$$(\hat{\textcolor{#0b7285}{\beta_0}}, \hat{\textcolor{#0b7285}{\beta_1}}) = \textcolor{#7B4B8C}{\arg\min_{\beta_0,\beta_1}} \sum_{i=1}^{n} (y_i - \beta_0 - \beta_1 x_i)^2$$</p>
           </div>
           <div class="topic" id="regression-diagnostics">
             <h2>Regression Diagnostics</h2>
-            <p>Fitting a regression model doesn't guarantee a good fit — the model above assumed a linear trend, constant-variance errors, and normally distributed noise, and residual plots are how those assumptions get checked after the fact, since the true errors are never observed, only their estimates, the residuals.</p>
+            <p>Fitting always produces some line — it doesn't guarantee a good one. The model above assumed a linear trend, constant-variance errors, and normal noise; residual plots are how those assumptions get checked after the fact, since the true errors are never observed, only their estimates, the residuals.</p>
             <p class="math">$$e_i = y_i - \hat y_i = y_i - (\hat{\textcolor{#0b7285}{\beta_0}} + \hat{\textcolor{#0b7285}{\beta_1}} x_i)$$</p>
             <p>Plotting residuals against the fitted values should show patternless, constant-width scatter around zero if the assumptions hold; a pattern — like the fan shape below, where the spread visibly grows with the fitted value — signals heteroscedasticity, a violation of the constant-variance assumption.</p>
 
@@ -116,13 +139,6 @@
 
             <p>A separate summary number, R², reports the proportion of the total variance in y explained by the fitted line rather than left over in the residuals.</p>
             <p class="math">$$R^2 = 1 - \frac{\sum_i (y_i - \hat y_i)^2}{\sum_i (y_i - \bar y)^2}$$</p>
-          </div>
-          <div class="topic" id="fisher-information">
-            <h2>Fisher information</h2>
-            <p>Fisher information measures how sharply the log-likelihood curves at the true parameter — more curvature means the data pins the parameter down more precisely.</p>
-            <p class="math">$$I(\textcolor{#0b7285}{\theta}) = -E\!\left[\frac{\partial^2}{\partial \textcolor{#0b7285}{\theta}^2} \log f(X; \textcolor{#0b7285}{\theta})\right]$$</p>
-            <p>It bounds how precise any unbiased estimator can possibly be, and approximates how precise the MLE actually is once the sample is large.</p>
-            <p class="math">$$\text{Var}(\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}}) \approx \frac{1}{I(\textcolor{#0b7285}{\theta})}$$</p>
           </div>
         </div>
       </section>
