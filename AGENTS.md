@@ -162,29 +162,51 @@ so the result still sits flush left with zero overflow; `center top`
 scales by the right *amount* but around the wrong point, leaving the same
 overflow on the right that the shrink was supposed to remove.
 
-**Why `.topic .math` is `overflow-x: hidden`, not `auto`:** the shrink
-above is meant to make scrolling unnecessary, not just unnecessary *most*
-of the time — `auto` still makes the box a scroll container even when
-nothing truly overflows, which trackpads render as a tiny rubber-band
-nudge on any scroll gesture over it (reported directly: "if i put my
-cursor over an equation and scroll, it scrolls a tiny bit"). `hidden`
-removes that affordance entirely. That raises the stakes on the fit being
-exact, since any shortfall now silently clips a glyph instead of just
-being scrollable — so the scale computation subtracts a 3px safety margin
-from the available width, covering compounding sub-pixel rounding
-(`offsetWidth` itself rounds to the nearest integer, and the transform
-matrix's own pixel-snapping can round up on top of that). 1px wasn't
-enough margin in practice; a clipped `μ₀` subscript on the narrowest
-formula is what caught it.
+**Why `.topic .math` is `overflow: hidden` on *both* axes, not just
+`overflow-x`:** the shrink above is meant to make scrolling unnecessary,
+not just unnecessary *most* of the time — a non-`visible` `overflow-x`
+with no `overflow-y` makes the box a scroll container even when nothing
+truly overflows, which trackpads/wheels render as a tiny rubber-band
+nudge on any scroll gesture over it (reported directly, twice: "if i put
+my cursor over an equation and scroll, it scrolls a tiny bit," then "but
+it's a y problem not x" once the first pass only set `overflow-x`). That
+second report was the real bug: per spec, an element can't mix `visible`
+on one axis with non-`visible` on the other — leaving `overflow-y`
+unset while `overflow-x` is `hidden` silently computes it to `auto`, not
+`visible`. And KaTeX's own internal baseline "struts" (invisible spacers
+it uses to stack sub/superscripts and fractions at the right height)
+render a few px taller than the box in *every* formula regardless of
+width or scale — so that implicit `overflow-y: auto` was a guaranteed
+scrollbar on every single equation, not an edge case. Setting the
+shorthand `overflow: hidden` (both axes explicitly) fixed it; the
+vertical "overflow" it now clips is just those invisible struts, not
+visible glyph content — confirmed by screenshotting tall formulas (nested
+fractions, `\sum`/`\prod`, `\left[...\right]` brackets) and checking
+nothing is actually cut off.
+
+That raises the stakes on the horizontal fit being exact, since any
+shortfall now silently clips a glyph instead of just being scrollable —
+so the scale computation subtracts a 3px safety margin from the available
+width, covering compounding sub-pixel rounding (`offsetWidth` itself
+rounds to the nearest integer, and the transform matrix's own
+pixel-snapping can round up on top of that). 1px wasn't enough margin in
+practice; a clipped `μ₀` subscript on the narrowest formula is what
+caught it.
 
 **Verifying:** after touching equation-heavy content, additionally check
 that no `.topic .math` has `scrollWidth > clientWidth` at narrow widths,
-and that `.katex-display` elements carry no transform at 900px+ (nothing
-should ever shrink when it doesn't need to):
+that every `.topic .math` computes to `overflow-x`/`overflow-y: hidden`
+(not `auto` on either axis — that's the actual scroll-container test, not
+`scrollHeight > clientHeight`, which is harmlessly nonzero on *every*
+formula because of KaTeX's own struts), and that `.katex-display`
+elements carry no transform at 900px+ (nothing should ever shrink when it
+doesn't need to):
 
 ```js
-Array.from(document.querySelectorAll('.topic .math'))
-  .filter(el => el.scrollWidth > el.clientWidth + 1) // should be empty
+Array.from(document.querySelectorAll('.topic .math')).filter(el =>
+  el.scrollWidth > el.clientWidth + 1 ||            // real horizontal overflow
+  getComputedStyle(el).overflowY !== 'hidden'        // a scroll container exists
+) // should be empty
 ```
 
 ## Diagram color key

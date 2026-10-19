@@ -320,9 +320,20 @@ body {
    scroll. Leaving it "auto" still made the box a scroll container even
    with zero real overflow, which trackpads render as a tiny rubber-band
    nudge on any scroll/gesture over it. "hidden" keeps a safety margin for
-   the rare off-by-a-pixel case (clips instead of scrolling) without that. */
+   the rare off-by-a-pixel case (clips instead of scrolling) without that.
+
+   overflow-y needs setting too, not just overflow-x: per spec, a
+   non-"visible" overflow-x with no overflow-y specified computes overflow-y
+   to "auto" too (the two axes can't be "visible"/non-"visible" mixed) — so
+   leaving overflow-y unset here silently made .math vertically scrollable.
+   KaTeX's own internal baseline "struts" (invisible spacers it uses to
+   stack sub/superscripts and fractions at the right height) render a few
+   px taller than the box in every formula, regardless of width/scale, so
+   that implicit overflow-y:auto was a *guaranteed* scrollbar on every
+   equation — the actual "scrolls a tiny bit" the hover/scroll report was
+   about, since a mouse wheel scrolls vertically by default. */
 .topic .math {
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 .topic .math .katex-display {
