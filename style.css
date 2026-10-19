@@ -83,10 +83,15 @@ body {
 /* <details class="menu-nav"> is the whole hamburger-button-plus-dropdown
    widget — native disclosure element, so the open/close toggle works with
    zero JS. script.js only adds the "close when you click outside it"
-   politeness on top; the menu is still fully usable without it. */
+   politeness on top; the menu is still fully usable without it.
+   Fixed-positioned so it floats in the viewport's top-left corner and
+   stays put while the page scrolls, rather than scrolling away with the
+   content below it. */
 .menu-nav {
-  position: relative;
-  display: inline-block;
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 30;
 }
 
 /* <summary> gets a default triangle marker and list-item styling in every
