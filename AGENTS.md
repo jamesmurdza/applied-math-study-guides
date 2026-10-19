@@ -52,20 +52,6 @@ page on load, so a new topic appears in it automatically too. It's hidden
 below the 1280px viewport-width breakpoint, where there's no longer room
 for a gutter beside the centered content column.
 
-On pages with enough topics to benefit from it (currently just
-Statistics), topics are grouped under a plain `<h2 class="group-heading">`
-("Parameter Estimation", "Hypothesis Testing", etc.) placed directly in
-`.topics` as a sibling of the `.topic` divs — deliberately *not* nested
-inside a `.topic[id]`. script.js's permalink-icon and TOC-building loops
-both query `.topic[id]` / `.topic[id] h2` specifically, so a heading
-outside that structure is automatically invisible to both: no anchor icon,
-no TOC entry, zero script.js changes needed to support it. It shares the
-`h2` tag with every topic's own heading (visually distinguished instead
-via `.group-heading`'s CSS — small, uppercase, muted) rather than using a
-semantically-more-correct higher-weight tag, since script.js's heading
-queries are hardcoded to `h2` across all three pages and changing that
-site-wide wasn't worth it for one page's grouping.
-
 ## Diagram font size and scaling — 1:1 at normal widths, responsive below that
 
 Every SVG on the site, whether hand-written in a page's `index.html` or

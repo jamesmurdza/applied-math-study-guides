@@ -29,13 +29,12 @@
         <p>The discipline of collecting, analyzing, interpreting, and presenting data to uncover patterns and inform decisions. Laid out as a learning path: estimating parameters, judging how good those estimates are, quantifying leftover uncertainty, testing hypotheses, and fitting relationships between variables — each later topic leans on the ones before it, including one running example (10 coin flips, 7 heads) threaded through the first four.</p>
 
         <div class="topics">
-          <h2 class="group-heading">Parameter Estimation</h2>
           <div class="topic" id="method-of-moments">
             <h2>Method of Moments</h2>
             <p>The simplest way to estimate a parameter: match what the sample actually averages to what the model predicts it should average, then solve for the parameter that makes those agree.</p>
             <p class="math">$$E[X^k] = \frac{1}{n}\sum_{i=1}^{n} X_i^k, \quad k = 1, 2, \dots$$</p>
             <p>Using k = 1, 2, … moments — one per unknown parameter — gives enough equations to solve for them all.</p>
-            <p>For 10 coin flips with 7 heads, the first moment is just the mean: E[X] = p, so matching it to the sample mean gives p̂ = X̄ = 7/10 = 0.7. This dataset recurs through the rest of this group — and for Bernoulli data, method of moments happens to land on exactly the same estimator as the MLE below. That's a coincidence of this particular model, not a general rule.</p>
+            <p>For 10 coin flips with 7 heads, the first moment is just the mean: E[X] = p, so matching it to the sample mean gives p̂ = X̄ = 7/10 = 0.7. This dataset recurs through the next few topics — and for Bernoulli data, method of moments happens to land on exactly the same estimator as the MLE below. That's a coincidence of this particular model, not a general rule.</p>
           </div>
           <div class="topic" id="mles">
             <h2>MLEs</h2>
@@ -54,8 +53,6 @@
 
             <div class="stat-chart" id="bayes-chart-root"></div>
           </div>
-
-          <h2 class="group-heading">Estimator Accuracy</h2>
           <div class="topic" id="bias-and-mse">
             <h2>Bias and Mean Squared Error</h2>
             <p>With several ways to estimate the same parameter above, which one is actually better? Bias measures whether an estimator gets the right answer on average; an unbiased estimator does, even though any single sample's estimate can still land off target.</p>
@@ -73,8 +70,6 @@
             <p>That's the information in a single observation; for n independent ones it simply adds up, I<sub>n</sub>(θ) = n·I₁(θ) — not I₁(θ) alone, a common mix-up. This total sets a hard floor on any unbiased estimator's variance (the Cramér–Rao bound), a floor the MLE's own variance approaches as the sample grows — the precise, quantified version of "more data ⇒ less variance" from Bias and Mean Squared Error above.</p>
             <p class="math">$$\text{Var}(\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}}) \gtrapprox \frac{1}{I_n(\textcolor{#0b7285}{\theta})} = \frac{1}{n\,I_1(\textcolor{#0b7285}{\theta})}$$</p>
           </div>
-
-          <h2 class="group-heading">Uncertainty and Confidence Intervals</h2>
           <div class="topic" id="pivotal-quantities">
             <h2>Pivotal Quantities</h2>
             <p>A recurring problem: a statistic's distribution usually depends on the very parameter being estimated, which seems circular to work with. A pivotal quantity breaks that circularity — built from the data and the parameter together, yet its own distribution doesn't depend on the parameter's actual value.</p>
@@ -88,8 +83,6 @@
             <p>"95% confidence" describes the procedure, not this one interval: before the data is collected, 95% of intervals built this way would contain the true μ. Once computed, a specific interval either does or doesn't — there's no probability left to assign to it.</p>
             <p>Coverage is exact here only because the pivot itself is exact, which for this statistic requires the underlying data to actually be normally distributed — the hidden condition behind "exact." When data isn't normal, or no exact pivot exists, a near-pivot — approximately pivotal via a large-sample (CLT) approximation — serves the same role, with coverage that's only approximate, improving as n grows.</p>
           </div>
-
-          <h2 class="group-heading">Hypothesis Testing</h2>
           <div class="topic" id="hypothesis-testing">
             <h2>Hypothesis Testing</h2>
             <p>A hypothesis test rejects the null hypothesis when the observed data would be too unlikely if the null were actually true.</p>
@@ -119,8 +112,6 @@
             <p class="math">$$-2\log \Lambda \ \xrightarrow{d}\ \chi^2_{k}, \quad k = \dim(\Theta) - \dim(\Theta_0)$$</p>
             <p>k is the number of parameters the restriction actually pins down — e.g. testing a single coefficient against a specific value gives k = 1. Reject H₀ when −2log Λ is too large to plausibly come from that χ² distribution, the same large-deviation logic as the z- and t-tests above.</p>
           </div>
-
-          <h2 class="group-heading">Regression</h2>
           <div class="topic" id="regression-models">
             <h2>Regression Models</h2>
             <p>A different kind of question from estimation so far: not "what's the best value of a single parameter," but "how does one variable move with another." Regression answers it by treating the response as a deterministic trend plus random noise, not an exact function of the predictor.</p>
