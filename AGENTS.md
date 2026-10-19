@@ -136,6 +136,45 @@ for (const svg of svgs) {
 }
 ```
 
+## Equations shrink too, the same way diagrams do
+
+A `$$...$$` display equation has no `viewBox` to pin a `max-width` to, but
+it follows the identical rule: full declared size whenever it fits, fluid
+shrinking below that, never a scrollbar. `script.js` enforces this after
+every KaTeX render (`fitMathBlocks()`, also re-run on `resize` and once
+`document.fonts.ready` resolves, since KaTeX's own math fonts load async
+and swap in after the first measurement) — new `.topic > p.math` blocks
+get this for free and need no manual handling.
+
+**Why this needed real measurement, not just CSS:** `.katex-display` is
+`display:block` (from katex.css), so its own `offsetWidth`/`scrollWidth`
+are clamped to the paragraph's width — they can't reveal that KaTeX's
+inner `.base` span (the actual glyphs, `display:inline-block`) already
+needs more room and is silently overflowing past it. The fix measures the
+true natural width by toggling `.katex-display` to `display:inline-block`
+just long enough to read its shrink-to-fit `offsetWidth`, then reverts it.
+
+**Why the scale has to originate from the left edge, not center:** an
+overflowing formula renders flush with the paragraph's left edge, not
+centered — confirmed by comparing an inner span's position before and
+after scaling. `transform-origin: left top` shrinks from that same edge,
+so the result still sits flush left with zero overflow; `center top`
+scales by the right *amount* but around the wrong point, leaving the same
+overflow on the right that the shrink was supposed to remove. A small
+negative pixel margin is subtracted from the available width too, since
+sub-pixel rounding in the applied transform matrix can otherwise land a
+formula a pixel or two past its container even at the "exact" scale.
+
+**Verifying:** after touching equation-heavy content, additionally check
+that no `.topic .math` has `scrollWidth > clientWidth` at narrow widths,
+and that `.katex-display` elements carry no transform at 900px+ (nothing
+should ever shrink when it doesn't need to):
+
+```js
+Array.from(document.querySelectorAll('.topic .math'))
+  .filter(el => el.scrollWidth > el.clientWidth + 1) // should be empty
+```
+
 ## Diagram color key
 
 Colors are assigned by grammatical role, consistently across every topic —

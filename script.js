@@ -124,6 +124,67 @@ if (window.renderMathInElement) {
   renderMathInElement(document.body, {
     delimiters: [{ left: '$$', right: '$$', display: true }]
   });
+
+  // Shrink display equations that are wider than their container instead of
+  // letting them scroll — the same "pinned at natural size, fluid below
+  // that" rule the diagrams follow, just without a viewBox to pin to.
+  //
+  // Measuring "natural width" is the subtle part: .katex-display is
+  // display:block (from katex.css), so its own offsetWidth/scrollWidth are
+  // clamped to the paragraph's width — they can't reveal that KaTeX's
+  // inner .base span (the actual formula glyphs, display:inline-block)
+  // already needs more room and is silently overflowing past it. Switching
+  // .katex-display to inline-block just for the measurement makes the
+  // browser's own shrink-to-fit sizing report that true width instead.
+  //
+  // The overflowing content also renders flush with the paragraph's left
+  // edge, not centered within it (confirmed by comparing the pre- and
+  // post-scale position of that inner span) — so the shrink has to scale
+  // from the left edge too (transform-origin: left top). Scaling from
+  // center would shrink the formula by the right amount but center it on
+  // a wider box than actually exists, leaving the same overflow on the
+  // right that we were trying to remove.
+  function fitMathBlocks() {
+    document.querySelectorAll('.topic .math .katex-display').forEach((display) => {
+      const container = display.closest('.math');
+      if (!container) return;
+      display.style.transform = 'none';
+      display.style.height = 'auto';
+      display.style.display = 'inline-block';
+      const naturalWidth = display.offsetWidth;
+      const naturalHeight = display.offsetHeight;
+      display.style.display = '';
+      // -1px safety margin: sub-pixel rounding in the applied transform
+      // matrix can otherwise land a formula 1-2px past its container even
+      // though the scale was computed "exactly," which is enough to trip
+      // overflow-x:auto's scrollbar right back on.
+      const scale = Math.min(1, (container.clientWidth - 1) / naturalWidth);
+      if (scale < 1) {
+        display.style.transformOrigin = 'left top';
+        display.style.transform = `scale(${scale})`;
+        display.style.height = (naturalHeight * scale) + 'px';
+      }
+    });
+  }
+  fitMathBlocks();
+  // KaTeX's own math fonts load asynchronously, after this script already
+  // ran — measuring scrollWidth before they're in means every formula is
+  // briefly measured against a fallback font's (narrower) glyph metrics, so
+  // the scale computed here can undershoot once the real font swaps in.
+  // Re-running once fonts finish loading catches that reflow.
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(fitMathBlocks);
+  }
+
+  let mathResizeTicking = false;
+  window.addEventListener('resize', () => {
+    if (mathResizeTicking) return;
+    mathResizeTicking = true;
+    requestAnimationFrame(() => {
+      fitMathBlocks();
+      mathResizeTicking = false;
+    });
+  });
 }
 
 // ---------------------------------------------------------------------------
