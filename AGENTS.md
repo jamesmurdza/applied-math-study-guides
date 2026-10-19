@@ -163,6 +163,29 @@ short expression inside running prose, use the same plain-Unicode style
 already used throughout (`θ̂`, `μ₀`, `I₁(θ)`, `n·I₁(θ)`) rather than LaTeX
 delimiters; save `$$...$$` for standalone `p.math` display equations.
 
+## Copying a rendered equation copies its LaTeX source
+
+Selecting rendered KaTeX output and copying it would otherwise paste as
+garbled text — KaTeX builds formulas from many individually-positioned
+spans for visual layout, and that DOM order isn't reading order. Fixed
+site-wide by vendoring KaTeX's own official extension for exactly this,
+`vendor/katex/copy-tex.min.js` (fetched from the same `0.16.11` release as
+the rest of `vendor/katex/`, matching the "locally-vendored" convention —
+no CDN reference), included via `<script>` on all three pages right after
+`auto-render.min.js`. It needs no init call and no CSS: it just installs a
+global `copy` listener that, when the selection touches a `.katex`
+element, expands the selection to the whole formula and rewrites the
+clipboard's plain-text data to the original TeX pulled from KaTeX's own
+`<annotation encoding="application/x-tex">` (already present in every
+formula's hidden MathML output, since nothing on this site overrides
+KaTeX's default `output: "htmlAndMathml"`) — wrapped in `$...$` for inline
+math or `$$...$$` for `.katex-display` blocks. A selection spanning both
+prose and a formula keeps the prose as plain text and only rewrites the
+formula part. Verify with Playwright by selecting a `.katex` element's
+contents, dispatching a copy, and reading `navigator.clipboard.readText()`
+back — it should equal the formula's own delimited TeX source, not the
+rendered glyphs' text content.
+
 ## Equations shrink too, the same way diagrams do
 
 A `$$...$$` display equation has no `viewBox` to pin a `max-width` to, but
