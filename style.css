@@ -194,11 +194,11 @@ body {
    below — specificity (0,2,1) beats the generic "* + p" (0,1,1) rule
    above, so this wins without needing !important. */
 .topic > p.math {
-  margin-top: 28px;
+  margin-top: 22px;
 }
 
 .topic > p.math + p {
-  margin-top: 28px;
+  margin-top: 22px;
 }
 
 .topic > * + ol {
