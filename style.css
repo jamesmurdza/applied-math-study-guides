@@ -134,13 +134,46 @@ body {
   font-weight: 600;
 }
 
+/* padding-left reserves a gutter for .heading-anchor — padding (unlike
+   margin) doesn't move this auto-width block's own border edges, so the
+   border-bottom below still lines up exactly as before; only the text
+   shifts right to make room. Keeping the icon inside that padding means
+   it's still within h2's own hoverable box, not floating outside it —
+   otherwise moving the cursor toward the icon to click it would leave
+   the hover zone and the icon would vanish before you could reach it. */
 .topic h2 {
+  position: relative;
   font-size: 1.1rem;
   font-weight: 600;
   color: #1a1a1a;
   margin: 0 0 16px;
-  padding-bottom: 12px;
+  padding: 0 0 12px 20px;
   border-bottom: 1px solid #e5e5e5;
+}
+
+.heading-anchor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  width: 20px;
+  color: #999;
+  text-decoration: none;
+  font-weight: 400;
+  font-size: 0.9rem;
+  opacity: 0;
+  transition: opacity 0.1s ease, color 0.1s ease;
+}
+
+.heading-anchor:hover {
+  color: #1a1a1a;
+}
+
+.topic h2:hover .heading-anchor,
+.heading-anchor:focus {
+  opacity: 1;
 }
 
 /* Any paragraph that isn't the first child gets the standard flow gap —

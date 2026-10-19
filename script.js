@@ -16,6 +16,22 @@ document.querySelectorAll('details.menu-nav').forEach((menu) => {
   });
 });
 
+// GitHub-markdown-style permalink icons: every .topic already carries a
+// unique id (used for the site's own cross-references, like the "complete"
+// link in Open and Closed Sets), so rather than hand-adding an anchor tag
+// to all ~30 topic headings across three pages, inject one here — any
+// topic with an id gets one for free, including ones added later.
+document.querySelectorAll('.topic[id]').forEach((topic) => {
+  const heading = topic.querySelector('h2');
+  if (!heading) return;
+  const anchor = document.createElement('a');
+  anchor.className = 'heading-anchor';
+  anchor.href = '#' + topic.id;
+  anchor.setAttribute('aria-label', 'Link to this section');
+  anchor.textContent = '#';
+  heading.prepend(anchor);
+});
+
 if (window.renderMathInElement) {
   renderMathInElement(document.body, {
     delimiters: [{ left: '$$', right: '$$', display: true }]
