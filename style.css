@@ -345,6 +345,11 @@ body {
 }
 
 .set-card {
+  min-width: 0; /* grid items default to min-width:auto, which refuses to
+                   shrink below the card's content size (the SVG) — the
+                   classic CSS Grid overflow trap. Without this, cards in
+                   a narrow viewport's 2-column grid push past the
+                   container's edge instead of shrinking with it. */
   border: 1px solid #eee;
   border-radius: 6px;
   padding: 14px;

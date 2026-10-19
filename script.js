@@ -318,7 +318,7 @@ if (window.renderMathInElement) {
     const originX = padL, originY = height - padB;
     const toScreen = (x, y) => ({ x: originX + x * scale, y: originY - y * scale });
 
-    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:${width}px;max-width:${width}px`, role: 'img', 'aria-label': 'Feasible region graph' });
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'Feasible region graph' });
     // Collected and appended last (so they sit on top of every other element
     // in SVG's paint order) — otherwise axis lines, labels, and markers drawn
     // afterward would intercept the hover before it reaches these.
@@ -1017,7 +1017,7 @@ if (window.renderMathInElement) {
   const steps = runDijkstra();
   let stepIdx = -1; // -1 = nothing settled yet
 
-  const svg = el('svg', { viewBox: '0 0 400 260', style: 'width:400px;max-width:400px', role: 'img', 'aria-label': "Dijkstra's algorithm step-through" });
+  const svg = el('svg', { viewBox: '0 0 400 260', style: 'width:100%;max-width:400px', role: 'img', 'aria-label': "Dijkstra's algorithm step-through" });
   mount.appendChild(svg);
 
   const controls = document.createElement('div');
@@ -1175,7 +1175,7 @@ if (window.renderMathInElement) {
       y: padT + plotH - (y / yMax) * plotH
     });
 
-    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:${width}px;max-width:${width}px`, role: 'img', 'aria-label': 'Standard normal curve with rejection region' });
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'Standard normal curve with rejection region' });
 
     const curvePts = sample(normalPdf, xMin, xMax, 200);
     svg.appendChild(el('path', { d: pathFor(curvePts, toScreen), fill: 'none', stroke: '#1a1a1a', 'stroke-width': '1.75' }));
@@ -1259,7 +1259,7 @@ if (window.renderMathInElement) {
       y: padT + plotH - (y / maxY) * plotH
     });
 
-    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:${width}px;max-width:${width}px`, role: 'img', 'aria-label': 'Likelihood curve peaked at the MLE' });
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'Likelihood curve peaked at the MLE' });
     svg.appendChild(el('path', { d: pathFor(pts, toScreen), fill: 'none', stroke: '#0b7285', 'stroke-width': '1.75' }));
 
     const o = toScreen(xMin, 0), oR = toScreen(xMax, 0), oT = toScreen(xMin, maxY);
@@ -1317,7 +1317,7 @@ if (window.renderMathInElement) {
       { fn: posteriorFn, color: '#0b7285', dash: null, weight: '2' }
     ];
 
-    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:${width}px;max-width:${width}px`, role: 'img', 'aria-label': 'Prior, likelihood, and posterior curves' });
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'Prior, likelihood, and posterior curves' });
 
     curves.forEach(c => {
       const pts = sample(c.fn, xMin, xMax, 200);
