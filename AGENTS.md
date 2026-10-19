@@ -24,11 +24,15 @@ directory deep). When adding a new page, follow the same pattern: a
 standalone HTML document with its own `<head>`/nav markup, referencing the
 shared root assets with `../`, rather than duplicating CSS/JS per page.
 
-The nav bar (`<nav class="tabs">` with three `<a class="tab">` links) is
+The subject switcher (`<details class="menu-nav">` — a hamburger icon in
+the top-left corner that opens a dropdown with the three subject links) is
 duplicated at the top of each page's markup — there's no templating step,
-so if nav text, links, or styling change, update it in all three files.
-The `active` class on the current page's own link is hardcoded per file,
-not computed by JS.
+so if its links, text, or styling change, update it in all three files.
+The `active` class on the current page's own `.menu-item` is hardcoded per
+file, not computed by JS. The open/close toggle itself is native
+`<details>`/`<summary>` behavior, not JS — script.js only adds "close on
+outside click" and "close on Escape" on top of it, so the menu still works
+with JS disabled.
 
 Content-wise, each page is just what used to be that tab's `<section
 class="panel">` — same ids, same structure, same `.topic` divs — so
