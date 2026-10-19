@@ -236,7 +236,7 @@ if (window.renderMathInElement) {
     const originX = padL, originY = height - padB;
     const toScreen = (x, y) => ({ x: originX + x * scale, y: originY - y * scale });
 
-    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img', 'aria-label': 'Feasible region graph' });
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:${width}px;max-width:${width}px`, role: 'img', 'aria-label': 'Feasible region graph' });
     // Collected and appended last (so they sit on top of every other element
     // in SVG's paint order) — otherwise axis lines, labels, and markers drawn
     // afterward would intercept the hover before it reaches these.
@@ -315,7 +315,7 @@ if (window.renderMathInElement) {
       }));
       if (isCut && cut.label) {
         const mx = (s1.x + s2.x) / 2, my = (s1.y + s2.y) / 2;
-        const lbl = el('text', { x: (mx + 6).toFixed(1), y: (my - 6).toFixed(1), 'font-size': '10', fill: cut.color || '#c0392b' });
+        const lbl = el('text', { x: (mx + 6).toFixed(1), y: (my - 6).toFixed(1), 'font-size': '12', fill: cut.color || '#c0392b' });
         lbl.textContent = cut.label;
         svg.appendChild(lbl);
       }
@@ -330,12 +330,12 @@ if (window.renderMathInElement) {
     for (let x = 0; x <= xMax; x++) {
       const s = toScreen(x, 0);
       svg.appendChild(el('line', { x1: s.x, y1: s.y, x2: s.x, y2: s.y + 5, stroke: '#333' }));
-      svg.appendChild(el('text', { x: s.x, y: s.y + 18, 'font-size': '11', fill: '#555', 'text-anchor': 'middle' })).textContent = x;
+      svg.appendChild(el('text', { x: s.x, y: s.y + 18, 'font-size': '12', fill: '#555', 'text-anchor': 'middle' })).textContent = x;
     }
     for (let y = 0; y <= yMax; y++) {
       const s = toScreen(0, y);
       svg.appendChild(el('line', { x1: s.x - 5, y1: s.y, x2: s.x, y2: s.y, stroke: '#333' }));
-      const t = el('text', { x: s.x - 11, y: s.y + 3, 'font-size': '11', fill: '#555', 'text-anchor': 'end' });
+      const t = el('text', { x: s.x - 11, y: s.y + 3, 'font-size': '12', fill: '#555', 'text-anchor': 'end' });
       t.textContent = y;
       svg.appendChild(t);
     }
@@ -353,13 +353,13 @@ if (window.renderMathInElement) {
     if (axisLabels) {
       const xTitle = el('text', {
         x: originX + (xMax * scale) / 2, y: height - 6,
-        'font-size': '11', 'font-weight': '600', fill: colors[0], 'text-anchor': 'middle'
+        'font-size': '12', 'font-weight': '600', fill: colors[0], 'text-anchor': 'middle'
       });
       xTitle.textContent = axisLabels[0];
       svg.appendChild(xTitle);
       const yTitleY = originY - (yMax * scale) / 2;
       const yTitle = el('text', {
-        x: 14, y: yTitleY, 'font-size': '11', 'font-weight': '600', fill: colors[1],
+        x: 14, y: yTitleY, 'font-size': '12', 'font-weight': '600', fill: colors[1],
         'text-anchor': 'middle', transform: `rotate(-90, 14, ${yTitleY.toFixed(1)})`
       });
       yTitle.textContent = axisLabels[1];
@@ -384,7 +384,7 @@ if (window.renderMathInElement) {
       if (Math.abs(baseBest.x - bestCont.x) > 1e-6 || Math.abs(baseBest.y - bestCont.y) > 1e-6) {
         const cs = toScreen(baseBest.x, baseBest.y);
         svg.appendChild(el('circle', { cx: cs.x.toFixed(1), cy: cs.y.toFixed(1), r: 4, fill: 'none', stroke: '#bbb', 'stroke-width': '1.5', 'stroke-dasharray': '2,2' }));
-        const clabel = el('text', { x: (cs.x + 10).toFixed(1), y: (cs.y - 8).toFixed(1), 'font-size': '10', fill: '#999' });
+        const clabel = el('text', { x: (cs.x + 10).toFixed(1), y: (cs.y - 8).toFixed(1), 'font-size': '12', fill: '#999' });
         clabel.textContent = `before cut: (${fmt(baseBest.x)}, ${fmt(baseBest.y)})`;
         svg.appendChild(clabel);
       }
@@ -435,7 +435,7 @@ if (window.renderMathInElement) {
         hoverTargets.push({ x: cs.x, y: cs.y, r: 6, title: pointTitle(bestCont) });
         const clabel = el('text', {
           x: (cs.x + 10).toFixed(1), y: (cs.y - 8).toFixed(1),
-          'font-size': '10', fill: '#888'
+          'font-size': '12', fill: '#888'
         });
         clabel.textContent = `LP relaxation: (${fmt(bestCont.x)}, ${fmt(bestCont.y)})`;
         svg.appendChild(clabel);
@@ -459,7 +459,7 @@ if (window.renderMathInElement) {
       for (let i = 1; i < pPts.length - 1; i++) {
         svg.appendChild(el('circle', { cx: pPts[i].x.toFixed(1), cy: pPts[i].y.toFixed(1), r: 3.5, fill: pathColor }));
       }
-      const startLabel = el('text', { x: (pPts[0].x + 8).toFixed(1), y: (pPts[0].y - 8).toFixed(1), 'font-size': '10', fill: pathColor });
+      const startLabel = el('text', { x: (pPts[0].x + 8).toFixed(1), y: (pPts[0].y - 8).toFixed(1), 'font-size': '12', fill: pathColor });
       startLabel.textContent = 'start';
       svg.appendChild(startLabel);
     }
@@ -470,7 +470,7 @@ if (window.renderMathInElement) {
       const rp = config.referencePoint;
       const rs = toScreen(rp.x, rp.y);
       svg.appendChild(el('circle', { cx: rs.x.toFixed(1), cy: rs.y.toFixed(1), r: 3.5, fill: '#555' }));
-      const rl = el('text', { x: (rs.x + 8).toFixed(1), y: (rs.y + 15).toFixed(1), 'font-size': '10', fill: '#555' });
+      const rl = el('text', { x: (rs.x + 8).toFixed(1), y: (rs.y + 15).toFixed(1), 'font-size': '12', fill: '#555' });
       rl.textContent = rp.label;
       svg.appendChild(rl);
     }
@@ -480,7 +480,7 @@ if (window.renderMathInElement) {
     hoverTargets.push({ x: bs.x, y: bs.y, r: 6, title: pointTitle(best) });
     const label = el('text', {
       x: (bs.x + 10).toFixed(1), y: (bs.y - 8).toFixed(1),
-      'font-size': '11', fill: '#1a1a1a'
+      'font-size': '12', fill: '#1a1a1a'
     });
     label.textContent = `${config.optimalLabel || 'optimal'}: (${fmt(best.x)}, ${fmt(best.y)})`;
     svg.appendChild(label);
@@ -935,7 +935,7 @@ if (window.renderMathInElement) {
   const steps = runDijkstra();
   let stepIdx = -1; // -1 = nothing settled yet
 
-  const svg = el('svg', { viewBox: '0 0 400 260', role: 'img', 'aria-label': "Dijkstra's algorithm step-through" });
+  const svg = el('svg', { viewBox: '0 0 400 260', style: 'width:400px;max-width:400px', role: 'img', 'aria-label': "Dijkstra's algorithm step-through" });
   mount.appendChild(svg);
 
   const controls = document.createElement('div');
@@ -969,7 +969,7 @@ if (window.renderMathInElement) {
       svg.appendChild(el('line', { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, stroke: '#ccc', 'stroke-width': '1.5' }));
       const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
       svg.appendChild(el('rect', { x: mx - 7, y: my - 8, width: 14, height: 13, fill: '#fff' }));
-      const wl = el('text', { x: mx, y: my + 3, 'font-size': '11', fill: '#888', 'text-anchor': 'middle' });
+      const wl = el('text', { x: mx, y: my + 3, 'font-size': '12', fill: '#888', 'text-anchor': 'middle' });
       wl.textContent = w;
       svg.appendChild(wl);
     });
@@ -998,10 +998,10 @@ if (window.renderMathInElement) {
         stroke: isCurrent ? '#c0392b' : (isFrontier ? '#1a1a1a' : '#ccc'),
         'stroke-width': isCurrent ? '3' : '1.5'
       }));
-      const label = el('text', { x: p.x, y: p.y + 4, 'font-size': '13', 'font-weight': '600', fill: isSettled ? '#fff' : '#1a1a1a', 'text-anchor': 'middle' });
+      const label = el('text', { x: p.x, y: p.y + 4, 'font-size': '12', 'font-weight': '600', fill: isSettled ? '#fff' : '#1a1a1a', 'text-anchor': 'middle' });
       label.textContent = n;
       svg.appendChild(label);
-      const dl = el('text', { x: p.x, y: p.y + 30, 'font-size': '11', fill: isSettled ? '#1a1a1a' : '#999', 'text-anchor': 'middle' });
+      const dl = el('text', { x: p.x, y: p.y + 30, 'font-size': '12', fill: isSettled ? '#1a1a1a' : '#999', 'text-anchor': 'middle' });
       dl.textContent = fmtD(dist[n]);
       svg.appendChild(dl);
     });
@@ -1093,7 +1093,7 @@ if (window.renderMathInElement) {
       y: padT + plotH - (y / yMax) * plotH
     });
 
-    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img', 'aria-label': 'Standard normal curve with rejection region' });
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:${width}px;max-width:${width}px`, role: 'img', 'aria-label': 'Standard normal curve with rejection region' });
 
     const curvePts = sample(normalPdf, xMin, xMax, 200);
     svg.appendChild(el('path', { d: pathFor(curvePts, toScreen), fill: 'none', stroke: '#1a1a1a', 'stroke-width': '1.75' }));
@@ -1114,14 +1114,14 @@ if (window.renderMathInElement) {
     // plot's left edge, since that's the chart's natural reference point
     const zeroPt = toScreen(0, 0), topPt = toScreen(0, yMax);
     svg.appendChild(el('line', { x1: zeroPt.x, y1: zeroPt.y, x2: topPt.x, y2: topPt.y, stroke: '#333' }));
-    const zeroTick = el('text', { x: zeroPt.x, y: zeroPt.y + 15, 'font-size': '10.5', fill: '#555', 'text-anchor': 'middle' });
+    const zeroTick = el('text', { x: zeroPt.x, y: zeroPt.y + 15, 'font-size': '12', fill: '#555', 'text-anchor': 'middle' });
     zeroTick.textContent = '0';
     svg.appendChild(zeroTick);
 
-    const xAxisLabel = el('text', { x: width - 4, y: o.y + 4, 'font-size': '11', fill: '#555', 'text-anchor': 'end' });
+    const xAxisLabel = el('text', { x: width - 4, y: o.y + 4, 'font-size': '12', fill: '#555', 'text-anchor': 'end' });
     xAxisLabel.textContent = 'z';
     svg.appendChild(xAxisLabel);
-    const yAxisLabel = el('text', { x: padL, y: padT + 10, 'font-size': '11', fill: '#555', 'text-anchor': 'start' });
+    const yAxisLabel = el('text', { x: padL, y: padT + 10, 'font-size': '12', fill: '#555', 'text-anchor': 'start' });
     yAxisLabel.textContent = 'f(z)';
     svg.appendChild(yAxisLabel);
 
@@ -1129,7 +1129,7 @@ if (window.renderMathInElement) {
     const cs = toScreen(zCrit, normalPdf(zCrit));
     const cb = toScreen(zCrit, 0);
     svg.appendChild(el('line', { x1: cs.x, y1: cs.y, x2: cb.x, y2: cb.y, stroke: '#c92a2a', 'stroke-width': '1.25', 'stroke-dasharray': '3,3' }));
-    const critLabel = el('text', { x: cs.x, y: padT - 5, 'font-size': '10.5', fill: '#c92a2a', 'text-anchor': 'middle' });
+    const critLabel = el('text', { x: cs.x, y: padT - 5, 'font-size': '12', fill: '#c92a2a', 'text-anchor': 'middle' });
     critLabel.textContent = `z* = ${zCrit}`;
     svg.appendChild(critLabel);
 
@@ -1146,7 +1146,7 @@ if (window.renderMathInElement) {
     const ob = toScreen(zObs, 0);
     svg.appendChild(el('line', { x1: os.x, y1: os.y, x2: ob.x, y2: ob.y, stroke: '#1a1a1a', 'stroke-width': '1.25' }));
     svg.appendChild(el('circle', { cx: os.x.toFixed(1), cy: os.y.toFixed(1), r: 3, fill: '#1a1a1a' }));
-    const obsLabel = el('text', { x: os.x, y: os.y - 8, 'font-size': '10.5', fill: '#1a1a1a', 'text-anchor': 'middle' });
+    const obsLabel = el('text', { x: os.x, y: os.y - 8, 'font-size': '12', fill: '#1a1a1a', 'text-anchor': 'middle' });
     obsLabel.textContent = `z = ${zObs}`;
     svg.appendChild(obsLabel);
 
@@ -1177,17 +1177,17 @@ if (window.renderMathInElement) {
       y: padT + plotH - (y / maxY) * plotH
     });
 
-    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img', 'aria-label': 'Likelihood curve peaked at the MLE' });
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:${width}px;max-width:${width}px`, role: 'img', 'aria-label': 'Likelihood curve peaked at the MLE' });
     svg.appendChild(el('path', { d: pathFor(pts, toScreen), fill: 'none', stroke: '#0b7285', 'stroke-width': '1.75' }));
 
     const o = toScreen(xMin, 0), oR = toScreen(xMax, 0), oT = toScreen(xMin, maxY);
     svg.appendChild(el('line', { x1: o.x, y1: o.y, x2: oR.x, y2: oR.y, stroke: '#333' }));
     svg.appendChild(el('line', { x1: o.x, y1: o.y, x2: oT.x, y2: oT.y, stroke: '#333' }));
 
-    const xAxisLabel = el('text', { x: width - 4, y: o.y + 4, 'font-size': '11', fill: '#555', 'text-anchor': 'end' });
+    const xAxisLabel = el('text', { x: width - 4, y: o.y + 4, 'font-size': '12', fill: '#555', 'text-anchor': 'end' });
     xAxisLabel.textContent = 'θ';
     svg.appendChild(xAxisLabel);
-    const yAxisLabel = el('text', { x: o.x, y: oT.y - 6, 'font-size': '11', fill: '#555', 'text-anchor': 'start' });
+    const yAxisLabel = el('text', { x: o.x, y: oT.y - 6, 'font-size': '12', fill: '#555', 'text-anchor': 'start' });
     yAxisLabel.textContent = 'L(θ)';
     svg.appendChild(yAxisLabel);
 
@@ -1195,13 +1195,13 @@ if (window.renderMathInElement) {
     const peakBase = toScreen(thetaHat, 0);
     svg.appendChild(el('line', { x1: peak.x, y1: peak.y, x2: peakBase.x, y2: peakBase.y, stroke: '#0b7285', 'stroke-width': '1.25', 'stroke-dasharray': '3,3' }));
     svg.appendChild(el('circle', { cx: peak.x.toFixed(1), cy: peak.y.toFixed(1), r: 3, fill: '#0b7285' }));
-    const label = el('text', { x: peak.x, y: peak.y - 8, 'font-size': '11', fill: '#0b7285', 'text-anchor': 'middle', 'font-weight': '600' });
+    const label = el('text', { x: peak.x, y: peak.y - 8, 'font-size': '12', fill: '#0b7285', 'text-anchor': 'middle', 'font-weight': '600' });
     label.textContent = `θ̂ = ${thetaHat}`;
     svg.appendChild(label);
 
     [0, 1].forEach(v => {
       const s = toScreen(v, 0);
-      const t = el('text', { x: s.x, y: s.y + 16, 'font-size': '10.5', fill: '#555', 'text-anchor': 'middle' });
+      const t = el('text', { x: s.x, y: s.y + 16, 'font-size': '12', fill: '#555', 'text-anchor': 'middle' });
       t.textContent = v;
       svg.appendChild(t);
     });
@@ -1235,7 +1235,7 @@ if (window.renderMathInElement) {
       { fn: posteriorFn, color: '#0b7285', dash: null, weight: '2' }
     ];
 
-    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img', 'aria-label': 'Prior, likelihood, and posterior curves' });
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:${width}px;max-width:${width}px`, role: 'img', 'aria-label': 'Prior, likelihood, and posterior curves' });
 
     curves.forEach(c => {
       const pts = sample(c.fn, xMin, xMax, 200);
@@ -1254,15 +1254,15 @@ if (window.renderMathInElement) {
     svg.appendChild(el('line', { x1: padL, y1: oY, x2: padL, y2: padT, stroke: '#333' }));
     [0, 1].forEach(v => {
       const sx = padL + (v - xMin) / (xMax - xMin) * plotW;
-      const t = el('text', { x: sx, y: oY + 16, 'font-size': '10.5', fill: '#555', 'text-anchor': 'middle' });
+      const t = el('text', { x: sx, y: oY + 16, 'font-size': '12', fill: '#555', 'text-anchor': 'middle' });
       t.textContent = v;
       svg.appendChild(t);
     });
 
-    const xAxisLabel = el('text', { x: width - 4, y: oY + 4, 'font-size': '11', fill: '#555', 'text-anchor': 'end' });
+    const xAxisLabel = el('text', { x: width - 4, y: oY + 4, 'font-size': '12', fill: '#555', 'text-anchor': 'end' });
     xAxisLabel.textContent = 'θ';
     svg.appendChild(xAxisLabel);
-    const yAxisLabel = el('text', { x: padL, y: padT + 10, 'font-size': '11', fill: '#555', 'text-anchor': 'start' });
+    const yAxisLabel = el('text', { x: padL, y: padT + 10, 'font-size': '12', fill: '#555', 'text-anchor': 'start' });
     yAxisLabel.textContent = 'density';
     svg.appendChild(yAxisLabel);
 
