@@ -1371,6 +1371,142 @@ if (window.renderMathInElement) {
     container.appendChild(caption);
   }
 
+  // Approximate sampling distributions of two estimators of a Bernoulli p
+  // (the same 7-heads-in-10-flips setup as MLEs/Bayesian inference above):
+  // the unbiased MLE vs. the Bayesian posterior mean, whose bias trades for
+  // a smaller variance. Both curves share one y-scale (unlike the prior/
+  // likelihood/posterior curves above, each normalized to its own peak) so
+  // the relative spread — the actual bias/variance tradeoff — is visible
+  // directly: the narrower, taller curve has lower variance.
+  function renderBiasMseChart(container) {
+    const n = 10, p = 0.7;
+    const mleMean = p, mleSd = Math.sqrt(p * (1 - p) / n);
+    const bayesMean = (n * p + 2) / (n + 4), bayesSd = Math.sqrt(n * p * (1 - p)) / (n + 4);
+    const normalPdf = (x, mu, sigma) => Math.exp(-0.5 * ((x - mu) / sigma) ** 2) / (sigma * Math.sqrt(2 * Math.PI));
+
+    const xMin = 0.15, xMax = 1.05;
+    const width = 380, height = 190, padL = 16, padR = 16, padT = 18, padB = 24;
+    const plotW = width - padL - padR, plotH = height - padT - padB;
+    const yMax = Math.max(normalPdf(mleMean, mleMean, mleSd), normalPdf(bayesMean, bayesMean, bayesSd)) * 1.15;
+    const toScreen = (x, y) => ({
+      x: padL + (x - xMin) / (xMax - xMin) * plotW,
+      y: padT + plotH - (y / yMax) * plotH
+    });
+
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'Sampling distributions of two estimators, compared by bias and variance' });
+
+    const mlePts = sample(x => normalPdf(x, mleMean, mleSd), xMin, xMax, 200);
+    svg.appendChild(el('path', { d: pathFor(mlePts, toScreen), fill: 'none', stroke: '#1a1a1a', 'stroke-width': '1.75' }));
+    const bayesPts = sample(x => normalPdf(x, bayesMean, bayesSd), xMin, xMax, 200);
+    svg.appendChild(el('path', { d: pathFor(bayesPts, toScreen), fill: 'none', stroke: '#0b7285', 'stroke-width': '1.75', 'stroke-dasharray': '5,3' }));
+
+    // true p — the fixed target both estimators are judged against, so it's
+    // a secondary reference line rather than one of the two main curves
+    const trueTop = toScreen(p, yMax), trueBase = toScreen(p, 0);
+    svg.appendChild(el('line', { x1: trueTop.x, y1: trueTop.y, x2: trueBase.x, y2: trueBase.y, stroke: '#999', 'stroke-width': '1.25', 'stroke-dasharray': '3,3' }));
+    const trueLabel = el('text', { x: trueTop.x, y: padT - 5, 'font-size': '12', fill: '#999', 'text-anchor': 'middle' });
+    trueLabel.textContent = `true p = ${p}`;
+    svg.appendChild(trueLabel);
+
+    const oY = padT + plotH;
+    svg.appendChild(el('line', { x1: padL, y1: oY, x2: padL + plotW, y2: oY, stroke: '#333' }));
+    svg.appendChild(el('line', { x1: padL, y1: oY, x2: padL, y2: padT, stroke: '#333' }));
+    [0.25, 0.5, 0.75, 1].forEach(v => {
+      const sx = toScreen(v, 0).x;
+      const t = el('text', { x: sx, y: oY + 16, 'font-size': '12', fill: '#555', 'text-anchor': 'middle' });
+      t.textContent = v;
+      svg.appendChild(t);
+    });
+
+    const xAxisLabel = el('text', { x: width - 4, y: oY + 4, 'font-size': '12', fill: '#555', 'text-anchor': 'end' });
+    xAxisLabel.textContent = 'estimate';
+    svg.appendChild(xAxisLabel);
+    const yAxisLabel = el('text', { x: padL, y: padT + 10, 'font-size': '12', fill: '#555', 'text-anchor': 'start' });
+    yAxisLabel.textContent = 'density';
+    svg.appendChild(yAxisLabel);
+
+    container.innerHTML = '';
+    container.appendChild(svg);
+    renderLegend(container, [
+      { type: 'line', color: '#1a1a1a', label: 'MLE p̂ (unbiased, higher variance)' },
+      { type: 'dashed', color: '#0b7285', label: 'Bayes estimate (biased, lower variance)' },
+      { type: 'dashed', color: '#999', label: 'true p' }
+    ]);
+  }
+
+  // Two mini residual-vs-fitted scatterplots, side by side: one with
+  // roughly constant spread (assumptions met) and one whose spread visibly
+  // fans out as the fitted value grows (a violated constant-variance
+  // assumption) — exactly the two patterns a residual plot is used to tell
+  // apart. Points come from a small deterministic PRNG (not Math.random),
+  // so the figure is stable across reloads like every other diagram here.
+  function renderResidualChart(container) {
+    function mulberry32(seed) {
+      return function () {
+        seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+        let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+    // Sum of three uniforms approximates a bell shape well enough for a
+    // diagram, without needing a full normal-variate transform.
+    function jitter(rand, scale) {
+      return ((rand() + rand() + rand()) - 1.5) / 1.5 * scale;
+    }
+
+    const n = 22;
+    const randGood = mulberry32(7), randBad = mulberry32(13);
+    const goodPts = [], badPts = [];
+    for (let i = 0; i < n; i++) {
+      const x = i / (n - 1);
+      goodPts.push({ x, y: jitter(randGood, 1) });
+      badPts.push({ x, y: jitter(randBad, 0.3 + 1.4 * x) });
+    }
+
+    const width = 400, height = 200;
+    const panelW = 170, gap = 40, padL = 10, padT = 32, padB = 30;
+    const plotH = height - padT - padB;
+    const yAbsMax = 2.3;
+
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'Residual plots: constant variance versus fanning variance' });
+
+    const yAxisLabel = el('text', { x: padL, y: padT - 18, 'font-size': '12', fill: '#555', 'text-anchor': 'start' });
+    yAxisLabel.textContent = 'residual';
+    svg.appendChild(yAxisLabel);
+
+    [
+      { pts: goodPts, offsetX: padL, title: 'well-behaved', color: '#1a1a1a' },
+      { pts: badPts, offsetX: padL + panelW + gap, title: 'fanning variance', color: '#c92a2a' }
+    ].forEach(panel => {
+      const toScreen = (x, y) => ({
+        x: panel.offsetX + x * panelW,
+        y: padT + plotH / 2 - (y / yAbsMax) * (plotH / 2)
+      });
+      const zL = toScreen(0, 0), zR = toScreen(1, 0);
+      svg.appendChild(el('line', { x1: zL.x, y1: zL.y, x2: zR.x, y2: zR.y, stroke: '#999', 'stroke-width': '1', 'stroke-dasharray': '4,3' }));
+      svg.appendChild(el('line', { x1: panel.offsetX, y1: padT, x2: panel.offsetX, y2: padT + plotH, stroke: '#ccc' }));
+      svg.appendChild(el('line', { x1: panel.offsetX, y1: padT + plotH, x2: panel.offsetX + panelW, y2: padT + plotH, stroke: '#ccc' }));
+      panel.pts.forEach(p => {
+        const s = toScreen(p.x, p.y);
+        svg.appendChild(el('circle', { cx: s.x.toFixed(1), cy: s.y.toFixed(1), r: 2.5, fill: panel.color, 'fill-opacity': '0.65' }));
+      });
+      const t = el('text', { x: panel.offsetX + panelW / 2, y: padT - 12, 'font-size': '12', 'font-weight': '600', fill: panel.color, 'text-anchor': 'middle' });
+      t.textContent = panel.title;
+      svg.appendChild(t);
+      const xl = el('text', { x: panel.offsetX + panelW, y: padT + plotH + 16, 'font-size': '12', fill: '#555', 'text-anchor': 'end' });
+      xl.textContent = 'fitted value';
+      svg.appendChild(xl);
+    });
+
+    container.innerHTML = '';
+    container.appendChild(svg);
+    renderLegend(container, [
+      { type: 'dot', color: '#1a1a1a', label: 'well-behaved residuals' },
+      { type: 'dot', color: '#c92a2a', label: 'fanning variance (violated)' }
+    ]);
+  }
+
   const mleMount = document.getElementById('mle-chart-root');
   if (mleMount) renderMLEChart(mleMount);
 
@@ -1379,4 +1515,10 @@ if (window.renderMathInElement) {
 
   const hypMount = document.getElementById('hyp-chart-root');
   if (hypMount) renderHypothesisChart(hypMount);
+
+  const biasMseMount = document.getElementById('bias-mse-chart-root');
+  if (biasMseMount) renderBiasMseChart(biasMseMount);
+
+  const residMount = document.getElementById('resid-chart-root');
+  if (residMount) renderResidualChart(residMount);
 })();
