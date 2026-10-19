@@ -60,6 +60,7 @@ document.querySelectorAll('details.menu-nav').forEach((menu) => {
   // but still above, the trigger line — and correctly clears to "none" the
   // moment you're above all of them.
   const headings = Array.from(headingToLink.keys());
+  let activeLink = null;
   function updateActiveTocLink() {
     const triggerY = window.innerHeight * 0.15;
     let current = null;
@@ -69,8 +70,17 @@ document.querySelectorAll('details.menu-nav').forEach((menu) => {
         current = { heading, top };
       }
     }
-    document.querySelectorAll('.toc a.active').forEach((a) => a.classList.remove('active'));
-    if (current) headingToLink.get(current.heading).classList.add('active');
+    const next = current ? headingToLink.get(current.heading) : null;
+    if (next === activeLink) return; // no change — skip the DOM churn below
+    if (activeLink) activeLink.classList.remove('active');
+    if (next) next.classList.add('active');
+    activeLink = next;
+    // Keep the active item in view within the TOC's own scrollable list as
+    // it changes — "nearest" only moves the TOC's internal scrollbar (the
+    // list is the closest scrollable ancestor; the page itself can't bring
+    // a position:fixed element into view by scrolling), smoothly rather
+    // than snapping, matching the page's own smooth-scroll anchor behavior.
+    if (next) next.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 
   let ticking = false;
