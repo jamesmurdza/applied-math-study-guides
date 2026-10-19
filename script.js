@@ -1249,9 +1249,10 @@ if (window.renderMathInElement) {
       { type: 'fill', color: '#c92a2a', label: 'rejection region' },
       { type: 'dot', color: '#1a1a1a', label: 'observed statistic' }
     ]);
-    const caption = document.createElement('p');
-    caption.textContent = `The shaded tail is the rejection region, sized to hold exactly α = 0.05 of the area under the null distribution. The observed statistic falls at z = ${zObs}, past the critical value z* = ${zCrit} — inside the rejection region, so H₀ is rejected.`;
-    container.appendChild(caption);
+    // No trailing caption here — unlike the MLE/Bayesian charts, this
+    // example's numbers (α = 0.05, z* = 1.645, z = 2.1) are already woven
+    // into the surrounding prose above, so a repeated caption would just
+    // restate it.
   }
 
   // Likelihood curve over θ for a Bernoulli sample, peaked at the MLE.
