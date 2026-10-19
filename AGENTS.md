@@ -1,9 +1,39 @@
 # AGENTS.md
 
 Conventions for this repo — a static educational site (vanilla HTML/CSS/JS,
-locally-vendored KaTeX) with three tabs: Real Analysis, Optimization,
+locally-vendored KaTeX) with three sections: Real Analysis, Optimization,
 Statistics. Follow these when adding or editing content, especially SVG
 diagrams.
+
+## Site structure — separate pages, shared assets
+
+Each section is its own real page, not a hash-toggled tab:
+
+```
+/real-analysis/index.html
+/optimization/index.html
+/statistics/index.html
+```
+
+`/index.html` at the root is just a redirect to `/real-analysis/`, for
+anyone hitting the bare domain — it has no real content of its own.
+
+`style.css`, `script.js`, and `vendor/katex/` live at the repo root and are
+shared by all three pages via `../`-relative paths (each page is one
+directory deep). When adding a new page, follow the same pattern: a
+standalone HTML document with its own `<head>`/nav markup, referencing the
+shared root assets with `../`, rather than duplicating CSS/JS per page.
+
+The nav bar (`<nav class="tabs">` with three `<a class="tab">` links) is
+duplicated at the top of each page's markup — there's no templating step,
+so if nav text, links, or styling change, update it in all three files.
+The `active` class on the current page's own link is hardcoded per file,
+not computed by JS.
+
+Content-wise, each page is just what used to be that tab's `<section
+class="panel">` — same ids, same structure, same `.topic` divs — so
+diagram/content conventions below apply identically regardless of which
+page you're in.
 
 ## Diagram font size and scaling — always 1:1
 
