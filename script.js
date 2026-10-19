@@ -1318,29 +1318,29 @@ if (window.renderMathInElement) {
     // restate it.
   }
 
-  // Method of moments, visualized as matching: the theoretical first
-  // moment E[X] as a function of θ (for Bernoulli, just the identity line
-  // θ) against the observed sample mean X̄, solved by reading off where
-  // they cross. Same 7-heads-in-10-flips dataset as the MLE chart below,
-  // landing on the same θ̂ — by a different mechanism (a crossing here,
-  // a peak there), which is the point.
-  function renderMomentMatchChart(container) {
-    const xMin = 0, xMax = 1;
-    const xBar = 0.7;
-    const momentFn = theta => theta; // E[X] = θ for Bernoulli
+  // Method of moments, visualized as matching: the theoretical moment
+  // E[X] as a function of θ, against the observed sample moment, solved
+  // by reading off where they cross. One chart function, two examples on
+  // the topic — Bernoulli (identity line, coincides with the MLE two
+  // topics down) and Uniform(0,θ) (a genuinely different slope, and a
+  // genuinely different answer from that same model's MLE) — so the
+  // "crossing" mechanic reads as the same idea both times; only the line
+  // itself, and where it's cut off, changes.
+  function renderMomentMatchChart(container, config) {
+    const { xMax, yMax, momentFn, observed, thetaHat, observedLabel, estimateLabel, curveLabel, ariaLabel } = config;
     const width = 380, height = 170, padL = 34, padR = 16, padT = 20, padB = 24;
     const plotW = width - padL - padR, plotH = height - padT - padB;
     const toScreen = (x, y) => ({
-      x: padL + (x - xMin) / (xMax - xMin) * plotW,
-      y: padT + plotH - (y - xMin) / (xMax - xMin) * plotH
+      x: padL + (x / xMax) * plotW,
+      y: padT + plotH - (y / yMax) * plotH
     });
 
-    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'Theoretical mean matched against the observed sample mean' });
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': ariaLabel });
 
-    const pts = sample(momentFn, xMin, xMax, 2);
+    const pts = sample(momentFn, 0, xMax, 2);
     svg.appendChild(el('path', { d: pathFor(pts, toScreen), fill: 'none', stroke: '#0b7285', 'stroke-width': '1.75' }));
 
-    const o = toScreen(xMin, 0), oR = toScreen(xMax, 0), oT = toScreen(xMin, xMax);
+    const o = toScreen(0, 0), oR = toScreen(xMax, 0), oT = toScreen(0, yMax);
     svg.appendChild(el('line', { x1: o.x, y1: o.y, x2: oR.x, y2: oR.y, stroke: '#333' }));
     svg.appendChild(el('line', { x1: o.x, y1: o.y, x2: oT.x, y2: oT.y, stroke: '#333' }));
 
@@ -1351,39 +1351,42 @@ if (window.renderMathInElement) {
     yAxisLabel.textContent = 'E[X]';
     svg.appendChild(yAxisLabel);
 
-    [0, 1].forEach(v => {
-      const sx = toScreen(v, 0);
-      const tx = el('text', { x: sx.x, y: sx.y + 16, 'font-size': '12', fill: '#555', 'text-anchor': 'middle' });
-      tx.textContent = v;
-      svg.appendChild(tx);
-      const sy = toScreen(xMin, v);
-      const ty = el('text', { x: sy.x - 8, y: sy.y + 4, 'font-size': '12', fill: '#555', 'text-anchor': 'end' });
-      ty.textContent = v;
-      svg.appendChild(ty);
+    [0, xMax].forEach(v => {
+      const s = toScreen(v, 0);
+      const t = el('text', { x: s.x, y: s.y + 16, 'font-size': '12', fill: '#555', 'text-anchor': 'middle' });
+      t.textContent = v;
+      svg.appendChild(t);
+    });
+    [0, yMax].forEach(v => {
+      const s = toScreen(0, v);
+      const t = el('text', { x: s.x - 8, y: s.y + 4, 'font-size': '12', fill: '#555', 'text-anchor': 'end' });
+      t.textContent = v;
+      svg.appendChild(t);
     });
 
-    // matching lines: observed X̄ (horizontal) meeting the theoretical
-    // curve, dropped down (vertical) to read off θ̂ — stopping exactly at
-    // the crossing point rather than running the full width/height, so
-    // the diagram reads as "solve for this," not just a static grid.
-    const cross = toScreen(xBar, xBar);
+    // matching lines: the observed moment (horizontal) meeting the
+    // theoretical curve, dropped down (vertical) to read off θ̂ —
+    // stopping exactly at the crossing point rather than running the
+    // full width/height, so the diagram reads as "solve for this," not
+    // just a static grid.
+    const cross = toScreen(thetaHat, observed);
     svg.appendChild(el('line', { x1: o.x, y1: cross.y, x2: cross.x, y2: cross.y, stroke: '#999', 'stroke-width': '1.25', 'stroke-dasharray': '3,3' }));
     svg.appendChild(el('line', { x1: cross.x, y1: cross.y, x2: cross.x, y2: o.y, stroke: '#999', 'stroke-width': '1.25', 'stroke-dasharray': '3,3' }));
-    const xBarLabel = el('text', { x: o.x + 4, y: cross.y - 6, 'font-size': '12', fill: '#999', 'text-anchor': 'start' });
-    xBarLabel.textContent = `X̄ = ${xBar}`;
-    svg.appendChild(xBarLabel);
+    const obsLabel = el('text', { x: o.x + 4, y: cross.y - 6, 'font-size': '12', fill: '#999', 'text-anchor': 'start' });
+    obsLabel.textContent = observedLabel;
+    svg.appendChild(obsLabel);
 
     svg.appendChild(el('circle', { cx: cross.x.toFixed(1), cy: cross.y.toFixed(1), r: 3, fill: '#0b7285' }));
     const label = el('text', { x: cross.x, y: cross.y - 8, 'font-size': '12', fill: '#0b7285', 'text-anchor': 'middle', 'font-weight': '600' });
-    label.textContent = `p̂ = ${xBar}`;
+    label.textContent = estimateLabel;
     svg.appendChild(label);
 
     container.innerHTML = '';
     container.appendChild(svg);
     renderLegend(container, [
-      { type: 'line', color: '#0b7285', label: 'theoretical mean E[X] = θ' },
-      { type: 'dashed', color: '#999', label: 'observed sample mean X̄' },
-      { type: 'dot', color: '#0b7285', label: 'solution p̂' }
+      { type: 'line', color: '#0b7285', label: curveLabel },
+      { type: 'dashed', color: '#999', label: 'observed sample moment' },
+      { type: 'dot', color: '#0b7285', label: 'solution' }
     ]);
   }
 
@@ -1640,7 +1643,24 @@ if (window.renderMathInElement) {
   }
 
   const momentMount = document.getElementById('moment-match-chart-root');
-  if (momentMount) renderMomentMatchChart(momentMount);
+  if (momentMount) renderMomentMatchChart(momentMount, {
+    xMax: 1, yMax: 1,
+    momentFn: theta => theta, // E[X] = θ for Bernoulli
+    observed: 0.7, thetaHat: 0.7,
+    observedLabel: 'X̄ = 0.7', estimateLabel: 'p̂ = 0.7',
+    curveLabel: 'theoretical mean E[X] = θ',
+    ariaLabel: 'Theoretical mean matched against the observed sample mean, Bernoulli'
+  });
+
+  const momentUniformMount = document.getElementById('moment-match-uniform-chart-root');
+  if (momentUniformMount) renderMomentMatchChart(momentUniformMount, {
+    xMax: 8, yMax: 4,
+    momentFn: theta => theta / 2, // E[X] = θ/2 for Uniform(0, θ)
+    observed: 3, thetaHat: 6,
+    observedLabel: 'X̄ = 3', estimateLabel: 'θ̂ = 6',
+    curveLabel: 'theoretical mean E[X] = θ/2',
+    ariaLabel: 'Theoretical mean matched against the observed sample mean, Uniform(0, θ)'
+  });
 
   const mleMount = document.getElementById('mle-chart-root');
   if (mleMount) renderMLEChart(mleMount);
