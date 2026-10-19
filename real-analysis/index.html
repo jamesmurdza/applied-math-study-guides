@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real Analysis · Math Topics</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+</head>
+<body>
+
+  <div class="container">
+    <nav class="tabs">
+      <a class="tab active" href="/real-analysis/">Real Analysis</a>
+      <a class="tab" href="/optimization/">Optimization</a>
+      <a class="tab" href="/statistics/">Statistics</a>
+    </nav>
+
+    <main class="panels">
+      <section class="panel" id="real-analysis">
+        <h1>Real Analysis</h1>
+        <p>The rigorous study of limits, continuity, differentiation, integration, and sequences and series of real numbers.</p>
+
+        <div class="topics">
+          <div class="topic" id="metric-spaces">
+            <h2>Metric Spaces</h2>
+            <p>A <strong>metric space</strong> pairs a set <strong>M</strong> with a <strong>distance function</strong> <strong>d</strong> that formalizes notions like nearness and size.</p>
+            <p>Distance is never negative, and never infinite.</p>
+            <p class="math">$$0 \textcolor{#7B4B8C}{\leq} \textcolor{#4078F2}{d}(x,y) \textcolor{#7B4B8C}{<} \infty$$</p>
+            <p>Two points are at distance zero exactly when they are the same point.</p>
+            <p class="math">$$\textcolor{#4078F2}{d}(x,y) \textcolor{#7B4B8C}{=} 0 \textcolor{#7B4B8C}{\iff} x \textcolor{#7B4B8C}{=} y$$</p>
+            <p>Distance doesn't depend on which point you measure from.</p>
+            <p class="math">$$\textcolor{#4078F2}{d}(x,y) \textcolor{#7B4B8C}{=} \textcolor{#4078F2}{d}(y,x)$$</p>
+            <p>Going through a third point never shortens the direct route.</p>
+            <p class="math">$$\textcolor{#4078F2}{d}(x,z) \textcolor{#7B4B8C}{\leq} \textcolor{#4078F2}{d}(x,y) + \textcolor{#4078F2}{d}(y,z)$$</p>
+
+            <div class="viz">
+              <svg viewBox="0 0 220 150" style="width:220px;max-width:220px;" role="img" aria-label="Triangle inequality diagram">
+                <line x1="40" y1="120" x2="175" y2="95" stroke="#999" stroke-width="1.5"></line>
+                <line x1="175" y1="95" x2="115" y2="25" stroke="#999" stroke-width="1.5"></line>
+                <line x1="40" y1="120" x2="115" y2="25" stroke="#C18401" stroke-width="2" stroke-dasharray="5,4"></line>
+                <circle cx="40" cy="120" r="3" fill="#1a1a1a"></circle>
+                <circle cx="175" cy="95" r="3" fill="#1a1a1a"></circle>
+                <circle cx="115" cy="25" r="3" fill="#1a1a1a"></circle>
+                <text x="26" y="134" font-size="12" fill="#555">x</text>
+                <text x="183" y="92" font-size="12" fill="#555">y</text>
+                <text x="110" y="15" font-size="12" fill="#555">z</text>
+                <text x="80" y="118" font-size="12" fill="#777">d(x,y)</text>
+                <text x="150" y="53" font-size="12" fill="#777">d(y,z)</text>
+                <text x="18" y="85" font-size="12" fill="#C18401">d(x,z)</text>
+              </svg>
+              <p>The direct route <strong>x → z</strong> (dashed) is never longer than detouring through <strong>y</strong>.</p>
+            </div>
+          </div>
+          <div class="topic" id="balls">
+            <h2>Balls</h2>
+            <p>An <strong>open ball</strong> collects every point within some fixed radius of a center point.</p>
+            <p class="math">$$\textcolor{#C18401}{B}_r(x) \textcolor{#7B4B8C}{:=} \{y \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M} \textcolor{#7B4B8C}{:} \textcolor{#4078F2}{d}(x,y) \textcolor{#7B4B8C}{<} r\}$$</p>
+            <p>A <strong>closed ball</strong> additionally includes the points at distance exactly r.</p>
+            <p class="math">$$\overline{\textcolor{#C18401}{B}}_r(x) \textcolor{#7B4B8C}{:=} \{y \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M} \textcolor{#7B4B8C}{:} \textcolor{#4078F2}{d}(x,y) \textcolor{#7B4B8C}{\leq} r\}$$</p>
+          </div>
+          <div class="topic" id="convergence-and-cauchy-sequences">
+            <h2>Convergence and Cauchy Sequences</h2>
+            <p>A sequence <strong>converges</strong> when its terms get and stay arbitrarily close to a single limit point.</p>
+            <p class="math">$$x_n \to x \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#7B4B8C}{\exists} N \textcolor{#7B4B8C}{\geq} 1 \text{ s.t. } \textcolor{#7B4B8C}{\forall} n \textcolor{#7B4B8C}{\geq} N,\ \textcolor{#4078F2}{d}(x, x_n) \textcolor{#7B4B8C}{<} \varepsilon$$</p>
+            <p><strong>N</strong> depends on <strong>ε</strong> — smaller windows generally need larger N before the terms stay inside.</p>
+
+            <div class="viz">
+              <svg viewBox="0 0 250 100" style="width:250px;max-width:250px;" role="img" aria-label="Sequence converging to a limit marked by a notch, bounded by dashed epsilon lines">
+                <line x1="10" y1="55" x2="235" y2="55" stroke="#ccc" stroke-width="1"></line>
+                <line x1="150" y1="35" x2="150" y2="95" stroke="#7B4B8C" stroke-width="1" stroke-dasharray="3,3"></line>
+                <line x1="220" y1="35" x2="220" y2="95" stroke="#7B4B8C" stroke-width="1" stroke-dasharray="3,3"></line>
+                <text x="167.5" y="88" font-size="12" fill="#7B4B8C" font-style="italic" text-anchor="middle">ε</text>
+                <text x="202.5" y="88" font-size="12" fill="#7B4B8C" font-style="italic" text-anchor="middle">ε</text>
+                <line x1="185" y1="50" x2="185" y2="60" stroke="#999" stroke-width="1.5"></line>
+                <text x="185" y="45" font-size="12" fill="#999" text-anchor="middle">x</text>
+                <circle cx="20" cy="55" r="3" fill="#1a1a1a"></circle>
+                <text x="20" y="45" font-size="12" fill="#1a1a1a" text-anchor="middle">x₁</text>
+                <circle cx="55" cy="55" r="3" fill="#1a1a1a"></circle>
+                <text x="55" y="45" font-size="12" fill="#1a1a1a" text-anchor="middle">x₂</text>
+                <circle cx="88" cy="55" r="3" fill="#1a1a1a"></circle>
+                <text x="88" y="45" font-size="12" fill="#1a1a1a" text-anchor="middle">x₃</text>
+                <circle cx="120" cy="55" r="3" fill="#1a1a1a"></circle>
+                <text x="120" y="45" font-size="12" fill="#1a1a1a" text-anchor="middle">x₄</text>
+                <circle cx="165" cy="55" r="3" fill="#1a1a1a"></circle>
+                <text x="165" y="45" font-size="12" text-anchor="middle"><tspan fill="#1a1a1a">x</tspan><tspan fill="#7B4B8C">₅</tspan></text>
+                <circle cx="205" cy="55" r="3" fill="#1a1a1a"></circle>
+                <text x="205" y="45" font-size="12" text-anchor="middle"><tspan fill="#1a1a1a">x</tspan><tspan fill="#7B4B8C">₆</tspan></text>
+              </svg>
+              <p>Terms with index past <strong>N</strong> stay within ε of the limit <strong>x</strong>.</p>
+            </div>
+
+            <p>A sequence is <strong>Cauchy</strong> when its own terms eventually get arbitrarily close to each other, with no need to already know the limit.</p>
+            <p class="math">$$\textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#7B4B8C}{\exists} N \textcolor{#7B4B8C}{\geq} 1 \text{ s.t. } \textcolor{#7B4B8C}{\forall} m,n \textcolor{#7B4B8C}{\geq} N,\ \textcolor{#4078F2}{d}(x_m,x_n) \textcolor{#7B4B8C}{<} \varepsilon$$</p>
+            <p>Every convergent sequence is Cauchy, but the converse only holds once the space is <a href="#completeness">complete</a>.</p>
+          </div>
+          <div class="topic" id="open-and-closed-sets">
+            <h2>Open and Closed Sets</h2>
+            <p>A subset <strong>A</strong> ⊆ M is a smaller set living inside this <strong>ambient space</strong>, still measured by the same d.</p>
+            <p>An <strong>open set</strong> is one in which every point has some ball around it that still lies entirely inside the set.</p>
+            <p class="math">$$\textcolor{#C18401}{U} \text{ open} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{U},\ \textcolor{#7B4B8C}{\exists}\, \varepsilon \textcolor{#7B4B8C}{>} 0 \text{ s.t. } \textcolor{#C18401}{B}_\varepsilon(x) \textcolor{#7B4B8C}{\subseteq} \textcolor{#C18401}{U}$$</p>
+            <p>A <strong>closed set</strong> contains the limit of every convergent sequence built from its own points.</p>
+            <p class="math">$$\big(\textcolor{#7B4B8C}{\forall} n \textcolor{#7B4B8C}{\in} \mathbb{N},\ x_n \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{A}\big) \textcolor{#7B4B8C}{\wedge} x_n \to x\ \textcolor{#7B4B8C}{\implies}\ x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{A}$$</p>
+            <p>A set is closed exactly when its complement is open.</p>
+            <p class="math">$$\textcolor{#C18401}{A} \text{ closed} \textcolor{#7B4B8C}{\iff} \textcolor{#C18401}{M} \setminus \textcolor{#C18401}{A} \text{ open}$$</p>
+            <p>Openness and closedness depend on the ambient space and the metric chosen, not on the set alone.</p>
+
+            <div class="set-examples">
+              <div class="set-card">
+                <svg viewBox="0 0 160 160" role="img" aria-label="Open unit disk">
+                  <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="20" y1="76" x2="20" y2="84" stroke="#ccc"></line>
+                  <line x1="140" y1="76" x2="140" y2="84" stroke="#ccc"></line>
+                  <line x1="76" y1="20" x2="84" y2="20" stroke="#ccc"></line>
+                  <line x1="76" y1="140" x2="84" y2="140" stroke="#ccc"></line>
+                  <circle cx="80" cy="80" r="60" fill="#C18401" fill-opacity="0.15" stroke="#C18401" stroke-width="2" stroke-dasharray="4,4"></circle>
+                </svg>
+                <p><strong>Open, not closed</strong></p>
+                <p class="math">$$\{(x,y) : x^2 + y^2 \textcolor{#7B4B8C}{<} 1\}$$</p>
+              </div>
+              <div class="set-card">
+                <svg viewBox="0 0 160 160" role="img" aria-label="Closed unit disk">
+                  <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="20" y1="76" x2="20" y2="84" stroke="#ccc"></line>
+                  <line x1="140" y1="76" x2="140" y2="84" stroke="#ccc"></line>
+                  <line x1="76" y1="20" x2="84" y2="20" stroke="#ccc"></line>
+                  <line x1="76" y1="140" x2="84" y2="140" stroke="#ccc"></line>
+                  <circle cx="80" cy="80" r="60" fill="#C18401" fill-opacity="0.15" stroke="#C18401" stroke-width="2"></circle>
+                </svg>
+                <p><strong>Closed, not open</strong></p>
+                <p class="math">$$\{(x,y) : x^2 + y^2 \textcolor{#7B4B8C}{\leq} 1\}$$</p>
+              </div>
+            </div>
+
+            <div class="set-examples">
+              <div class="set-card">
+                <svg viewBox="0 0 160 160" role="img" aria-label="The whole plane">
+                  <rect x="10" y="10" width="140" height="140" fill="#C18401" fill-opacity="0.15"></rect>
+                  <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
+                </svg>
+                <p><strong>Closed and open</strong></p>
+                <p class="math">$$\textcolor{#C18401}{\mathbb{R}^2}$$</p>
+              </div>
+              <div class="set-card">
+                <svg viewBox="0 0 160 160" role="img" aria-label="The empty set">
+                  <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="20" y1="76" x2="20" y2="84" stroke="#ccc"></line>
+                  <line x1="140" y1="76" x2="140" y2="84" stroke="#ccc"></line>
+                  <line x1="76" y1="20" x2="84" y2="20" stroke="#ccc"></line>
+                  <line x1="76" y1="140" x2="84" y2="140" stroke="#ccc"></line>
+                </svg>
+                <p><strong>Closed and open</strong></p>
+                <p class="math">$$\textcolor{#C18401}{\varnothing}$$</p>
+              </div>
+              <div class="set-card">
+                <svg viewBox="0 0 160 160" role="img" aria-label="Disk with mixed boundary">
+                  <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="20" y1="76" x2="20" y2="84" stroke="#ccc"></line>
+                  <line x1="140" y1="76" x2="140" y2="84" stroke="#ccc"></line>
+                  <line x1="76" y1="20" x2="84" y2="20" stroke="#ccc"></line>
+                  <line x1="76" y1="140" x2="84" y2="140" stroke="#ccc"></line>
+                  <circle cx="80" cy="80" r="60" fill="#C18401" fill-opacity="0.15"></circle>
+                  <path d="M 20,80 A 60,60 0 0,1 140,80" fill="none" stroke="#C18401" stroke-width="2"></path>
+                  <path d="M 140,80 A 60,60 0 0,1 20,80" fill="none" stroke="#C18401" stroke-width="2" stroke-dasharray="4,4"></path>
+                </svg>
+                <p><strong>Not closed, not open</strong></p>
+                <p class="math">$$\{x^2\!+\!y^2 \textcolor{#7B4B8C}{<} 1\} \cup \{x^2\!+\!y^2 \textcolor{#7B4B8C}{=} 1, y \textcolor{#7B4B8C}{\geq} 0\}$$</p>
+              </div>
+              <div class="set-card">
+                <svg viewBox="0 0 160 160" role="img" aria-label="Punctured closed disk">
+                  <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="20" y1="76" x2="20" y2="84" stroke="#ccc"></line>
+                  <line x1="140" y1="76" x2="140" y2="84" stroke="#ccc"></line>
+                  <line x1="76" y1="20" x2="84" y2="20" stroke="#ccc"></line>
+                  <line x1="76" y1="140" x2="84" y2="140" stroke="#ccc"></line>
+                  <circle cx="80" cy="80" r="60" fill="#C18401" fill-opacity="0.15" stroke="#C18401" stroke-width="2"></circle>
+                  <line x1="76" y1="76" x2="84" y2="84" stroke="#C18401" stroke-width="2"></line>
+                  <line x1="84" y1="76" x2="76" y2="84" stroke="#C18401" stroke-width="2"></line>
+                </svg>
+                <p><strong>Not closed, not open</strong></p>
+                <p class="math">$$\{(x,y) : 0 \textcolor{#7B4B8C}{<} x^2+y^2 \textcolor{#7B4B8C}{\leq} 1\}$$</p>
+              </div>
+            </div>
+          </div>
+          <div class="topic" id="dense-sets">
+            <h2>Dense Sets</h2>
+            <p>A set is <strong>dense</strong> when every ball in the space contains at least one of its points, no matter how small — so its points can be found arbitrarily close to every point of the space.</p>
+            <p class="math">$$\textcolor{#C18401}{A} \text{ dense in } \textcolor{#C18401}{M} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M},\ \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#C18401}{B}_\varepsilon(x) \textcolor{#7B4B8C}{\cap} \textcolor{#C18401}{A} \textcolor{#7B4B8C}{\neq} \varnothing$$</p>
+            <p><strong>x</strong> ranges over the whole space, not just <strong>A</strong> — even points outside A must have A's points arbitrarily close by.</p>
+
+            <div class="viz">
+              <svg viewBox="0 0 250 100" style="width:250px;max-width:250px;" role="img" aria-label="Points of A scattered throughout the line, with at least one falling inside every epsilon window around x">
+                <line x1="10" y1="55" x2="235" y2="55" stroke="#ccc" stroke-width="1"></line>
+                <line x1="135" y1="35" x2="135" y2="75" stroke="#7B4B8C" stroke-width="1" stroke-dasharray="3,3"></line>
+                <line x1="165" y1="35" x2="165" y2="75" stroke="#7B4B8C" stroke-width="1" stroke-dasharray="3,3"></line>
+                <text x="135" y="88" font-size="12" fill="#7B4B8C" font-style="italic" text-anchor="middle">ε</text>
+                <text x="165" y="88" font-size="12" fill="#7B4B8C" font-style="italic" text-anchor="middle">ε</text>
+                <line x1="150" y1="50" x2="150" y2="60" stroke="#999" stroke-width="1.5"></line>
+                <text x="150" y="30" font-size="12" fill="#999" text-anchor="middle">x</text>
+                <circle cx="22" cy="55" r="2.5" fill="#C18401"></circle>
+                <circle cx="38" cy="55" r="2.5" fill="#C18401"></circle>
+                <circle cx="55" cy="55" r="2.5" fill="#C18401"></circle>
+                <circle cx="70" cy="55" r="2.5" fill="#C18401"></circle>
+                <circle cx="88" cy="55" r="2.5" fill="#C18401"></circle>
+                <circle cx="105" cy="55" r="2.5" fill="#C18401"></circle>
+                <circle cx="118" cy="55" r="2.5" fill="#C18401"></circle>
+                <circle cx="146" cy="55" r="2.5" fill="#C18401"></circle>
+                <circle cx="183" cy="55" r="2.5" fill="#C18401"></circle>
+                <circle cx="198" cy="55" r="2.5" fill="#C18401"></circle>
+                <circle cx="212" cy="55" r="2.5" fill="#C18401"></circle>
+                <circle cx="225" cy="55" r="2.5" fill="#C18401"></circle>
+              </svg>
+              <p>The dots are points of <strong>A</strong>; every ε-window around <strong>x</strong> still catches one.</p>
+            </div>
+
+            <p>If a subset <strong>A</strong> of a metric space <strong>M</strong> is both closed and dense in <strong>M</strong>, then <strong>A</strong> = <strong>M</strong>.</p>
+          </div>
+          <div class="topic" id="continuity">
+            <h2>Continuity</h2>
+            <p>A function is <strong>continuous</strong> when small changes in input produce arbitrarily small changes in output.</p>
+            <p class="math">$$\textcolor{#4078F2}{f} \text{ continuous at } x_0 \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0\,\textcolor{#7B4B8C}{\exists} \delta \textcolor{#7B4B8C}{>} 0\,\textcolor{#7B4B8C}{\forall} x\textcolor{#7B4B8C}{:}\,\textcolor{#4078F2}{d}(x_0,x) \textcolor{#7B4B8C}{<} \delta \textcolor{#7B4B8C}{\implies} \textcolor{#4078F2}{\rho}(\textcolor{#4078F2}{f}(x_0),\textcolor{#4078F2}{f}(x)) \textcolor{#7B4B8C}{<} \varepsilon$$</p>
+            <p><strong>d</strong> measures distance in the input space, <strong>ρ</strong> measures distance in the output space — they can be different metrics on different spaces. In ℝ, both just mean |x − y|.</p>
+
+            <div class="viz">
+              <svg viewBox="0 0 260 220" style="width:260px;max-width:260px;" role="img" aria-label="Epsilon-delta diagram for continuity">
+                <rect x="120" y="20" width="60" height="170" fill="#7B4B8C" fill-opacity="0.06"></rect>
+                <rect x="50" y="75" width="190" height="50" fill="#7B4B8C" fill-opacity="0.06"></rect>
+                <line x1="120" y1="20" x2="120" y2="190" stroke="#999" stroke-width="1" stroke-dasharray="3,3"></line>
+                <line x1="180" y1="20" x2="180" y2="190" stroke="#999" stroke-width="1" stroke-dasharray="3,3"></line>
+                <line x1="50" y1="75" x2="240" y2="75" stroke="#999" stroke-width="1" stroke-dasharray="3,3"></line>
+                <line x1="50" y1="125" x2="240" y2="125" stroke="#999" stroke-width="1" stroke-dasharray="3,3"></line>
+                <text x="131" y="15" font-size="12" fill="#777" font-style="italic">δ</text>
+                <text x="161" y="15" font-size="12" fill="#777" font-style="italic">δ</text>
+                <text x="244" y="91" font-size="12" fill="#777" font-style="italic">ε</text>
+                <text x="244" y="116" font-size="12" fill="#777" font-style="italic">ε</text>
+                <line x1="50" y1="190" x2="240" y2="190" stroke="#999" stroke-width="1.5"></line>
+                <line x1="50" y1="190" x2="50" y2="20" stroke="#999" stroke-width="1.5"></line>
+                <polyline points="50,175 90,150 120,125 150,100 180,75 210,55 240,40" fill="none" stroke="#4078F2" stroke-width="2"></polyline>
+                <line x1="150" y1="190" x2="150" y2="100" stroke="#999" stroke-width="1" stroke-dasharray="2,2"></line>
+                <line x1="50" y1="100" x2="150" y2="100" stroke="#999" stroke-width="1" stroke-dasharray="2,2"></line>
+                <circle cx="150" cy="100" r="3.5" fill="#4078F2"></circle>
+                <text x="140" y="205" font-size="12" fill="#555">x₀</text>
+                <text x="8" y="104" font-size="12" fill="#555">f(x₀)</text>
+              </svg>
+              <p>Keeping <strong>x</strong> within δ of <strong>x₀</strong> (vertical band) keeps <strong>f(x)</strong> within ε of <strong>f(x₀)</strong> (horizontal band).</p>
+            </div>
+          </div>
+          <div class="topic" id="uniform-continuity">
+            <h2>Uniform Continuity</h2>
+            <p><em>Placeholder: definition — one δ works for every point at once, not chosen per x₀.</em></p>
+            <p><em>Placeholder: formula, contrasted against the Continuity formula above (quantifier order change).</em></p>
+            <p><em>Placeholder: example pair — x² on [0,1] (uniformly continuous, ties to Compactness/Heine–Cantor) vs 1/x on (0,1) (not uniformly continuous, ties to Completeness/Bolzano–Weierstrass).</em></p>
+          </div>
+          <div class="topic" id="homeomorphisms">
+            <h2>Homeomorphisms</h2>
+            <p><em>Placeholder: definition — continuous bijection with continuous inverse.</em></p>
+            <p><em>Placeholder: formula.</em></p>
+            <p><em>Placeholder: example pair — (-1,1) ≅ ℝ (boundedness not preserved) vs [0,1] ≇ (0,1) (compactness is preserved, ties to Compactness cards).</em></p>
+          </div>
+          <div class="topic" id="boundedness">
+            <h2>Boundedness</h2>
+            <p>A set is <strong>bounded</strong> when the largest distance between any two of its points is finite.</p>
+            <p class="math">$$\mathrm{diam}(\textcolor{#C18401}{A}) \textcolor{#7B4B8C}{:=} \textcolor{#7B4B8C}{\sup}_{x,y \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{A}} \textcolor{#4078F2}{d}(x,y), \qquad \textcolor{#C18401}{A} \text{ bounded} \textcolor{#7B4B8C}{\iff} \mathrm{diam}(\textcolor{#C18401}{A}) \textcolor{#7B4B8C}{<} \infty$$</p>
+            <p>Equivalently, a set is bounded when it fits entirely inside some ball of finite radius.</p>
+            <p class="math">$$\textcolor{#C18401}{A} \text{ bounded} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\exists}\, x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M},\ \textcolor{#7B4B8C}{\exists}\, r \textcolor{#7B4B8C}{>} 0 \text{ s.t. } \textcolor{#C18401}{A} \textcolor{#7B4B8C}{\subseteq} \textcolor{#C18401}{B}_r(x)$$</p>
+            <p><strong>x</strong> can be any point of the space — the ball's center doesn't need to lie in A.</p>
+
+            <div class="viz">
+              <svg viewBox="0 0 195 160" style="width:195px;max-width:195px;" role="img" aria-label="A bounded set inside one large ball">
+                <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
+                <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
+                <circle cx="80" cy="80" r="65" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="4,4"></circle>
+                <ellipse cx="80" cy="80" rx="40" ry="28" fill="#C18401" fill-opacity="0.15" stroke="#C18401" stroke-width="2"></ellipse>
+                <line x1="165" y1="15" x2="165" y2="80" stroke="#777" stroke-width="1"></line>
+                <text x="170" y="50" font-size="12" fill="#777" font-style="italic">r</text>
+              </svg>
+              <p>One ball of radius <strong>r</strong> contains all of <strong>A</strong>.</p>
+            </div>
+
+            <p><strong>Total boundedness</strong> strengthens boundedness by requiring a set to be coverable by finitely many small balls.</p>
+            <p class="math">$$\textcolor{#C18401}{A} \text{ totally bounded} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0,\ \textcolor{#C18401}{A} \textcolor{#7B4B8C}{\subseteq} \textcolor{#7B4B8C}{\bigcup}_{i=1}^{n} \textcolor{#C18401}{B}_\varepsilon(x_i) \text{ for some finite } x_1, \dots, x_n$$</p>
+            <p>The number of balls can grow as <strong>ε</strong> shrinks — but it's always finite.</p>
+
+            <div class="viz">
+              <svg viewBox="0 0 160 160" style="width:160px;max-width:160px;" role="img" aria-label="The same set covered by finitely many small balls">
+                <line x1="10" y1="80" x2="150" y2="80" stroke="#ccc" stroke-width="1"></line>
+                <line x1="80" y1="10" x2="80" y2="150" stroke="#ccc" stroke-width="1"></line>
+                <ellipse cx="80" cy="80" rx="40" ry="28" fill="#C18401" fill-opacity="0.15" stroke="#C18401" stroke-width="2"></ellipse>
+                <circle cx="60" cy="66" r="27" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="3,3"></circle>
+                <circle cx="100" cy="66" r="27" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="3,3"></circle>
+                <circle cx="60" cy="94" r="27" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="3,3"></circle>
+                <circle cx="100" cy="94" r="27" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="3,3"></circle>
+                <line x1="145" y1="39" x2="145" y2="66" stroke="#777" stroke-width="1"></line>
+                <text x="150" y="56" font-size="12" fill="#777" font-style="italic">ε</text>
+              </svg>
+              <p>Four balls of radius <strong>ε</strong> already cover all of <strong>A</strong>.</p>
+            </div>
+          </div>
+          <div class="topic" id="completeness">
+            <h2>Completeness</h2>
+            <p>A <strong>complete</strong> space contains the limits of all its Cauchy sequences, leaving no "gaps" to converge into.</p>
+            <p class="math">$$(\textcolor{#C18401}{M},\textcolor{#4078F2}{d}) \text{ complete} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \text{ Cauchy } (x_n) \text{ in } \textcolor{#C18401}{M},\ \textcolor{#7B4B8C}{\exists}\, x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M} \text{ s.t. } x_n \textcolor{#7B4B8C}{\to} x$$</p>
+            <p>Within a complete ambient space, a subset is complete exactly when it is closed.</p>
+            <p class="math">$$\textcolor{#C18401}{A} \textcolor{#7B4B8C}{\subseteq} \textcolor{#C18401}{M},\ \textcolor{#C18401}{M} \text{ complete}\ \textcolor{#7B4B8C}{\implies}\ \big(\textcolor{#C18401}{A} \text{ complete} \textcolor{#7B4B8C}{\iff} \textcolor{#C18401}{A} \text{ closed}\big)$$</p>
+
+            <div class="set-examples single" style="grid-template-columns: minmax(0, 240px);">
+              <div class="set-card">
+                <svg class="wide" viewBox="0 0 210 90" style="width:210px;max-width:210px;" role="img" aria-label="A Cauchy sequence of rationals with no rational limit">
+                  <line x1="10" y1="45" x2="151" y2="45" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="161" y1="45" x2="198" y2="45" stroke="#ccc" stroke-width="1"></line>
+                  <circle cx="18" cy="45" r="3" fill="#C18401"></circle>
+                  <text x="12" y="36" font-size="12" fill="#C18401">x₁</text>
+                  <circle cx="50" cy="45" r="3" fill="#C18401"></circle>
+                  <text x="44" y="36" font-size="12" fill="#C18401">x₂</text>
+                  <circle cx="80" cy="45" r="3" fill="#C18401"></circle>
+                  <text x="74" y="36" font-size="12" fill="#C18401">x₃</text>
+                  <circle cx="106" cy="45" r="3" fill="#C18401"></circle>
+                  <text x="100" y="36" font-size="12" fill="#C18401">x₄</text>
+                  <circle cx="126" cy="45" r="3" fill="#C18401"></circle>
+                  <text x="119" y="36" font-size="12" fill="#C18401">x₅</text>
+                  <circle cx="142" cy="45" r="3" fill="#C18401"></circle>
+                  <text x="135" y="36" font-size="12" fill="#C18401">x₆</text>
+                  <circle cx="156" cy="45" r="3.5" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="2,2"></circle>
+                  <text x="150" y="68" font-size="12" fill="#999">√2</text>
+                </svg>
+                <p><strong>Incomplete</strong></p>
+                <p class="math">$$\sqrt{2} \textcolor{#7B4B8C}{\notin} \textcolor{#C18401}{\mathbb{Q}}$$</p>
+              </div>
+            </div>
+
+            <div class="set-examples">
+              <div class="set-card">
+                <svg class="wide" viewBox="0 0 210 90" style="width:210px;max-width:210px;" role="img" aria-label="A sequence escaping the open interval as it converges to a missing endpoint">
+                  <line x1="10" y1="45" x2="190" y2="45" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="20" y1="45" x2="170" y2="45" stroke="#C18401" stroke-width="2.5"></line>
+                  <circle cx="20" cy="45" r="4" fill="#fff" stroke="#C18401" stroke-width="1.5"></circle>
+                  <circle cx="170" cy="45" r="4" fill="#fff" stroke="#C18401" stroke-width="1.5"></circle>
+                  <circle cx="140" cy="45" r="3" fill="#999"></circle>
+                  <text x="140" y="36" font-size="12" fill="#999" text-anchor="middle">x₁</text>
+                  <circle cx="110" cy="45" r="3" fill="#999"></circle>
+                  <text x="110" y="36" font-size="12" fill="#999" text-anchor="middle">x₂</text>
+                  <circle cx="84" cy="45" r="3" fill="#999"></circle>
+                  <text x="84" y="36" font-size="12" fill="#999" text-anchor="middle">x₃</text>
+                  <circle cx="62" cy="45" r="3" fill="#999"></circle>
+                  <text x="62" y="36" font-size="12" fill="#999" text-anchor="middle">x₄</text>
+                  <circle cx="44" cy="45" r="3" fill="#999"></circle>
+                  <text x="44" y="36" font-size="12" fill="#999" text-anchor="middle">x₅</text>
+                  <circle cx="30" cy="45" r="3" fill="#999"></circle>
+                  <text x="30" y="36" font-size="12" fill="#999" text-anchor="middle">x₆</text>
+                </svg>
+                <p><strong>Incomplete</strong></p>
+                <p class="math">$$x_n \textcolor{#7B4B8C}{=} \tfrac{1}{n+1} \textcolor{#7B4B8C}{\to} 0 \textcolor{#7B4B8C}{\notin} \textcolor{#C18401}{(0,1)}$$</p>
+              </div>
+              <div class="set-card">
+                <svg class="wide" viewBox="0 0 210 90" style="width:210px;max-width:210px;" role="img" aria-label="The closed interval, containing its own boundary">
+                  <line x1="10" y1="45" x2="190" y2="45" stroke="#ccc" stroke-width="1"></line>
+                  <line x1="20" y1="45" x2="170" y2="45" stroke="#C18401" stroke-width="2.5"></line>
+                  <circle cx="20" cy="45" r="3.5" fill="#C18401"></circle>
+                  <circle cx="170" cy="45" r="3.5" fill="#C18401"></circle>
+                </svg>
+                <p><strong>Complete</strong></p>
+                <p class="math">$$\textcolor{#C18401}{[0,1]} \text{ closed in } \textcolor{#C18401}{\mathbb{R}} \textcolor{#7B4B8C}{\implies} \text{ complete}$$</p>
+              </div>
+            </div>
+          </div>
+          <div class="topic" id="fixed-points">
+            <h2>Fixed Points</h2>
+            <p><em>Placeholder: definition of a contraction — shrinks distances by a fixed factor k &lt; 1.</em></p>
+            <p><em>Placeholder: formula, contraction definition.</em></p>
+            <p><em>Placeholder: Banach fixed-point theorem — M complete ∧ f contraction ⟹ unique fixed point (reuses "M complete" from the Completeness topic above).</em></p>
+            <p><em>Placeholder: diagram — iterates x₀, f(x₀), f(f(x₀)), … spiraling into the fixed point, same converging-dots visual as Convergence.</em></p>
+          </div>
+          <div class="topic" id="compactness">
+            <h2>Compactness</h2>
+            <p>A space is <strong>compact</strong> when it's both complete and totally bounded. In other words, no sequence escapes to a missing limit, and finitely many balls of any size still cover the whole space.</p>
+            <p class="math">$$\textcolor{#C18401}{M} \text{ compact} \textcolor{#7B4B8C}{\iff} \textcolor{#C18401}{M} \text{ complete} \textcolor{#7B4B8C}{\wedge} \textcolor{#C18401}{M} \text{ totally bounded}$$</p>
+
+            <div class="set-examples">
+              <div class="set-card">
+                <p class="math">$$\textcolor{#C18401}{[0,1]}$$</p>
+                <p><strong>Compact</strong></p>
+                <p>&#10003; complete</p>
+                <p>&#10003; totally bounded</p>
+              </div>
+              <div class="set-card">
+                <p class="math">$$\textcolor{#C18401}{(0,1)}$$</p>
+                <p><strong>Not compact</strong></p>
+                <p style="color:#c0392b">&#10007; complete</p>
+                <p>&#10003; totally bounded</p>
+              </div>
+              <div class="set-card">
+                <p class="math">$$\textcolor{#C18401}{\mathbb{R}}$$</p>
+                <p><strong>Not compact</strong></p>
+                <p>&#10003; complete</p>
+                <p style="color:#c0392b">&#10007; totally bounded</p>
+              </div>
+              <div class="set-card">
+                <p class="math">$$\textcolor{#C18401}{\mathbb{Q}}$$</p>
+                <p><strong>Not compact</strong></p>
+                <p style="color:#c0392b">&#10007; complete</p>
+                <p style="color:#c0392b">&#10007; totally bounded</p>
+              </div>
+            </div>
+          </div>
+          <div class="topic" id="bolzano-weierstrass">
+            <h2>Bolzano&ndash;Weierstrass</h2>
+            <p>The Bolzano&ndash;Weierstrass theorem gives an equivalent, sequence-based test for compactness: a space is compact exactly when every sequence inside it has a <strong>subsequence</strong> that converges to a point still inside the space.</p>
+            <p class="math">$$\textcolor{#C18401}{M} \text{ compact} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} (x_n) \text{ in } \textcolor{#C18401}{M},\ \textcolor{#7B4B8C}{\exists} \text{ subsequence } (x_{n_k}) \text{ s.t. } x_{n_k} \textcolor{#7B4B8C}{\to} x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M}$$</p>
+          </div>
+          <div class="topic" id="sequences-and-series-of-functions">
+            <h2>Sequences and Series of Functions</h2>
+            <p><strong>Pointwise convergence</strong> only asks each individual input to eventually settle, with no control over how fast that happens from one point to the next.</p>
+            <p class="math">$$\forall x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M},\quad \textcolor{#4078F2}{f_n}(x) \to \textcolor{#4078F2}{f}(x) \text{ as } n \to \infty$$</p>
+            <p><strong>N</strong> depends on <strong>x</strong> here — each point is allowed to settle at its own pace.</p>
+
+            <div class="viz">
+              <svg viewBox="0 -10 200 82" style="width:200px;max-width:200px;" role="img" aria-label="Three snapshots f1, f2, f3 of a function sequence, each with a spike that relocates rather than shrinking">
+                <rect x="10" y="40" width="180" height="30" fill="#7B4B8C" fill-opacity="0.06"></rect>
+                <line x1="10" y1="40" x2="190" y2="40" stroke="#999" stroke-width="1" stroke-dasharray="3,3"></line>
+                <line x1="10" y1="70" x2="190" y2="70" stroke="#999" stroke-width="1" stroke-dasharray="3,3"></line>
+                <line x1="10" y1="55" x2="190" y2="55" stroke="#4078F2" stroke-width="1.5"></line>
+                <line x1="15" y1="40" x2="15" y2="55" stroke="#777" stroke-width="1"></line>
+                <text x="19" y="50" font-size="12" fill="#777" font-style="italic">ε</text>
+                <polyline points="10,55 30,55 40,55 50,14 60,55 70,55 190,55" fill="none" stroke="#4078F2" stroke-opacity="0.35" stroke-width="1.5" stroke-dasharray="4,3"></polyline>
+                <text x="50" y="6" font-size="12" fill="#4078F2" fill-opacity="0.5" text-anchor="middle">f₁</text>
+                <polyline points="10,55 70,55 90,55 100,14 110,55 130,55 190,55" fill="none" stroke="#4078F2" stroke-opacity="0.65" stroke-width="1.5" stroke-dasharray="4,3"></polyline>
+                <text x="100" y="6" font-size="12" fill="#4078F2" fill-opacity="0.8" text-anchor="middle">f₂</text>
+                <polyline points="10,55 130,55 140,55 150,14 160,55 170,55 190,55" fill="none" stroke="#4078F2" stroke-width="1.5" stroke-dasharray="4,3"></polyline>
+                <text x="150" y="6" font-size="12" fill="#4078F2" text-anchor="middle">f₃</text>
+              </svg>
+              <p>Each fₙ still has a spike poking outside the ε tube, just relocated.</p>
+            </div>
+
+            <p><strong>Uniform convergence</strong> requires the entire function, not just each point, to be well-approximated as n grows.</p>
+            <p class="math">$$\textcolor{#4078F2}{f_n} \to \textcolor{#4078F2}{f} \text{ uniformly} \textcolor{#7B4B8C}{\iff} \sup_{x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M}} |\textcolor{#4078F2}{f_n}(x) - \textcolor{#4078F2}{f}(x)| \to 0 \text{ as } n \to \infty$$</p>
+            <p><strong>N</strong> no longer depends on <strong>x</strong> — every point must settle at the same pace.</p>
+
+            <div class="viz">
+              <svg viewBox="0 -13 200 106" style="width:200px;max-width:200px;" role="img" aria-label="Three snapshots f1, f2, f3 of a function sequence, each wiggling less until the whole function fits the epsilon tube">
+                <rect x="10" y="40" width="180" height="30" fill="#7B4B8C" fill-opacity="0.06"></rect>
+                <line x1="10" y1="40" x2="190" y2="40" stroke="#999" stroke-width="1" stroke-dasharray="3,3"></line>
+                <line x1="10" y1="70" x2="190" y2="70" stroke="#999" stroke-width="1" stroke-dasharray="3,3"></line>
+                <line x1="10" y1="55" x2="190" y2="55" stroke="#4078F2" stroke-width="1.5"></line>
+                <line x1="15" y1="40" x2="15" y2="55" stroke="#777" stroke-width="1"></line>
+                <text x="19" y="50" font-size="12" fill="#777" font-style="italic">ε</text>
+                <polyline points="10,55 50,25 90,85 130,22 170,88 190,55" fill="none" stroke="#4078F2" stroke-opacity="0.35" stroke-width="1.5" stroke-dasharray="4,3"></polyline>
+                <polyline points="10,55 50,38 90,72 130,36 170,74 190,55" fill="none" stroke="#4078F2" stroke-opacity="0.65" stroke-width="1.5" stroke-dasharray="4,3"></polyline>
+                <polyline points="10,55 50,48 90,62 130,47 170,58 190,55" fill="none" stroke="#4078F2" stroke-width="1.5" stroke-dasharray="4,3"></polyline>
+                <text x="188" y="0" font-size="12" fill="#4078F2" fill-opacity="0.5" text-anchor="end">f₁</text>
+                <text x="188" y="14" font-size="12" fill="#4078F2" fill-opacity="0.8" text-anchor="end">f₂</text>
+                <text x="188" y="28" font-size="12" fill="#4078F2" text-anchor="end">f₃</text>
+              </svg>
+              <p>f₃ already fits inside the ε tube everywhere; f₁ and f₂ still don't.</p>
+            </div>
+
+            <p>A <strong>series of functions</strong> converges uniformly when its partial sums converge uniformly to the same limit function.</p>
+            <p class="math">$$\textstyle\sum_{n=1}^{N} \textcolor{#4078F2}{f_n} \to \textcolor{#4078F2}{f} \text{ uniformly as } N \to \infty$$</p>
+            <p>The <strong>Weierstrass M-test</strong> gets uniform convergence for free: bound each term by a constant, and if those constants are summable, so is the series — uniformly.</p>
+            <p class="math">$$\Big(\forall n,\ \forall x \textcolor{#7B4B8C}{\in} \textcolor{#C18401}{M},\ |\textcolor{#4078F2}{f_n}(x)| \le M_n\Big) \wedge \sum_{n=1}^{\infty} M_n < \infty\ \textcolor{#7B4B8C}{\implies}\ \sum_{n=1}^{\infty} \textcolor{#4078F2}{f_n} \text{ converges uniformly}$$</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../vendor/katex/katex.min.js"></script>
+  <script src="../vendor/katex/auto-render.min.js"></script>
+  <script src="../script.js"></script>
+</body>
+</html>

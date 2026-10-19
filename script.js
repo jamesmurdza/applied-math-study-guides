@@ -1,32 +1,7 @@
-function activateTab(tab, updateHash) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-
-  tab.classList.add('active');
-  document.getElementById(tab.dataset.tab).classList.add('active');
-  // pushState (not location.hash =) — assigning location.hash is treated
-  // as navigating to that fragment, which makes the browser scroll to the
-  // element with a matching id. pushState just updates the URL.
-  if (updateHash) {
-    const hash = '#' + tab.dataset.tab;
-    if (location.hash !== hash) history.pushState(null, '', hash);
-  }
-}
-
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => activateTab(tab, true));
-});
-
-// Tab state lives in the URL hash — shareable/bookmarkable, and gives
-// back/forward button support for free.
-function activateFromHash() {
-  const id = location.hash.slice(1);
-  const tab = id && document.querySelector(`.tab[data-tab="${id}"]`);
-  if (tab) activateTab(tab, false);
-}
-
-window.addEventListener('hashchange', activateFromHash);
-activateFromHash();
+// Each of Real Analysis / Optimization / Statistics is now its own page
+// (real-analysis/, optimization/, statistics/) rather than a hash-toggled
+// panel, so navigation between them is just plain <a href> links the
+// browser handles natively — no tab-switching JS needed here anymore.
 
 if (window.renderMathInElement) {
   renderMathInElement(document.body, {

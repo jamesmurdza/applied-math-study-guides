@@ -24,10 +24,16 @@ body {
   gap: 8px;
 }
 
+/* .tab is now an <a> (real navigation between real-analysis/,
+   optimization/, statistics/ pages) rather than a <button> that toggled
+   a panel's visibility — display/text-decoration resets replace the
+   button-specific ones, the rest of the look carries over unchanged. */
 .tab {
+  display: inline-block;
   background: none;
   border: none;
   outline: none;
+  text-decoration: none;
   font-size: 0.95rem;
   font-weight: 500;
   color: #888;
@@ -50,11 +56,9 @@ body {
   padding: 40px 4px;
 }
 
+/* Each page now has exactly one panel, always shown — no more
+   show/hide toggling between panels, just the entrance animation. */
 .panel {
-  display: none;
-}
-
-.panel.active {
   display: block;
   animation: fade 0.2s ease;
 }

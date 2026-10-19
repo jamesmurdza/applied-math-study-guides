@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Statistics · Math Topics</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+</head>
+<body>
+
+  <div class="container">
+    <nav class="tabs">
+      <a class="tab" href="/real-analysis/">Real Analysis</a>
+      <a class="tab" href="/optimization/">Optimization</a>
+      <a class="tab active" href="/statistics/">Statistics</a>
+    </nav>
+
+    <main class="panels">
+      <section class="panel" id="statistics">
+        <h1>Statistics</h1>
+        <p>The discipline of collecting, analyzing, interpreting, and presenting data to uncover patterns and inform decisions.</p>
+
+        <div class="topics">
+          <div class="topic" id="mles">
+            <h2>MLEs</h2>
+            <p>Maximum likelihood picks whichever parameter value makes the observed data most probable.</p>
+            <p class="math">$$\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}} = \textcolor{#7B4B8C}{\arg\max_{\theta}}\ L(\theta) = \textcolor{#7B4B8C}{\arg\max_{\theta}} \prod_{i=1}^{n} f(x_i; \theta)$$</p>
+            <p>Products are awkward to differentiate, so in practice the log-likelihood is maximized instead — it has the same maximizer, with easier calculus.</p>
+            <p class="math">$$\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}} = \textcolor{#7B4B8C}{\arg\max_{\theta}}\ \ell(\theta), \quad \ell(\theta) = \sum_{i=1}^{n} \log f(x_i;\theta)$$</p>
+
+            <div class="stat-chart" id="mle-chart-root"></div>
+          </div>
+          <div class="topic" id="bayesian-inference">
+            <h2>Bayesian inference</h2>
+            <p>Bayesian inference treats the parameter itself as random, updating a prior belief into a posterior once data is observed.</p>
+            <p class="math">$$\pi(\textcolor{#0b7285}{\theta} \mid x) \textcolor{#7B4B8C}{\propto} f(x \mid \textcolor{#0b7285}{\theta})\, \pi(\textcolor{#0b7285}{\theta})$$</p>
+            <p>In words: the posterior is proportional to the likelihood times the prior — the data reshapes belief, it doesn't replace it.</p>
+
+            <div class="stat-chart" id="bayes-chart-root"></div>
+          </div>
+          <div class="topic" id="method-of-moments">
+            <h2>Method of moments</h2>
+            <p>Method of moments estimates parameters by matching the sample's moments to the distribution's theoretical moments.</p>
+            <p class="math">$$E[X^k] = \frac{1}{n}\sum_{i=1}^{n} X_i^k, \quad k = 1, 2, \dots$$</p>
+            <p>Solving these equations for the unknown parameters, one per moment used, gives the method-of-moments estimator.</p>
+            <p class="math">$$\text{solve for } \textcolor{#0b7285}{\theta} \text{ using as many moments as there are parameters}$$</p>
+          </div>
+          <div class="topic" id="hypothesis-testing">
+            <h2>Hypothesis testing</h2>
+            <p>A hypothesis test rejects the null hypothesis when the observed data would be too unlikely if the null were actually true.</p>
+            <p class="math">$$\textcolor{#7B4B8C}{\text{reject } H_0} \textcolor{#7B4B8C}{\iff} \text{test statistic} \textcolor{#7B4B8C}{\in} \text{rejection region}$$</p>
+            <p>The rejection region is sized so that, if H₀ is actually true, the test wrongly rejects it only a small fraction of the time.</p>
+            <p class="math">$$P(\textcolor{#7B4B8C}{\text{reject } H_0} \mid H_0 \text{ true}) = \textcolor{#c92a2a}{\alpha}$$</p>
+
+            <div class="stat-chart" id="hyp-chart-root"></div>
+          </div>
+          <div class="topic" id="likelihood-ratio">
+            <h2>Likelihood ratio</h2>
+            <p>The likelihood ratio compares how well the data is explained by the best-fitting restricted (null) model versus the best-fitting unrestricted model.</p>
+            <p class="math">$$\Lambda = \frac{\sup_{\theta \in \Theta_0} L(\theta)}{\sup_{\theta \in \Theta} L(\theta)}$$</p>
+            <p>A ratio near 1 means restricting to H₀ barely hurt the fit; a ratio near 0 means the unrestricted model fits much better.</p>
+            <p class="math">$$-2\log \Lambda \ \xrightarrow{d}\ \chi^2_{k}$$</p>
+          </div>
+          <div class="topic" id="pivotal-quantities">
+            <h2>Pivotal quantities</h2>
+            <p>A pivotal quantity is built from both the data and the parameter, yet its own distribution never depends on the parameter's value.</p>
+            <p class="math">$$\frac{\bar{X} - \textcolor{#0b7285}{\mu}}{S/\sqrt{n}} \textcolor{#7B4B8C}{\sim} t_{n-1} \quad \text{for every value of } \textcolor{#0b7285}{\mu}$$</p>
+            <p>Because that distribution is known regardless of the true parameter, a pivotal quantity can be inverted directly into a confidence interval.</p>
+          </div>
+          <div class="topic" id="regression-models">
+            <h2>Regression models</h2>
+            <p>A regression model treats the response as a deterministic trend plus random noise, rather than an exact function of the predictors.</p>
+            <p class="math">$$Y_i = \textcolor{#0b7285}{\beta_0} + \textcolor{#0b7285}{\beta_1} x_i + \varepsilon_i, \quad \varepsilon_i \textcolor{#7B4B8C}{\sim} N(0, \sigma^2)$$</p>
+            <p>Fitting the model means choosing the coefficients that make the residuals — the leftover noise — as small as possible.</p>
+            <p class="math">$$(\hat{\textcolor{#0b7285}{\beta_0}}, \hat{\textcolor{#0b7285}{\beta_1}}) = \textcolor{#7B4B8C}{\arg\min_{\beta_0,\beta_1}} \sum_{i=1}^{n} (y_i - \beta_0 - \beta_1 x_i)^2$$</p>
+          </div>
+          <div class="topic" id="fisher-information">
+            <h2>Fisher information</h2>
+            <p>Fisher information measures how sharply the log-likelihood curves at the true parameter — more curvature means the data pins the parameter down more precisely.</p>
+            <p class="math">$$I(\textcolor{#0b7285}{\theta}) = -E\!\left[\frac{\partial^2}{\partial \textcolor{#0b7285}{\theta}^2} \log f(X; \textcolor{#0b7285}{\theta})\right]$$</p>
+            <p>It bounds how precise any unbiased estimator can possibly be, and approximates how precise the MLE actually is once the sample is large.</p>
+            <p class="math">$$\text{Var}(\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}}) \approx \frac{1}{I(\textcolor{#0b7285}{\theta})}$$</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../vendor/katex/katex.min.js"></script>
+  <script src="../vendor/katex/auto-render.min.js"></script>
+  <script src="../script.js"></script>
+</body>
+</html>
