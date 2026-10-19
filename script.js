@@ -154,11 +154,13 @@ if (window.renderMathInElement) {
       const naturalWidth = display.offsetWidth;
       const naturalHeight = display.offsetHeight;
       display.style.display = '';
-      // -1px safety margin: sub-pixel rounding in the applied transform
-      // matrix can otherwise land a formula 1-2px past its container even
-      // though the scale was computed "exactly," which is enough to trip
-      // overflow-x:auto's scrollbar right back on.
-      const scale = Math.min(1, (container.clientWidth - 1) / naturalWidth);
+      // -3px safety margin: sub-pixel rounding (offsetWidth itself rounds
+      // to the nearest integer, and the transform matrix's own pixel
+      // snapping can round up) can land a formula a couple of pixels past
+      // its container even though the scale was computed "exactly" — and
+      // since .math is overflow-x:hidden, not auto, anything past the edge
+      // is a genuinely clipped glyph, not just a dormant scrollbar.
+      const scale = Math.min(1, (container.clientWidth - 3) / naturalWidth);
       if (scale < 1) {
         display.style.transformOrigin = 'left top';
         display.style.transform = `scale(${scale})`;

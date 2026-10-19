@@ -160,10 +160,22 @@ centered — confirmed by comparing an inner span's position before and
 after scaling. `transform-origin: left top` shrinks from that same edge,
 so the result still sits flush left with zero overflow; `center top`
 scales by the right *amount* but around the wrong point, leaving the same
-overflow on the right that the shrink was supposed to remove. A small
-negative pixel margin is subtracted from the available width too, since
-sub-pixel rounding in the applied transform matrix can otherwise land a
-formula a pixel or two past its container even at the "exact" scale.
+overflow on the right that the shrink was supposed to remove.
+
+**Why `.topic .math` is `overflow-x: hidden`, not `auto`:** the shrink
+above is meant to make scrolling unnecessary, not just unnecessary *most*
+of the time — `auto` still makes the box a scroll container even when
+nothing truly overflows, which trackpads render as a tiny rubber-band
+nudge on any scroll gesture over it (reported directly: "if i put my
+cursor over an equation and scroll, it scrolls a tiny bit"). `hidden`
+removes that affordance entirely. That raises the stakes on the fit being
+exact, since any shortfall now silently clips a glyph instead of just
+being scrollable — so the scale computation subtracts a 3px safety margin
+from the available width, covering compounding sub-pixel rounding
+(`offsetWidth` itself rounds to the nearest integer, and the transform
+matrix's own pixel-snapping can round up on top of that). 1px wasn't
+enough margin in practice; a clipped `μ₀` subscript on the narrowest
+formula is what caught it.
 
 **Verifying:** after touching equation-heavy content, additionally check
 that no `.topic .math` has `scrollWidth > clientWidth` at narrow widths,
