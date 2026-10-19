@@ -10,11 +10,18 @@
 <body>
 
   <div class="container">
-    <nav class="tabs">
-      <a class="tab" href="/real-analysis/">Real Analysis</a>
-      <a class="tab" href="/optimization/">Optimization</a>
-      <a class="tab active" href="/statistics/">Statistics</a>
-    </nav>
+    <details class="menu-nav">
+      <summary class="menu-button" aria-label="Switch subject">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </summary>
+      <div class="menu-dropdown">
+        <a class="menu-item" href="/real-analysis/">Real Analysis</a>
+        <a class="menu-item" href="/optimization/">Optimization</a>
+        <a class="menu-item active" href="/statistics/">Statistics</a>
+      </div>
+    </details>
 
     <main class="panels">
       <section class="panel" id="statistics">

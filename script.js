@@ -3,6 +3,19 @@
 // panel, so navigation between them is just plain <a href> links the
 // browser handles natively — no tab-switching JS needed here anymore.
 
+// The subject switcher is a native <details>/<summary> disclosure, so the
+// open/close toggle itself needs zero JS. This just adds the usual
+// dropdown politeness on top — click outside it, or press Escape, and it
+// closes — which <details> doesn't do on its own.
+document.querySelectorAll('details.menu-nav').forEach((menu) => {
+  document.addEventListener('click', (e) => {
+    if (menu.open && !menu.contains(e.target)) menu.open = false;
+  });
+  menu.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') menu.open = false;
+  });
+});
+
 if (window.renderMathInElement) {
   renderMathInElement(document.body, {
     delimiters: [{ left: '$$', right: '$$', display: true }]

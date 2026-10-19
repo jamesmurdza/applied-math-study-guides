@@ -18,38 +18,84 @@ body {
   padding: 48px 24px;
 }
 
-.tabs {
-  display: flex;
-  border-bottom: 1px solid #e5e5e5;
-  gap: 8px;
+/* <details class="menu-nav"> is the whole hamburger-button-plus-dropdown
+   widget — native disclosure element, so the open/close toggle works with
+   zero JS. script.js only adds the "close when you click outside it"
+   politeness on top; the menu is still fully usable without it. */
+.menu-nav {
+  position: relative;
+  display: inline-block;
 }
 
-/* .tab is now an <a> (real navigation between real-analysis/,
-   optimization/, statistics/ pages) rather than a <button> that toggled
-   a panel's visibility — display/text-decoration resets replace the
-   button-specific ones, the rest of the look carries over unchanged. */
-.tab {
-  display: inline-block;
-  background: none;
-  border: none;
-  outline: none;
-  text-decoration: none;
+/* <summary> gets a default triangle marker and list-item styling in every
+   browser — strip both so it reads as a plain icon button. */
+.menu-button {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 36px;
+  height: 32px;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  cursor: pointer;
+  list-style: none;
+  transition: border-color 0.15s ease;
+}
+
+.menu-button::-webkit-details-marker {
+  display: none;
+}
+
+.menu-button:hover {
+  border-color: #bbb;
+}
+
+.menu-nav[open] .menu-button {
+  border-color: #1a1a1a;
+}
+
+.menu-button .bar {
+  width: 16px;
+  height: 2px;
+  border-radius: 1px;
+  background: #1a1a1a;
+}
+
+.menu-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 20;
+  min-width: 180px;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  padding: 6px;
+}
+
+.menu-item {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 6px;
   font-size: 0.95rem;
   font-weight: 500;
-  color: #888;
-  padding: 12px 16px;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  color: #555;
+  text-decoration: none;
+  transition: background 0.1s ease, color 0.1s ease;
 }
 
-.tab:hover {
+.menu-item:hover {
+  background: #f5f5f5;
   color: #1a1a1a;
 }
 
-.tab.active {
+.menu-item.active {
+  background: #f3f3f3;
   color: #1a1a1a;
-  border-bottom-color: #1a1a1a;
+  font-weight: 600;
 }
 
 .panels {
