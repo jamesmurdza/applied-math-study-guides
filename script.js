@@ -90,15 +90,24 @@ document.querySelectorAll('details.menu-nav').forEach((menu) => {
 // link in Open and Closed Sets), so rather than hand-adding an anchor tag
 // to all ~30 topic headings across three pages, inject one here — any
 // topic with an id gets one for free, including ones added later.
+//
+// The anchor goes into a wrapping .heading-wrap around the h2, not into
+// the h2 itself — see the CSS comment on .heading-wrap for why: it keeps
+// the heading's own text and border-bottom flush with the body text
+// below, instead of nudging them over to make room for the icon.
 document.querySelectorAll('.topic[id]').forEach((topic) => {
   const heading = topic.querySelector('h2');
   if (!heading) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'heading-wrap';
+  heading.before(wrap);
+  wrap.appendChild(heading);
   const anchor = document.createElement('a');
   anchor.className = 'heading-anchor';
   anchor.href = '#' + topic.id;
   anchor.setAttribute('aria-label', 'Link to this section');
   anchor.textContent = '#';
-  heading.prepend(anchor);
+  wrap.insertBefore(anchor, heading);
 });
 
 if (window.renderMathInElement) {

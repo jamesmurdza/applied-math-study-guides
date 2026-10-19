@@ -201,21 +201,29 @@ body {
   font-weight: 600;
 }
 
-/* padding-left reserves a gutter for .heading-anchor — padding (unlike
-   margin) doesn't move this auto-width block's own border edges, so the
-   border-bottom below still lines up exactly as before; only the text
-   shifts right to make room. Keeping the icon inside that padding means
-   it's still within h2's own hoverable box, not floating outside it —
-   otherwise moving the cursor toward the icon to click it would leave
-   the hover zone and the icon would vanish before you could reach it. */
 .topic h2 {
-  position: relative;
   font-size: 1.1rem;
   font-weight: 600;
   color: #1a1a1a;
   margin: 0 0 16px;
-  padding: 0 0 12px 20px;
+  padding-bottom: 12px;
   border-bottom: 1px solid #e5e5e5;
+}
+
+/* script.js wraps each h2 in this rather than reserving the anchor's
+   gutter via padding directly on h2 — negative margin-left + equal
+   padding-left extends .heading-wrap's own hoverable box into the
+   gutter without touching h2's box at all, so h2's text and its
+   border-bottom stay exactly where they'd be with no anchor, flush
+   with the body text below. (The icon still needs to live inside
+   *some* element's hoverable box, not floating outside it via negative
+   margin on its own — otherwise moving the cursor toward it to click
+   would leave the hover zone and it'd vanish before you could reach
+   it. Here that box is the wrapper's, not the heading's.) */
+.heading-wrap {
+  position: relative;
+  margin-left: -20px;
+  padding-left: 20px;
 }
 
 .heading-anchor {
@@ -238,7 +246,7 @@ body {
   color: #1a1a1a;
 }
 
-.topic h2:hover .heading-anchor,
+.heading-wrap:hover .heading-anchor,
 .heading-anchor:focus {
   opacity: 1;
 }
@@ -252,8 +260,10 @@ body {
 }
 
 /* ...except directly under a heading, where the heading's own bottom
-   margin already provides the gap. */
-.topic h2 + p {
+   margin already provides the gap. h2 is wrapped in .heading-wrap (see
+   above), so .heading-wrap, not h2 itself, is the actual sibling
+   immediately before the first paragraph now. */
+.topic .heading-wrap + p {
   margin-top: 0;
 }
 
