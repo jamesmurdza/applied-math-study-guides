@@ -28,10 +28,10 @@ body {
 .toc {
   display: none;
   position: fixed;
-  top: 140px;
+  top: 88px; /* level with .panel h1 — container (48px) + panels (40px) padding */
   left: calc(50% + 360px + 40px);
   width: 200px;
-  max-height: calc(100vh - 180px);
+  max-height: calc(100vh - 128px);
   overflow-y: auto;
 }
 
