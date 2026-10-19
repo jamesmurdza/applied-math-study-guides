@@ -18,6 +18,68 @@ body {
   padding: 48px 24px;
 }
 
+/* Floating table of contents, injected by script.js — lives in the right
+   gutter beside the centered .container. Fixed positioning + a calc()
+   tied to the container's own max-width keeps it clear of the content
+   column at any viewport width, but there's only a gutter to sit in once
+   the viewport is comfortably wider than 720px (container) + itself
+   (~220px) + breathing room either side — hidden below that via the
+   media query rather than risking overlap on narrower windows. */
+.toc {
+  display: none;
+  position: fixed;
+  top: 140px;
+  left: calc(50% + 360px + 40px);
+  width: 200px;
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
+}
+
+@media (min-width: 1280px) {
+  .toc {
+    display: block;
+  }
+}
+
+.toc-label {
+  margin: 0 0 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #999;
+}
+
+.toc ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-left: 1px solid #e5e5e5;
+}
+
+.toc li + li {
+  margin-top: 2px;
+}
+
+.toc a {
+  display: block;
+  padding: 4px 0 4px 14px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: #888;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.toc a:hover {
+  color: #1a1a1a;
+}
+
+.toc a.active {
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
 /* <details class="menu-nav"> is the whole hamburger-button-plus-dropdown
    widget — native disclosure element, so the open/close toggle works with
    zero JS. script.js only adds the "close when you click outside it"

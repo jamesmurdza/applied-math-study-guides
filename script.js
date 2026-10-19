@@ -16,6 +16,75 @@ document.querySelectorAll('details.menu-nav').forEach((menu) => {
   });
 });
 
+// Floating "on this page" table of contents (right-hand gutter, wide
+// viewports only — see the min-width media query in style.css). Built
+// from the same .topic[id] elements the permalink-icon loop below walks;
+// this one runs first so it reads each heading's clean title text before
+// that loop prepends a "#" anchor into it.
+(function () {
+  const topics = Array.from(document.querySelectorAll('.topic[id]'));
+  if (topics.length < 2) return; // not worth a TOC for a near-empty page
+
+  const toc = document.createElement('nav');
+  toc.className = 'toc';
+  toc.setAttribute('aria-label', 'Table of contents');
+
+  const label = document.createElement('p');
+  label.className = 'toc-label';
+  label.textContent = 'On this page';
+  toc.appendChild(label);
+
+  const list = document.createElement('ul');
+  const headingToLink = new Map();
+  topics.forEach((topic) => {
+    const heading = topic.querySelector('h2');
+    if (!heading) return;
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = '#' + topic.id;
+    a.textContent = heading.textContent.trim();
+    li.appendChild(a);
+    list.appendChild(li);
+    headingToLink.set(heading, a);
+  });
+  toc.appendChild(list);
+  document.querySelector('.container').appendChild(toc);
+
+  // Scrollspy: highlight whichever section's heading you've most recently
+  // scrolled past — the usual floating-TOC behavior. Deliberately a plain
+  // scroll listener rather than IntersectionObserver: that only fires when
+  // a heading *crosses* the trigger line, so there's no event at all when
+  // you scroll back above every heading, and the last-active link would
+  // just stay stuck active forever. Recomputing from scratch on every
+  // scroll (rAF-throttled) instead picks the single heading closest to,
+  // but still above, the trigger line — and correctly clears to "none" the
+  // moment you're above all of them.
+  const headings = Array.from(headingToLink.keys());
+  function updateActiveTocLink() {
+    const triggerY = window.innerHeight * 0.15;
+    let current = null;
+    for (const heading of headings) {
+      const top = heading.getBoundingClientRect().top;
+      if (top <= triggerY && (!current || top > current.top)) {
+        current = { heading, top };
+      }
+    }
+    document.querySelectorAll('.toc a.active').forEach((a) => a.classList.remove('active'));
+    if (current) headingToLink.get(current.heading).classList.add('active');
+  }
+
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      updateActiveTocLink();
+      ticking = false;
+    });
+  });
+  updateActiveTocLink();
+})();
+
 // GitHub-markdown-style permalink icons: every .topic already carries a
 // unique id (used for the site's own cross-references, like the "complete"
 // link in Open and Closed Sets), so rather than hand-adding an anchor tag
