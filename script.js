@@ -1028,13 +1028,17 @@ if (window.renderMathInElement) {
 })();
 
 // ---------------------------------------------------------------------------
-// Dijkstra's algorithm: a small weighted graph, stepped through one "settle
-// the closest unvisited node" step at a time. Distances/tree are computed
-// live by running the real algorithm, not hand-placed per step.
+// Dijkstra's algorithm: the simplest graph that still forces a real relax
+// (A-B-C-D, where the direct A-C edge isn't the cheapest way to reach C).
+// Rendered as a fixed sequence of static diagrams, one per "settle" step,
+// each followed by its own explanation — same pattern as the simplex
+// tableau cards, not a slider. Distances/tree are computed live by running
+// the real algorithm, not hand-placed per step.
 // ---------------------------------------------------------------------------
 (function () {
   const mount = document.getElementById('dijkstra-graph-root');
   if (!mount) return;
+  mount.innerHTML = '';
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
   function el(tag, attrs) {
@@ -1045,15 +1049,12 @@ if (window.renderMathInElement) {
 
   const nodePos = {
     A: { x: 30, y: 140 },
-    B: { x: 140, y: 55 },
-    C: { x: 140, y: 225 },
-    D: { x: 250, y: 140 },
-    E: { x: 250, y: 230 },
-    F: { x: 365, y: 140 }
+    B: { x: 150, y: 50 },
+    C: { x: 150, y: 230 },
+    D: { x: 270, y: 140 }
   };
   const edgeList = [
-    ['A', 'B', 4], ['A', 'C', 1], ['B', 'C', 2], ['B', 'D', 5],
-    ['C', 'D', 8], ['C', 'E', 10], ['D', 'E', 2], ['D', 'F', 6], ['E', 'F', 3]
+    ['A', 'B', 4], ['A', 'C', 2], ['B', 'C', 1], ['B', 'D', 5], ['C', 'D', 8]
   ];
   const SOURCE = 'A';
   const names = Object.keys(nodePos);
@@ -1063,7 +1064,7 @@ if (window.renderMathInElement) {
   edgeList.forEach(([u, v, w]) => { adj[u].push([v, w]); adj[v].push([u, w]); });
 
   // Run the real algorithm once, recording a snapshot after each "settle"
-  // step so the UI can step through exactly what Dijkstra itself computed.
+  // step so every rendered diagram matches exactly what Dijkstra computed.
   function runDijkstra() {
     const dist = {}, prev = {}, visited = {};
     names.forEach(n => { dist[n] = Infinity; prev[n] = null; visited[n] = false; });
@@ -1088,35 +1089,17 @@ if (window.renderMathInElement) {
   }
 
   const steps = runDijkstra();
-  let stepIdx = -1; // -1 = nothing settled yet
-
-  const svg = el('svg', { viewBox: '0 0 400 260', style: 'width:100%;max-width:400px', role: 'img', 'aria-label': "Dijkstra's algorithm step-through" });
-  mount.appendChild(svg);
-
-  const controls = document.createElement('div');
-  controls.className = 'dijkstra-controls';
-  const slider = document.createElement('input');
-  slider.type = 'range';
-  slider.min = '0';
-  slider.max = String(steps.length);
-  slider.value = '0';
-  controls.appendChild(slider);
-  const lpWrap = mount.parentNode;
-  lpWrap.parentNode.insertBefore(controls, lpWrap.nextSibling);
-
-  // Plain paragraph, not a figure caption — placed as a sibling of the
-  // graph wrapper (not nested inside it) so it reads as normal topic text.
-  const caption = document.createElement('p');
-  lpWrap.parentNode.insertBefore(caption, controls.nextSibling);
 
   function fmtD(d) { return d === Infinity ? '∞' : String(d); }
 
-  function render() {
-    svg.innerHTML = '';
-    const cur = stepIdx >= 0 ? steps[stepIdx] : null;
-    const dist = cur ? cur.dist : Object.fromEntries(names.map(n => [n, n === SOURCE ? 0 : Infinity]));
-    const prev = cur ? cur.prev : {};
-    const visited = cur ? cur.visited : Object.fromEntries(names.map(n => [n, false]));
+  function renderStep(cur, idx) {
+    const dist = cur.dist, prev = cur.prev, visited = cur.visited;
+    const svg = el('svg', {
+      viewBox: '0 0 300 260',
+      style: `width:100%;max-width:300px${idx > 0 ? ';margin-top:24px' : ''}`,
+      role: 'img',
+      'aria-label': `Dijkstra step ${idx + 1}: settle ${cur.settled}`
+    });
 
     // plain edges, underneath everything
     edgeList.forEach(([u, v, w]) => {
@@ -1145,7 +1128,7 @@ if (window.renderMathInElement) {
     names.forEach(n => {
       const p = nodePos[n];
       const isSettled = visited[n];
-      const isCurrent = cur && cur.settled === n;
+      const isCurrent = cur.settled === n;
       const isFrontier = !isSettled && dist[n] < Infinity;
       svg.appendChild(el('circle', {
         cx: p.x, cy: p.y, r: 16,
@@ -1161,23 +1144,17 @@ if (window.renderMathInElement) {
       svg.appendChild(dl);
     });
 
-    // caption + controls
-    if (!cur) {
-      caption.textContent = `Every node starts unreached except the source, A (distance 0). Drag the slider to settle the closest unvisited node, one step at a time.`;
-    } else {
-      const parts = cur.relaxed.map(r => `${r.node}: ${fmtD(r.from)} → ${r.to}`);
-      const relaxedText = parts.length ? ` Relaxed ${parts.join(', ')}.` : ' No shorter paths found through it.';
-      caption.textContent = `Step ${stepIdx + 1}: settle ${cur.settled} at distance ${cur.dist[cur.settled]} (the closest unvisited node).${relaxedText}`;
-    }
-    slider.value = String(stepIdx + 1);
+    return svg;
   }
 
-  slider.addEventListener('input', () => {
-    stepIdx = Number(slider.value) - 1;
-    render();
+  steps.forEach((cur, idx) => {
+    mount.appendChild(renderStep(cur, idx));
+    const caption = document.createElement('p');
+    const parts = cur.relaxed.map(r => `${r.node}: ${fmtD(r.from)} → ${r.to}`);
+    const relaxedText = parts.length ? ` Relaxes ${parts.join(', ')}.` : ' No shorter paths found through it.';
+    caption.textContent = `Step ${idx + 1}: settle ${cur.settled} at distance ${cur.dist[cur.settled]} (the closest unvisited node).${relaxedText}`;
+    mount.appendChild(caption);
   });
-
-  render();
 })();
 
 // ---------------------------------------------------------------------------

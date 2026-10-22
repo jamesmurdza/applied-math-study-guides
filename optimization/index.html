@@ -115,23 +115,6 @@
             <p>That gives y₁ = 1, y₂ = 2, y₃ = 0 — a dual objective of 24(1) + 6(2) + 5(0) = 24 + 12 = 36, exactly matching the primal's optimal profit.</p>
             <p>Weak duality keeps the primal's rising values below the dual's falling ones at every step; strong duality is the special fact that, at the optimum, they meet exactly.</p>
           </div>
-          <div class="topic" id="complementary-slackness">
-            <h2>Complementary Slackness</h2>
-            <p>At the optimum, a primal variable and its matching dual constraint can't both be slack — for each pair, at least one of the two must be exactly zero.</p>
-            <div class="lp-graph">
-              <table class="cs-table">
-                <thead>
-                  <tr><th>Primal</th><th>Dual</th><th>Rule</th></tr>
-                </thead>
-                <tbody>
-                  <tr><td><span class="var-mint">x₁</span> &gt; 0</td><td>dual constraint 1</td><td>binds exactly (zero slack)</td></tr>
-                  <tr><td><span class="var-berry">x₂</span> &gt; 0</td><td>dual constraint 2</td><td>binds exactly (zero slack)</td></tr>
-                  <tr><td>blueberries constraint slack</td><td>y₃ = 0</td><td>unused dual variable is zero</td></tr>
-                </tbody>
-              </table>
-              <p class="math">$$\textcolor{#e64980}{x_1} \textcolor{#7B4B8C}{>} 0 \implies \text{dual constraint 1 binds}, \qquad y_3 = 0 \text{ since blueberries is slack}$$</p>
-            </div>
-          </div>
           <div class="topic" id="gomory-cutting-planes">
             <h2>Gomory Cutting Planes</h2>
             <p>A Gomory cut adds a valid inequality — one that every integer point already satisfies — that slices a fractional corner off the LP relaxation, shrinking it toward the true integer hull.</p>
@@ -149,9 +132,7 @@
           <div class="topic" id="dijkstras-algorithm">
             <h2>Dijkstra's Algorithm</h2>
             <p>Dijkstra grows a shortest-path tree one node at a time, always settling the closest unvisited node next.</p>
-            <div class="lp-graph">
-              <div class="dijkstra-graph" id="dijkstra-graph-root"></div>
-            </div>
+            <div class="lp-graph" id="dijkstra-graph-root"></div>
           </div>
           <div class="topic" id="complexity-and-np-completeness">
             <h2>Complexity and NP-Completeness</h2>

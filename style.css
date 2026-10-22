@@ -464,34 +464,6 @@ body {
   margin: 0 auto;
 }
 
-.cs-table {
-  width: 100%;
-  max-width: 420px;
-  border-collapse: collapse;
-  font-size: 0.85rem;
-  margin: 0 auto;
-}
-
-.cs-table th,
-.cs-table td {
-  text-align: left;
-  padding: 7px 10px 7px 0;
-  color: #555;
-}
-
-.cs-table th {
-  color: #1a1a1a;
-  font-weight: 600;
-}
-
-.dijkstra-graph svg {
-  width: 100%;
-  max-width: 420px;
-  height: auto;
-  display: block;
-  margin: 0 auto;
-}
-
 .stat-chart p {
   margin-top: 16px;
   font-size: 0.9rem;
@@ -556,18 +528,6 @@ body {
 .var-posterior {
   color: #0b7285;
   font-weight: 600;
-}
-
-.dijkstra-controls {
-  margin-top: 16px;
-}
-
-.dijkstra-controls input[type="range"] {
-  width: 100%;
-  max-width: 420px;
-  display: block;
-  margin: 0 auto;
-  accent-color: #1a1a1a;
 }
 
 .tableau-wrap {
