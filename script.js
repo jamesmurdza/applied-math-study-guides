@@ -1137,9 +1137,6 @@ if (window.renderMathInElement) {
       const label = el('text', { x: p.x, y: p.y + 4, 'font-size': '12', 'font-weight': '600', fill: isSettled ? '#fff' : '#1a1a1a', 'text-anchor': 'middle' });
       label.textContent = n;
       svg.appendChild(label);
-      const dl = el('text', { x: p.x, y: p.y + 30, 'font-size': '12', fill: isSettled ? '#1a1a1a' : '#999', 'text-anchor': 'middle' });
-      dl.textContent = fmtD(dist[n]);
-      svg.appendChild(dl);
     });
 
     // edge weight labels last, on top of every line/node drawn above
