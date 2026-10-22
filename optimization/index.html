@@ -58,14 +58,6 @@
 
             <div class="lp-graph" id="ilp-graph-root"></div>
             <p>The shaded region above is the continuous feasible area; the dots are the integer points inside it. The best integer point is (x₁, x₂) = (3, 1), for a value of 31 — not the same as rounding the LP relaxation's optimum of (0, 3.33), which scores 33.33.</p>
-
-            <p>A second shape of ILP, common enough to deserve its own pattern: <strong>assignment</strong>. Two workers {1, 2} must each be assigned to exactly one of two tasks {A, B}, at a known cost per worker-task pair, minimizing total cost.</p>
-            <p class="math">$$x_{ij} \in \{0, 1\}, \quad x_{ij} = 1 \iff \text{worker } i \text{ is assigned to task } j$$</p>
-            <p>Each worker takes exactly one task, and each task goes to exactly one worker — a row sum and a column sum, both pinned to 1.</p>
-            <p class="math">$$x_{1A} + x_{1B} = 1,\quad x_{2A} + x_{2B} = 1,\quad x_{1A} + x_{2A} = 1,\quad x_{1B} + x_{2B} = 1$$</p>
-            <p>With costs c₁ₐ = 4, c₁ᵦ = 2, c₂ₐ = 3, c₂ᵦ = 5, the objective to minimize is:</p>
-            <p class="math">$$\min\ 4x_{1A} + 2x_{1B} + 3x_{2A} + 5x_{2B}$$</p>
-            <p>The binary variables and one-per-row/one-per-column constraints are the signature of an assignment formulation — worth recognizing on sight, since the same pattern covers scheduling (one shift per worker, one worker per shift) with no change beyond relabeling.</p>
           </div>
           <div class="topic" id="simplex">
             <h2>Simplex</h2>
@@ -139,10 +131,6 @@
               </table>
               <p class="math">$$\textcolor{#e64980}{x_1} \textcolor{#7B4B8C}{>} 0 \implies \text{dual constraint 1 binds}, \qquad y_3 = 0 \text{ since blueberries is slack}$$</p>
             </div>
-
-            <p>The same argument is how a shortest-path tree gets proven optimal, not just plausible. Written as an LP, shortest path from s to t minimizes total edge weight subject to flow conservation at every node; its dual assigns each node v a <strong>potential</strong> y(v), with one dual constraint per edge:</p>
-            <p class="math">$$y(v) - y(u) \leq w(u,v) \quad \text{for every edge } (u,v)$$</p>
-            <p>Complementary slackness says every edge actually carrying flow in the shortest-path tree must have its dual constraint bind exactly, y(v) = y(u) + w(u,v) — otherwise that edge's primal flow would have to be zero. A set of Dijkstra distances d(·) is exactly such a potential: d(v) ≤ d(u) + w(u,v) for every edge, with equality precisely on the tree edges Dijkstra used. That tightness-only-on-tree-edges is the certificate — it's what lets a graded shortest-path answer be checked for optimality without re-running the algorithm, the same way the ice cream example above checks an LP corner.</p>
           </div>
           <div class="topic" id="gomory-cutting-planes">
             <h2>Gomory Cutting Planes</h2>
@@ -164,19 +152,11 @@
             <div class="lp-graph">
               <div class="dijkstra-graph" id="dijkstra-graph-root"></div>
             </div>
-
-            <p>Each node keeps a running best-known distance from the source, improved by <strong>relaxation</strong> through every settled neighbor:</p>
-            <p class="math">$$\text{dist}(v) \leftarrow \min\big(\text{dist}(v),\ \text{dist}(u) + w(u,v)\big)$$</p>
-            <p>Whenever a relaxation actually lowers dist(v), it also records <strong>prev(v) = u</strong> — the neighbor that achieved the new best distance. The algorithm only ever outputs distances directly, but the path itself is recovered by walking prev pointers backward from the target to the source and reversing that walk.</p>
           </div>
           <div class="topic" id="complexity-and-np-completeness">
             <h2>Complexity and NP-Completeness</h2>
             <p>P is every problem solvable quickly; NP is every problem whose solution can be checked quickly; NP-complete problems are the hardest problems in NP, each able to encode any other via a reduction.</p>
             <p>If any single NP-complete problem (like SAT) turns out to be solvable quickly, a reduction lets every problem in NP ride along and be solved quickly too — that's exactly the open question "does P = NP?".</p>
-
-            <p>A worked reduction, proving <strong>Independent Set</strong> is NP-complete given that <strong>Vertex Cover</strong> already is: a set S ⊆ V is independent exactly when no edge has both endpoints in S — equivalently, every edge has at least one endpoint outside S, which is exactly what it means for V∖S to be a vertex cover.</p>
-            <p class="math">$$S \text{ independent} \iff V \setminus S \text{ is a vertex cover}$$</p>
-            <p>So graph G has an independent set of size k iff G has a vertex cover of size n − k (n = |V|). The reduction is just that threshold swap — same graph, flip k to n − k — computable in constant time, so it's trivially polynomial. Combined with Independent Set already being in NP (checking a candidate set is independent takes one pass over its edges), this proves Independent Set is NP-complete: at least as hard as a known NP-complete problem, and itself verifiable in polynomial time.</p>
           </div>
         </div>
       </section>
