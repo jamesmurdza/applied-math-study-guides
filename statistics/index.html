@@ -26,7 +26,7 @@
     <main class="panels">
       <section class="panel" id="statistics">
         <h1>Statistics</h1>
-        <p>The discipline of collecting, analyzing, interpreting, and presenting data to uncover patterns and inform decisions. Laid out as a learning path: estimating parameters, judging how good those estimates are, quantifying leftover uncertainty, testing hypotheses, and fitting relationships between variables — each later topic leans on the ones before it, including one running example (10 coin flips, 7 heads) threaded through the first four.</p>
+        <p>The discipline of collecting, analyzing, interpreting, and presenting data to uncover patterns and inform decisions.</p>
 
         <div class="topics">
           <div class="topic" id="method-of-moments">
@@ -34,7 +34,7 @@
             <p>The simplest way to estimate a parameter: match what the sample actually averages to what the model predicts it should average, then solve for the parameter that makes those agree.</p>
             <p class="math">$$E[X^k] = \frac{1}{n}\sum_{i=1}^{n} X_i^k, \quad k = 1, 2, \dots$$</p>
             <p>Using k = 1, 2, … moments — one per unknown parameter — gives enough equations to solve for them all.</p>
-            <p>For 10 coin flips with 7 heads, the first moment is just the mean: E[X] = p, so matching it to the sample mean gives p̂ = X̄ = 7/10 = 0.7. This dataset recurs through the next few topics — and for Bernoulli data, method of moments happens to land on exactly the same estimator as the MLE below. That's a coincidence of this particular model, not a general rule.</p>
+            <p>For 10 coin flips with 7 heads, the first moment is just the mean: E[X] = p, so matching it to the sample mean gives p̂ = X̄ = 7/10 = 0.7. For Bernoulli data, method of moments happens to land on exactly the same estimator as the MLE below — that's a coincidence of this particular model, not a general rule.</p>
 
             <p>A less trivial case, where that coincidence disappears: for X ~ Uniform(0, θ), the first moment is E[X] = θ/2, not θ itself, so matching gives θ̂ = 2X̄. Five measurements averaging to X̄ = 3 give θ̂ = 6 — but the Uniform's MLE is the sample maximum, not twice the mean, a genuinely different estimator from the same data.</p>
           </div>
