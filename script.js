@@ -1101,15 +1101,13 @@ if (window.renderMathInElement) {
       'aria-label': `Dijkstra step ${idx + 1}: settle ${cur.settled}`
     });
 
-    // plain edges, underneath everything
+    // plain edges, underneath everything (weight labels drawn last, on top
+    // of the tree lines and nodes below — otherwise the tree edge redrawn
+    // over a shared segment, or a node circle sitting near the midpoint,
+    // paints over the label instead of the other way around)
     edgeList.forEach(([u, v, w]) => {
       const p1 = nodePos[u], p2 = nodePos[v];
       svg.appendChild(el('line', { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, stroke: '#ccc', 'stroke-width': '1.5' }));
-      const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
-      svg.appendChild(el('rect', { x: mx - 7, y: my - 8, width: 14, height: 13, fill: '#fff' }));
-      const wl = el('text', { x: mx, y: my + 3, 'font-size': '12', fill: '#888', 'text-anchor': 'middle' });
-      wl.textContent = w;
-      svg.appendChild(wl);
     });
 
     // shortest-path tree so far: solid black to settled nodes, dashed gray to
@@ -1142,6 +1140,16 @@ if (window.renderMathInElement) {
       const dl = el('text', { x: p.x, y: p.y + 30, 'font-size': '12', fill: isSettled ? '#1a1a1a' : '#999', 'text-anchor': 'middle' });
       dl.textContent = fmtD(dist[n]);
       svg.appendChild(dl);
+    });
+
+    // edge weight labels last, on top of every line/node drawn above
+    edgeList.forEach(([u, v, w]) => {
+      const p1 = nodePos[u], p2 = nodePos[v];
+      const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
+      svg.appendChild(el('rect', { x: mx - 7, y: my - 8, width: 14, height: 13, fill: '#fff' }));
+      const wl = el('text', { x: mx, y: my + 3, 'font-size': '12', fill: '#888', 'text-anchor': 'middle' });
+      wl.textContent = w;
+      svg.appendChild(wl);
     });
 
     return svg;
