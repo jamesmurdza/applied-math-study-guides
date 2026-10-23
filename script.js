@@ -1288,23 +1288,19 @@ if (window.renderMathInElement) {
     yAxisLabel.textContent = 'f(z)';
     svg.appendChild(yAxisLabel);
 
-    // critical value marker
+    // critical value marker — the dashed line runs from the curve down to
+    // the axis, so its label sits as an axis tick directly below it (like
+    // the "0" tick), not floating near the chart's top where it would be
+    // disconnected from a line that's often short (low density this far
+    // into the tail).
     const cs = toScreen(zCrit, normalPdf(zCrit));
     const cb = toScreen(zCrit, 0);
     svg.appendChild(el('line', { x1: cs.x, y1: cs.y, x2: cb.x, y2: cb.y, stroke: '#c92a2a', 'stroke-width': '1.25', 'stroke-dasharray': '3,3' }));
-    const critLabel = el('text', { x: cs.x, y: padT - 5, 'font-size': '12', fill: '#c92a2a', 'text-anchor': 'middle' });
+    const critLabel = el('text', { x: cb.x, y: cb.y + 15, 'font-size': '12', fill: '#c92a2a', 'text-anchor': 'middle' });
     critLabel.textContent = 'z*';
     svg.appendChild(critLabel);
 
-    // alpha label — sits just above the axis out past the observed marker,
-    // where the thin tail has room and nothing else is drawn
-    const alphaScreenX = toScreen((xMax + zObs) / 2 + 0.3, 0).x;
-    const alphaLabel = el('text', { x: alphaScreenX, y: padT + plotH - 12, 'font-size': '12', fill: '#c92a2a', 'text-anchor': 'middle', 'font-weight': '600' });
-    alphaLabel.textContent = 'α';
-    svg.appendChild(alphaLabel);
-
-    // observed statistic marker — label sits directly above its own point,
-    // clear of the α label beside it
+    // observed statistic marker — label sits directly above its own point
     const os = toScreen(zObs, normalPdf(zObs));
     const ob = toScreen(zObs, 0);
     svg.appendChild(el('line', { x1: os.x, y1: os.y, x2: ob.x, y2: ob.y, stroke: '#1a1a1a', 'stroke-width': '1.25' }));
@@ -1312,6 +1308,13 @@ if (window.renderMathInElement) {
     const obsLabel = el('text', { x: os.x, y: os.y - 8, 'font-size': '12', fill: '#1a1a1a', 'text-anchor': 'middle' });
     obsLabel.textContent = 'observed';
     svg.appendChild(obsLabel);
+
+    // alpha label — sits above the axis, past the observed marker, in the
+    // thin tail where nothing else is drawn
+    const alphaScreenX = toScreen((xMax + zObs) / 2 + 0.3, 0).x;
+    const alphaLabel = el('text', { x: alphaScreenX, y: padT + plotH - 12, 'font-size': '12', fill: '#c92a2a', 'text-anchor': 'middle', 'font-weight': '600' });
+    alphaLabel.textContent = 'α';
+    svg.appendChild(alphaLabel);
 
     container.innerHTML = '';
     container.appendChild(svg);
@@ -1384,20 +1387,26 @@ if (window.renderMathInElement) {
     yAxisLabel.textContent = 'f(z)';
     svg.appendChild(yAxisLabel);
 
+    // critical value marker — label as an axis tick directly below the
+    // line's base, not floating at a fixed height near the chart's top
+    // (disconnected from the line whenever the curve is low out there).
     const cs = toScreen(zCrit, normalPdf(zCrit, delta));
     const cb = toScreen(zCrit, 0);
     svg.appendChild(el('line', { x1: cs.x, y1: cs.y, x2: cb.x, y2: cb.y, stroke: '#333', 'stroke-width': '1.25', 'stroke-dasharray': '3,3' }));
-    const critLabel = el('text', { x: cs.x, y: padT - 5, 'font-size': '12', fill: '#555', 'text-anchor': 'middle' });
-    critLabel.textContent = `z* = ${zCrit}`;
+    const critLabel = el('text', { x: cb.x, y: cb.y + 15, 'font-size': '12', fill: '#555', 'text-anchor': 'middle' });
+    critLabel.textContent = 'z*';
     svg.appendChild(critLabel);
 
-    const alphaScreenX = toScreen(zCrit + 0.55, 0).x;
-    const alphaLabel = el('text', { x: alphaScreenX, y: padT + plotH - 12, 'font-size': '12', fill: '#c92a2a', 'text-anchor': 'middle', 'font-weight': '600' });
+    // alpha and power labels, pushed further apart (and higher, into each
+    // region's own wider area) than a naive even split would give, since
+    // the red tail here is much narrower than the teal one
+    const alphaScreenX = toScreen(zCrit + 0.25, 0).x;
+    const alphaLabel = el('text', { x: alphaScreenX, y: padT + plotH - 10, 'font-size': '12', fill: '#c92a2a', 'text-anchor': 'middle', 'font-weight': '600' });
     alphaLabel.textContent = 'α';
     svg.appendChild(alphaLabel);
 
-    const powerScreenX = toScreen(delta + 0.3, 0).x;
-    const powerLabel = el('text', { x: powerScreenX, y: padT + plotH - 12, 'font-size': '12', fill: '#0b7285', 'text-anchor': 'middle', 'font-weight': '600' });
+    const powerScreenX = toScreen(delta + 0.9, 0).x;
+    const powerLabel = el('text', { x: powerScreenX, y: padT + plotH - 10, 'font-size': '12', fill: '#0b7285', 'text-anchor': 'middle', 'font-weight': '600' });
     powerLabel.textContent = '1−β';
     svg.appendChild(powerLabel);
 
