@@ -1550,9 +1550,8 @@ if (window.renderMathInElement) {
       { type: 'fill', color: '#0b7285', label: 'estimated N(θ̂, σ²)' },
       { type: 'dot', color: '#1a1a1a', label: 'data' }
     ]);
-    const caption = document.createElement('p');
-    caption.textContent = `Five measurements average to θ̂ = 4.9, just short of the true μ = 5.0 — the estimated curve sits almost on top of the true one, the same estimator MLE would also produce for a Normal mean.`;
-    container.appendChild(caption);
+    // No trailing caption — the numbers are already in the prose right
+    // above this chart (same precedent as the Hypothesis Testing chart).
   }
 
   // Method of Moments, Uniform(0,θ) case: both supports drawn as shaded
@@ -1602,9 +1601,7 @@ if (window.renderMathInElement) {
       { type: 'fill', color: '#0b7285', label: `estimated θ̂ = ${xHat}` },
       { type: 'dot', color: '#1a1a1a', label: 'data' }
     ]);
-    const caption = document.createElement('p');
-    caption.textContent = `Five measurements average to X̄ = 3, giving θ̂ = 2X̄ = 6 — narrower than the true support, and a different number from what the Uniform's MLE (the sample maximum, 5.5) would give.`;
-    container.appendChild(caption);
+    // No trailing caption — same reasoning as the Normal chart above.
   }
 
   // Two mini residual-vs-fitted scatterplots, side by side: one with

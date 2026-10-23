@@ -31,16 +31,14 @@
         <div class="topics">
           <div class="topic" id="method-of-moments">
             <h2>Method of Moments</h2>
-            <p>The simplest way to estimate a parameter: match what the sample actually averages to what the model predicts it should average, then solve for the parameter that makes those agree.</p>
+            <p>Match the sample's average to what the model predicts it should be, then solve for the parameter that makes them agree.</p>
             <p class="math">$$E[X^k] = \frac{1}{n}\sum_{i=1}^{n} X_i^k, \quad k = 1, 2, \dots$$</p>
-            <p>Using k = 1, 2, … moments — one per unknown parameter — gives enough equations to solve for them all.</p>
-            <p>For 10 coin flips with 7 heads, the first moment is just the mean: E[X] = p, so matching it to the sample mean gives p̂ = X̄ = 7/10 = 0.7. For Bernoulli data, method of moments happens to land on exactly the same estimator as the MLE below — that's a coincidence of this particular model, not a general rule.</p>
 
-            <p>The same coincidence shows up with continuous data: five length measurements (4.1, 4.6, 5.0, 5.3, 5.5) match their first moment to θ̂ = μ̂ = X̄ = 4.9 — again, exactly what MLE would also give for a Normal mean.</p>
+            <p>For a Normal mean, the first moment is just μ itself, so θ̂ = X̄. Five measurements (4.1, 4.6, 5.0, 5.3, 5.5) average to 4.9, close to the true μ = 5.0 — the same estimator MLE would also give.</p>
 
             <div class="stat-chart" id="mom-normal-chart-root"></div>
 
-            <p>A less trivial case, where that coincidence disappears: for X ~ Uniform(0, θ), the first moment is E[X] = θ/2, not θ itself, so matching gives θ̂ = 2X̄. Five measurements averaging to X̄ = 3 give θ̂ = 6 — but the Uniform's MLE is the sample maximum, not twice the mean, a genuinely different estimator from the same data.</p>
+            <p>For X ~ Uniform(0, θ), the first moment is θ/2, not θ, so matching gives θ̂ = 2X̄ instead — a different formula from MLE's sample maximum. Five measurements averaging to X̄ = 3 give θ̂ = 6, short of the true θ = 7 and different from what MLE (the sample max, 5.5) would give.</p>
 
             <div class="stat-chart" id="mom-uniform-chart-root"></div>
           </div>
