@@ -101,8 +101,8 @@
             <h2>Confidence Intervals</h2>
             <p>Inverting a pivotal quantity asks which parameter values would make the observed pivot land in its typical range — that range of values is the confidence interval.</p>
             <p class="math">$$P\!\left(-t^*_{n-1} \le \frac{\bar X - \textcolor{#0b7285}{\mu}}{S/\sqrt{n}} \le t^*_{n-1}\right) = 1-\textcolor{#c92a2a}{\alpha} \quad\Longrightarrow\quad \textcolor{#0b7285}{\mu} \in \bar X \pm t^*_{n-1}\frac{S}{\sqrt{n}}$$</p>
-            <p>"95% confidence" describes the procedure, not this one interval: 95% of intervals built this way would contain the true μ. A specific computed interval either does or doesn't — there's no probability left to assign to it.</p>
-            <p>This coverage is exact only when the data is actually normal. Otherwise a near-pivot — approximately pivotal via a large-sample approximation — serves the same role, with coverage that's only approximate.</p>
+            <p>If you repeated this process on fresh data many times, about 95% of the resulting intervals would contain the true μ — that's what "95% confidence" means. Once you've computed one actual interval, it simply does or doesn't contain μ; there's no probability left to assign.</p>
+            <p>This coverage is exact only when the data is actually normal. Otherwise a near-pivot serves the same role: its distribution isn't exactly known, only approximated using a large sample, so coverage is only approximate too.</p>
           </div>
           <div class="topic" id="hypothesis-testing">
             <h2>Hypothesis Testing</h2>
@@ -115,7 +115,7 @@
 
             <p>Equivalently: the p-value is the probability of a test statistic at least as extreme as the one observed, assuming H₀ is true. Reject when p &lt; α — the same decision, expressed as a probability rather than a region.</p>
 
-            <p>A test can fail in two ways: rejecting a true H₀ (<strong>Type I error</strong>), or failing to reject a false one (<strong>Type II error</strong>). Size is the Type I rate, α; power against a given alternative is one minus the Type II rate.</p>
+            <p>A test can fail in two ways: rejecting a true H₀ (<strong>Type I error</strong>), or failing to reject a false one (<strong>Type II error</strong>). Size (α) is the Type I error rate — how often the test wrongly rejects a true H₀; power is one minus the Type II error rate — how often it correctly rejects a false one.</p>
             <p class="math">$$\textcolor{#c92a2a}{\alpha} = P(\text{reject } H_0 \mid H_0) \qquad 1-\textcolor{#0b7285}{\beta} = P(\text{reject } H_0 \mid H_1)$$</p>
             <p>Below, the same rejection region is checked against both the null N(0,1) and an alternative N(δ,1), δ = 2.5. The red tail is still α; the teal tail is the power, about 0.80.</p>
 
@@ -125,7 +125,7 @@
           </div>
           <div class="topic" id="students-t-tests">
             <h2>Student's t-tests</h2>
-            <p>When the data is normal and the population variance is unknown, estimating that variance from the sample turns a z-statistic into a t-statistic.</p>
+            <p>A z-statistic assumes the population variance is known. When it isn't, plugging in the sample's own variance instead gives the t-statistic.</p>
             <p class="math">$$T = \frac{\bar X - \textcolor{#0b7285}{\mu_0}}{S/\sqrt{n}} \textcolor{#7B4B8C}{\sim} t_{n-1} \quad \text{under } H_0: \mu = \textcolor{#0b7285}{\mu_0}$$</p>
             <p>The same form covers three cases: the <strong>one-sample</strong> test checks a mean against μ₀ (above); the <strong>paired</strong> test reduces differences Dᵢ = Xᵢ − Yᵢ to a one-sample test on D̄; the <strong>two-sample</strong> test compares X̄ − Ȳ directly.</p>
             <p class="math">$$T = \frac{\bar X - \bar Y}{S_p\sqrt{\tfrac{1}{n_1}+\tfrac{1}{n_2}}} \textcolor{#7B4B8C}{\sim} t_{n_1+n_2-2} \quad \text{(pooled, assumes equal variances)}$$</p>
@@ -136,7 +136,7 @@
             <p class="math">$$\Lambda = \frac{\sup_{\theta \in \Theta_0} L(\theta)}{\sup_{\theta \in \Theta} L(\theta)}$$</p>
             <p>Θ₀ ⊂ Θ is the restricted space under H₀, so Λ ∈ (0, 1] — near 1 means the restriction barely hurt the fit, near 0 means it hurt a lot.</p>
             <p class="math">$$-2\log \Lambda \ \xrightarrow{d}\ \chi^2_{k}, \quad k = \dim(\Theta) - \dim(\Theta_0)$$</p>
-            <p>k is the number of parameters the restriction pins down. Reject H₀ when −2log Λ is too large to plausibly come from that χ² distribution.</p>
+            <p>k is the number of parameters the restriction fixes to specific values. Reject H₀ when −2log Λ is too large to plausibly come from that χ² distribution.</p>
           </div>
           <div class="topic" id="regression-models">
             <h2>Regression Models</h2>
