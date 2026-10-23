@@ -83,19 +83,19 @@
           </div>
           <div class="topic" id="bias-and-mse">
             <h2>Bias and Mean Squared Error</h2>
-            <p>With several ways to estimate the same parameter above, which one is actually better? Bias measures whether an estimator gets the right answer on average; an unbiased estimator does, even though any single sample's estimate can still land off target.</p>
+            <p>Bias measures whether an estimator gets the right answer on average — an unbiased estimator does, even though any single sample can still land off target.</p>
             <p class="math">$$\text{Bias}(\hat{\textcolor{#0b7285}{\theta}}) = E[\hat{\textcolor{#0b7285}{\theta}}] - \textcolor{#0b7285}{\theta}$$</p>
-            <p>But low bias alone isn't the whole story — an estimator can be perfectly unbiased yet swing wildly from sample to sample. Mean squared error folds both effects into one number, splitting cleanly into variance plus bias squared.</p>
+            <p>Mean squared error folds bias and variance into one number, so an estimator can win on MSE despite being biased, if its variance drops enough to compensate.</p>
             <p class="math">$$\text{MSE}(\hat{\textcolor{#0b7285}{\theta}}) = E[(\hat{\textcolor{#0b7285}{\theta}}-\textcolor{#0b7285}{\theta})^2] = \text{Var}(\hat{\textcolor{#0b7285}{\theta}}) + \text{Bias}(\hat{\textcolor{#0b7285}{\theta}})^2$$</p>
-            <p>Revisiting the normal data above, hypothetically with true μ = 4.2: the MLE X̄ is unbiased (Bias = 0, Var = σ²/n = 0.072, so MSE = 0.072). The Bayesian posterior mean is biased toward the prior's center μ₀ = 4.0 (Bias ≈ −0.089) but has smaller variance (≈ 0.022), so its MSE (≈ 0.030) actually wins — a little bias bought a bigger cut in variance.</p>
+            <p>Revisiting the normal data above with a hypothetical true μ = 4.2: the MLE X̄ is unbiased but has the larger variance (MSE ≈ 0.072), while the biased Bayesian posterior mean has smaller variance and wins on MSE (≈ 0.030).</p>
 
             <div class="stat-chart" id="bias-mse-chart-root"></div>
           </div>
           <div class="topic" id="fisher-information">
             <h2>Fisher Information</h2>
-            <p>Curvature of the log-likelihood at the true parameter measures how sharply it's pinned down — a sharp peak means small changes in θ make the data much less likely (very informative); a flat peak means many values explain the data almost equally well (uninformative).</p>
+            <p>Curvature of the log-likelihood at the true parameter measures how sharply it's pinned down — a sharp peak is very informative, a flat peak much less so.</p>
             <p class="math">$$I_1(\textcolor{#0b7285}{\theta}) = -E\!\left[\frac{\partial^2}{\partial \textcolor{#0b7285}{\theta}^2} \log f(X; \textcolor{#0b7285}{\theta})\right]$$</p>
-            <p>That's the information in a single observation; for n independent ones it simply adds up, I<sub>n</sub>(θ) = n·I₁(θ) — not I₁(θ) alone, a common mix-up. This total sets a hard floor on any unbiased estimator's variance (the Cramér–Rao bound), a floor the MLE's own variance approaches as the sample grows — the precise, quantified version of "more data ⇒ less variance" from Bias and Mean Squared Error above.</p>
+            <p>That's the information in one observation; for n independent ones it adds up, I<sub>n</sub>(θ) = n·I₁(θ). This total sets a hard floor on any unbiased estimator's variance, the Cramér–Rao bound.</p>
             <p class="math">$$\text{Var}(\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}}) \gtrapprox \frac{1}{I_n(\textcolor{#0b7285}{\theta})} = \frac{1}{n\,I_1(\textcolor{#0b7285}{\theta})}$$</p>
           </div>
           <div class="topic" id="pivotal-quantities">
@@ -108,61 +108,61 @@
             <h2>Confidence Intervals</h2>
             <p>Inverting a pivotal quantity means asking: which parameter values would make the observed pivot land in its typical range? That range of values is the confidence interval.</p>
             <p class="math">$$P\!\left(-t^*_{n-1} \le \frac{\bar X - \textcolor{#0b7285}{\mu}}{S/\sqrt{n}} \le t^*_{n-1}\right) = 1-\textcolor{#c92a2a}{\alpha} \quad\Longrightarrow\quad \textcolor{#0b7285}{\mu} \in \bar X \pm t^*_{n-1}\frac{S}{\sqrt{n}}$$</p>
-            <p>"95% confidence" describes the procedure, not this one interval: before the data is collected, 95% of intervals built this way would contain the true μ. Once computed, a specific interval either does or doesn't — there's no probability left to assign to it.</p>
-            <p>Coverage is exact here only because the pivot itself is exact, which for this statistic requires the underlying data to actually be normally distributed — the hidden condition behind "exact." When data isn't normal, or no exact pivot exists, a near-pivot — approximately pivotal via a large-sample (CLT) approximation — serves the same role, with coverage that's only approximate, improving as n grows.</p>
+            <p>"95% confidence" describes the procedure, not this one interval: 95% of intervals built this way would contain the true μ. A specific computed interval either does or doesn't — there's no probability left to assign to it.</p>
+            <p>This coverage is exact only when the data is actually normal. Otherwise a near-pivot — approximately pivotal via a large-sample approximation — serves the same role, with coverage that's only approximate.</p>
           </div>
           <div class="topic" id="hypothesis-testing">
             <h2>Hypothesis Testing</h2>
             <p>A hypothesis test rejects the null hypothesis when the observed data would be too unlikely if the null were actually true.</p>
             <p class="math">$$\textcolor{#7B4B8C}{\text{reject } H_0} \textcolor{#7B4B8C}{\iff} \text{test statistic} \textcolor{#7B4B8C}{\in} \text{rejection region}$$</p>
-            <p>The rejection region is sized so that, if H₀ is actually true, the test wrongly rejects it only a small fraction of the time: below, the shaded tail holds exactly α = 0.05 of the area under the null distribution, cut off at the critical value z* = 1.645. The observed statistic falls at z = 2.1 — past z*, inside the rejection region — so H₀ is rejected.</p>
+            <p>The rejection region is sized so the test wrongly rejects a true H₀ only a small fraction of the time: below, the shaded tail holds α = 0.05, cut off at z* = 1.645. The observed statistic z = 2.1 falls past z*, so H₀ is rejected.</p>
             <p class="math">$$P(\textcolor{#7B4B8C}{\text{reject } H_0} \mid H_0 \text{ true}) = \textcolor{#c92a2a}{\alpha}$$</p>
 
             <div class="stat-chart" id="hyp-chart-root"></div>
 
-            <p>Equivalently: the p-value is the probability, assuming H₀ is true, of a test statistic at least as extreme as the one observed. Reject when p &lt; α — the same decision as checking the rejection region, just expressed as a probability. A small p-value does <strong>not</strong> mean H₀ is unlikely to be true; it means the data would be unlikely <em>if</em> H₀ were true — a statement about the data conditioned on H₀, not a statement about H₀ itself.</p>
+            <p>Equivalently: the p-value is the probability of a test statistic at least as extreme as the one observed, assuming H₀ is true. Reject when p &lt; α — the same decision, expressed as a probability rather than a region.</p>
           </div>
           <div class="topic" id="size-and-power">
             <h2>Size and Power</h2>
-            <p>A test can fail in two directions: rejecting H₀ when it's actually true (a <strong>Type I error</strong>), or failing to reject it when some specific alternative is actually true (a <strong>Type II error</strong>). The test's size is the Type I rate, already fixed at α above; its power against a given alternative is one minus the Type II rate — the chance of correctly rejecting H₀ when that alternative holds.</p>
+            <p>A test can fail two ways: rejecting a true H₀ (<strong>Type I error</strong>), or failing to reject a false one (<strong>Type II error</strong>). Size is the Type I rate, α; power against a given alternative is one minus the Type II rate.</p>
             <p class="math">$$\textcolor{#c92a2a}{\alpha} = P(\text{reject } H_0 \mid H_0) \qquad 1-\textcolor{#0b7285}{\beta} = P(\text{reject } H_0 \mid H_1)$$</p>
-            <p>Below, the same rejection region (z* = 1.645) is now checked against two distributions at once: the null N(0,1), and a specific alternative N(δ,1) shifted by δ = 2.5. The red tail is still α. The teal tail — the alternative's own area past z* — is the power, about 0.80 here; the unshaded area of the alternative curve left of z* is β, the 0.20 chance of missing a real effect of that size.</p>
+            <p>Below, the same rejection region (z* = 1.645) is checked against both the null N(0,1) and an alternative N(δ,1), δ = 2.5. The red tail is still α; the teal tail is the power, about 0.80.</p>
 
             <div class="stat-chart" id="power-chart-root"></div>
 
-            <p>Power grows with a larger δ (an easier, more obvious effect to detect), a larger n (shrinking both curves' spread), or a larger α (a wider rejection region) — the last one trading a higher Type I rate for a lower Type II rate, never eliminating both at once.</p>
+            <p>Power grows with a larger δ, a larger n, or a larger α — the last trading a higher Type I rate for a lower Type II rate.</p>
           </div>
           <div class="topic" id="students-t-tests">
             <h2>Student's t-tests</h2>
-            <p>The general hypothesis-testing machinery above specializes into a concrete, named test whenever the data is (approximately) normal and the population variance is unknown — estimating that variance from the sample is exactly what turns a z-statistic into a t-statistic. It's the same pivotal quantity as in Pivotal Quantities above, used here as a test statistic instead of being inverted into an interval.</p>
+            <p>When the data is approximately normal and the population variance is unknown, estimating it from the sample turns the z-statistic above into a t-statistic.</p>
             <p class="math">$$T = \frac{\bar X - \textcolor{#0b7285}{\mu_0}}{S/\sqrt{n}} \textcolor{#7B4B8C}{\sim} t_{n-1} \quad \text{under } H_0: \mu = \textcolor{#0b7285}{\mu_0}$$</p>
-            <p>The same form covers three cases: a <strong>one-sample</strong> test checks a single mean against μ₀ (above); a <strong>paired</strong> test takes differences Dᵢ = Xᵢ − Yᵢ within each pair and reduces to the one-sample test on D̄; a <strong>two-sample</strong> test compares X̄ − Ȳ directly.</p>
+            <p>The same form covers three cases: <strong>one-sample</strong> checks a mean against μ₀ (above); <strong>paired</strong> reduces differences Dᵢ = Xᵢ − Yᵢ to a one-sample test on D̄; <strong>two-sample</strong> compares X̄ − Ȳ directly.</p>
             <p class="math">$$T = \frac{\bar X - \bar Y}{S_p\sqrt{\tfrac{1}{n_1}+\tfrac{1}{n_2}}} \textcolor{#7B4B8C}{\sim} t_{n_1+n_2-2} \quad \text{(pooled, assumes equal variances)}$$</p>
-            <p>That pooled form assumes both populations share the same variance — a real assumption, not automatic. When they don't, <strong>Welch's t-test</strong> is the fix: it uses each sample's own variance in the standard error instead of pooling them, at the cost of an approximate (non-integer) degrees of freedom rather than the exact n₁+n₂−2.</p>
+            <p>When the two variances aren't actually equal, <strong>Welch's t-test</strong> uses each sample's own variance instead of pooling them, at the cost of an approximate degrees of freedom.</p>
             <p class="math">$$T = \frac{\bar X - \bar Y}{\sqrt{S_1^2/n_1 \,+\, S_2^2/n_2}} \ \overset{\cdot}{\sim}\ t_{\nu} \quad \text{(Welch–Satterthwaite } \nu\text{, approximate)}$$</p>
-            <p>Welch's reduces to the pooled test when the variances happen to match, but stays valid when they don't — which is why it's the more common default in practice, not the pooled version above.</p>
+            <p>Welch's is valid whether or not the variances match, which is why it's the more common default.</p>
           </div>
           <div class="topic" id="likelihood-ratio">
             <h2>Likelihood Ratio Test</h2>
-            <p>Another way to test a restriction on the parameter: compare how well the data is explained by the best-fitting model <em>under</em> the restriction against the best-fitting model <em>without</em> it. If forcing the restriction barely hurts the fit, the restriction looks plausible.</p>
+            <p>Another way to test a restriction: compare the best fit <em>under</em> the restriction against the best fit <em>without</em> it. If forcing the restriction barely hurts the fit, it looks plausible.</p>
             <p class="math">$$\Lambda = \frac{\sup_{\theta \in \Theta_0} L(\theta)}{\sup_{\theta \in \Theta} L(\theta)}$$</p>
-            <p>Θ is the full parameter space and Θ₀ ⊂ Θ is the restricted space under H₀, so the numerator can never exceed the denominator and Λ ∈ (0, 1]. A ratio near 1 means restricting to H₀ barely hurt the fit; near 0 means the unrestricted model fits much better.</p>
+            <p>Θ₀ ⊂ Θ is the restricted space under H₀, so Λ ∈ (0, 1] — near 1 means the restriction barely hurt the fit, near 0 means it hurt a lot.</p>
             <p class="math">$$-2\log \Lambda \ \xrightarrow{d}\ \chi^2_{k}, \quad k = \dim(\Theta) - \dim(\Theta_0)$$</p>
-            <p>k is the number of parameters the restriction actually pins down — e.g. testing a single coefficient against a specific value gives k = 1. Reject H₀ when −2log Λ is too large to plausibly come from that χ² distribution, the same large-deviation logic as the z- and t-tests above.</p>
+            <p>k is the number of parameters the restriction pins down. Reject H₀ when −2log Λ is too large to plausibly come from that χ² distribution.</p>
           </div>
           <div class="topic" id="regression-models">
             <h2>Regression Models</h2>
-            <p>A different kind of question from estimation so far: not "what's the best value of a single parameter," but "how does one variable move with another." Regression answers it by treating the response as a deterministic trend plus random noise, not an exact function of the predictor.</p>
+            <p>A different question from estimation so far: not the best value of a single parameter, but how one variable moves with another. Regression treats the response as a trend plus random noise, not an exact function of the predictor.</p>
             <p class="math">$$Y_i = \textcolor{#0b7285}{\beta_0} + \textcolor{#0b7285}{\beta_1} x_i + \varepsilon_i, \quad \varepsilon_i \textcolor{#7B4B8C}{\sim} N(0, \sigma^2)$$</p>
-            <p>Yᵢ is the response and xᵢ the predictor (both observed); β₀, β₁ are the intercept and slope to estimate; εᵢ is leftover randomness, assumed normal with constant variance σ² — an assumption Regression Diagnostics below actually checks, not just asserts.</p>
-            <p>Fitting means choosing the coefficients that make the residuals — the leftover noise once the line is drawn — as small as possible overall.</p>
+            <p>Yᵢ is the response, xᵢ the predictor; β₀, β₁ are the intercept and slope to estimate; εᵢ is leftover randomness, assumed normal with constant variance σ².</p>
+            <p>Fitting means choosing the coefficients that make the residuals — the leftover noise once the line is drawn — as small as possible.</p>
             <p class="math">$$(\hat{\textcolor{#0b7285}{\beta_0}}, \hat{\textcolor{#0b7285}{\beta_1}}) = \textcolor{#7B4B8C}{\arg\min_{\beta_0,\beta_1}} \sum_{i=1}^{n} (y_i - \beta_0 - \beta_1 x_i)^2$$</p>
           </div>
           <div class="topic" id="regression-diagnostics">
             <h2>Regression Diagnostics</h2>
-            <p>Fitting always produces some line — it doesn't guarantee a good one. The model above assumed a linear trend, constant-variance errors, and normal noise; residual plots are how those assumptions get checked after the fact, since the true errors are never observed, only their estimates, the residuals.</p>
+            <p>Fitting always produces some line — it doesn't guarantee a good one. Residual plots check the model's assumptions after the fact, since the true errors are never observed, only their estimates.</p>
             <p class="math">$$e_i = y_i - \hat y_i = y_i - (\hat{\textcolor{#0b7285}{\beta_0}} + \hat{\textcolor{#0b7285}{\beta_1}} x_i)$$</p>
-            <p>Plotting residuals against the fitted values should show patternless, constant-width scatter around zero if the assumptions hold; a pattern — like the fan shape below, where the spread visibly grows with the fitted value — signals heteroscedasticity, a violation of the constant-variance assumption.</p>
+            <p>Residuals plotted against fitted values should show patternless, constant-width scatter around zero. A pattern — like the fan shape below, where spread grows with the fitted value — signals heteroscedasticity.</p>
 
             <div class="stat-chart" id="resid-chart-root"></div>
 
