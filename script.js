@@ -1479,6 +1479,93 @@ if (window.renderMathInElement) {
     ]);
   }
 
+  // Method of Moments, Normal case: the true N(μ,σ²) the data was drawn
+  // from, against the curve implied by plugging the moment-matched θ̂ = X̄
+  // back into the model. Same color convention as the Bias/MSE chart above
+  // (true in dashed gray, estimated in solid teal) so "true vs. estimated"
+  // reads the same way across both charts.
+  function renderMomNormalChart(container) {
+    const data = [4.1, 4.6, 5.0, 5.3, 5.5];
+    const trueMu = 5.0, sigma = 0.6;
+    const xHat = data.reduce((a, b) => a + b, 0) / data.length;
+    const normalPdf = (x, mu, s) => Math.exp(-0.5 * ((x - mu) / s) ** 2) / (s * Math.sqrt(2 * Math.PI));
+
+    const xMin = 3.2, xMax = 6.8;
+    const width = 380, height = 170, padL = 16, padR = 16, padT = 18, padB = 30;
+    const plotW = width - padL - padR, plotH = height - padT - padB;
+    const maxY = normalPdf(trueMu, trueMu, sigma) * 1.1;
+    const axisY = padT + plotH;
+    const toScreen = (x, y) => ({
+      x: padL + (x - xMin) / (xMax - xMin) * plotW,
+      y: axisY - (y / maxY) * plotH
+    });
+
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'True and estimated Normal curves over five data points' });
+
+    const truePts = sample(x => normalPdf(x, trueMu, sigma), xMin, xMax, 200);
+    svg.appendChild(el('path', { d: pathFor(truePts, toScreen), fill: 'none', stroke: '#999', 'stroke-width': '1.75', 'stroke-dasharray': '4,3' }));
+    const estPts = sample(x => normalPdf(x, xHat, sigma), xMin, xMax, 200);
+    svg.appendChild(el('path', { d: pathFor(estPts, toScreen), fill: 'none', stroke: '#0b7285', 'stroke-width': '2' }));
+
+    svg.appendChild(el('line', { x1: padL, y1: axisY, x2: padL + plotW, y2: axisY, stroke: '#333' }));
+    data.forEach(x => {
+      const s = toScreen(x, 0);
+      svg.appendChild(el('circle', { cx: s.x, cy: s.y, r: 3, fill: '#1a1a1a' }));
+    });
+
+    container.innerHTML = '';
+    container.appendChild(svg);
+    renderLegend(container, [
+      { type: 'dashed', color: '#999', label: 'true N(μ, σ²)' },
+      { type: 'line', color: '#0b7285', label: 'estimated N(θ̂, σ²)' },
+      { type: 'dot', color: '#1a1a1a', label: 'data' }
+    ]);
+    const caption = document.createElement('p');
+    caption.textContent = `Five measurements average to θ̂ = 4.9, just short of the true μ = 5.0 — the estimated curve sits almost on top of the true one, the same estimator MLE would also produce for a Normal mean.`;
+    container.appendChild(caption);
+  }
+
+  // Method of Moments, Uniform(0,θ) case: drawn as two stacked support bars
+  // rather than density curves, since a Uniform density is just a flat line
+  // — the only thing worth comparing is how far each support reaches, which
+  // a bar's length shows directly.
+  function renderMomUniformChart(container) {
+    const data = [1.0, 1.5, 3.0, 4.0, 5.5];
+    const trueTheta = 7, xHat = 2 * (data.reduce((a, b) => a + b, 0) / data.length);
+
+    const xMin = 0, xMax = 7.6;
+    const width = 320, height = 130, padL = 16, padR = 16, padT = 18, padB = 30;
+    const plotW = width - padL - padR;
+    const axisY = padT + 70;
+    const toX = x => padL + (x - xMin) / (xMax - xMin) * plotW;
+
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'True and estimated support of a Uniform distribution, with five data points' });
+
+    const trueY = padT + 10, estY = padT + 34;
+    [[trueY, trueTheta, '#999', '11,6'], [estY, xHat, '#0b7285', null]].forEach(([y, end, color, dash]) => {
+      const attrs = { x1: toX(0), y1: y, x2: toX(end), y2: y, stroke: color, 'stroke-width': '4' };
+      if (dash) attrs['stroke-dasharray'] = dash;
+      svg.appendChild(el('line', attrs));
+      svg.appendChild(el('line', { x1: toX(end), y1: y - 6, x2: toX(end), y2: y + 6, stroke: color, 'stroke-width': '1.5' }));
+    });
+
+    svg.appendChild(el('line', { x1: padL, y1: axisY, x2: padL + plotW, y2: axisY, stroke: '#333' }));
+    data.forEach(x => {
+      svg.appendChild(el('circle', { cx: toX(x), cy: axisY, r: 3, fill: '#1a1a1a' }));
+    });
+
+    container.innerHTML = '';
+    container.appendChild(svg);
+    renderLegend(container, [
+      { type: 'dashed', color: '#999', label: `true θ = ${trueTheta}` },
+      { type: 'line', color: '#0b7285', label: `estimated θ̂ = ${xHat}` },
+      { type: 'dot', color: '#1a1a1a', label: 'data' }
+    ]);
+    const caption = document.createElement('p');
+    caption.textContent = `Five measurements average to X̄ = 3, giving θ̂ = 2X̄ = 6 — narrower than the true support, and a different number from what the Uniform's MLE (the sample maximum, 5.5) would give.`;
+    container.appendChild(caption);
+  }
+
   // Two mini residual-vs-fitted scatterplots, side by side: one with
   // roughly constant spread (assumptions met) and one whose spread visibly
   // fans out as the fitted value grows (a violated constant-variance
@@ -1551,6 +1638,12 @@ if (window.renderMathInElement) {
       { type: 'dot', color: '#c92a2a', label: 'fanning variance (violated)' }
     ]);
   }
+
+  const momNormalMount = document.getElementById('mom-normal-chart-root');
+  if (momNormalMount) renderMomNormalChart(momNormalMount);
+
+  const momUniformMount = document.getElementById('mom-uniform-chart-root');
+  if (momUniformMount) renderMomUniformChart(momUniformMount);
 
   const mleMount = document.getElementById('mle-chart-root');
   if (mleMount) renderMLEChart(mleMount);
