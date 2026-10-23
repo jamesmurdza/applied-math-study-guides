@@ -134,10 +134,7 @@
             <h2>Likelihood Ratio Test</h2>
             <p>The <strong>likelihood ratio test</strong> checks whether fixing a parameter to a specific value makes the model fit the data significantly worse.</p>
             <p class="math">$$\Lambda = \frac{\text{best fit under } H_0}{\text{best fit overall}} = \frac{\sup_{\theta \in \Theta_0} L(\theta)}{\sup_{\theta \in \Theta} L(\theta)}$$</p>
-            <ul>
-              <li>Λ near 1: the fit barely changes, so H₀ is plausible.</li>
-              <li>Λ near 0: the fit gets much worse, suggesting H₀ may be false.</li>
-            </ul>
+            <p>Λ near 1 means the fit barely changes, so H₀ is plausible; Λ near 0 means the fit gets much worse, suggesting H₀ may be false.</p>
             <p>Under H₀, the test statistic approximately follows a chi-squared distribution:</p>
             <p class="math">$$-2\log \Lambda \ \sim\ \chi^2_{k}$$</p>
             <p>Here, k is the number of independent restrictions imposed on the parameters. Reject H₀ if the test statistic is large enough to indicate a significantly worse fit.</p>
