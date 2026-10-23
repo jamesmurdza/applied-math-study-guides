@@ -108,7 +108,7 @@
             <h2>Hypothesis Testing</h2>
             <p>A hypothesis test rejects the null hypothesis when the observed data would be too unlikely if the null were actually true.</p>
             <p class="math">$$\textcolor{#7B4B8C}{\text{reject } H_0} \textcolor{#7B4B8C}{\iff} \text{test statistic} \textcolor{#7B4B8C}{\in} \text{rejection region}$$</p>
-            <p>The rejection region is sized so the test wrongly rejects a true H₀ only a small fraction of the time: below, the shaded tail holds α = 0.05, cut off at z* = 1.645. The observed statistic z = 2.1 falls past z*, so H₀ is rejected.</p>
+            <p>The rejection region is sized so a true H₀ is wrongly rejected only a small fraction of the time. Below, the observed test statistic falls past the critical value z*, inside the shaded tail, so H₀ is rejected.</p>
             <p class="math">$$P(\textcolor{#7B4B8C}{\text{reject } H_0} \mid H_0 \text{ true}) = \textcolor{#c92a2a}{\alpha}$$</p>
 
             <div class="stat-chart" id="hyp-chart-root"></div>
@@ -117,7 +117,7 @@
 
             <p>A test can fail in two ways: rejecting a true H₀ (<strong>Type I error</strong>), or failing to reject a false one (<strong>Type II error</strong>). Size (α) is the Type I error rate — how often the test wrongly rejects a true H₀; power is one minus the Type II error rate — how often it correctly rejects a false one.</p>
             <p class="math">$$\textcolor{#c92a2a}{\alpha} = P(\text{reject } H_0 \mid H_0) \qquad 1-\textcolor{#0b7285}{\beta} = P(\text{reject } H_0 \mid H_1)$$</p>
-            <p>Below, the same rejection region is checked against both the null N(0,1) and an alternative N(δ,1), δ = 2.5. The red tail is still α; the teal tail is the power, about 0.80.</p>
+            <p>Below, the same rejection region is checked against both the null distribution and a specific alternative. The red tail is still α; the teal tail is the power.</p>
 
             <div class="stat-chart" id="power-chart-root"></div>
 
