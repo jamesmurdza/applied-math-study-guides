@@ -1216,22 +1216,30 @@ if (window.renderMathInElement) {
     }).join(' ');
   }
 
-  // A letter with a drawn circumflex above it (μ̂, θ̂, ...), used for
+  // A letter with a proper circumflex above it (μ̂, θ̂, ...), used for
   // "estimate of" labels. The Unicode combining circumflex (U+0302) does
   // NOT render reliably over Greek letters in SVG <text> — it shows up as
   // a disconnected mark floating above-and-beside the glyph rather than
-  // centered on top of it, varying by font/browser. Drawing the accent as
-  // its own small path, centered on the letter's own x, sidesteps that
-  // entirely.
+  // centered on top of it, varying by font/browser. A hand-drawn accent
+  // shape (tried first) looked crude next to KaTeX's own hats used
+  // everywhere else on the page — so this renders the real thing via
+  // KaTeX itself, through a <foreignObject>, matching every other hat on
+  // the site exactly instead of approximating one.
   function hatLabel(svg, x, y, letter, color) {
-    const t = el('text', { x, y, 'font-size': '12', fill: color, 'text-anchor': 'middle', 'font-weight': '600' });
-    t.textContent = letter;
-    svg.appendChild(t);
-    const hatY = y - 12.5;
-    svg.appendChild(el('path', {
-      d: `M${(x - 4).toFixed(1)},${hatY.toFixed(1)} L${x.toFixed(1)},${(hatY - 3).toFixed(1)} L${(x + 4).toFixed(1)},${hatY.toFixed(1)}`,
-      fill: 'none', stroke: color, 'stroke-width': '1.3', 'stroke-linecap': 'round', 'stroke-linejoin': 'round'
-    }));
+    const w = 26, h = 22;
+    const fo = document.createElementNS(SVG_NS, 'foreignObject');
+    fo.setAttribute('x', (x - w / 2).toFixed(1));
+    fo.setAttribute('y', (y - h + 5).toFixed(1));
+    fo.setAttribute('width', w);
+    fo.setAttribute('height', h);
+    const div = document.createElement('div');
+    div.style.color = color;
+    div.style.fontSize = '13px';
+    div.style.fontWeight = '600';
+    div.style.textAlign = 'center';
+    katex.render(`\\hat{${letter}}`, div, { throwOnError: false });
+    fo.appendChild(div);
+    svg.appendChild(fo);
   }
 
   // Standard normal curve with a shaded right-tail rejection region, the
