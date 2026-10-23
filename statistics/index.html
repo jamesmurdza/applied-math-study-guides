@@ -146,17 +146,6 @@
             <p>Fitting means choosing the coefficients that make the residuals — the leftover noise once the line is drawn — as small as possible.</p>
             <p class="math">$$(\hat{\textcolor{#0b7285}{\beta_0}}, \hat{\textcolor{#0b7285}{\beta_1}}) = \textcolor{#7B4B8C}{\arg\min_{\beta_0,\beta_1}} \sum_{i=1}^{n} (y_i - \beta_0 - \beta_1 x_i)^2$$</p>
           </div>
-          <div class="topic" id="regression-diagnostics">
-            <h2>Regression Diagnostics</h2>
-            <p>Fitting always produces some line — it doesn't guarantee a good one. Residual plots check the model's assumptions after the fact, since the true errors are never observed, only their estimates.</p>
-            <p class="math">$$e_i = y_i - \hat y_i = y_i - (\hat{\textcolor{#0b7285}{\beta_0}} + \hat{\textcolor{#0b7285}{\beta_1}} x_i)$$</p>
-            <p>Residuals plotted against fitted values should show patternless, constant-width scatter around zero. A pattern — like the fan shape below, where spread grows with the fitted value — signals a violated assumption.</p>
-
-            <div class="stat-chart" id="resid-chart-root"></div>
-
-            <p>A separate summary number, R², reports the proportion of the total variance in y explained by the fitted line rather than left over in the residuals.</p>
-            <p class="math">$$R^2 = 1 - \frac{\sum_i (y_i - \hat y_i)^2}{\sum_i (y_i - \bar y)^2}$$</p>
-          </div>
         </div>
       </section>
     </main>
