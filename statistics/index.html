@@ -91,13 +91,6 @@
 
             <div class="stat-chart" id="bias-mse-chart-root"></div>
           </div>
-          <div class="topic" id="fisher-information">
-            <h2>Fisher Information</h2>
-            <p>Curvature of the log-likelihood at the true parameter measures how sharply it's pinned down — a sharp peak is very informative, a flat peak much less so.</p>
-            <p class="math">$$I_1(\textcolor{#0b7285}{\theta}) = -E\!\left[\frac{\partial^2}{\partial \textcolor{#0b7285}{\theta}^2} \log f(X; \textcolor{#0b7285}{\theta})\right]$$</p>
-            <p>That's the information in one observation; for n independent ones it adds up, I<sub>n</sub>(θ) = n·I₁(θ). This total sets a hard floor on any unbiased estimator's variance, the Cramér–Rao bound.</p>
-            <p class="math">$$\text{Var}(\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}}) \gtrapprox \frac{1}{I_n(\textcolor{#0b7285}{\theta})} = \frac{1}{n\,I_1(\textcolor{#0b7285}{\theta})}$$</p>
-          </div>
           <div class="topic" id="pivotal-quantities">
             <h2>Pivotal Quantities</h2>
             <p>A recurring problem: a statistic's distribution usually depends on the very parameter being estimated, which seems circular to work with. A pivotal quantity breaks that circularity — built from the data and the parameter together, yet its own distribution doesn't depend on the parameter's actual value.</p>
@@ -136,9 +129,6 @@
             <p class="math">$$T = \frac{\bar X - \textcolor{#0b7285}{\mu_0}}{S/\sqrt{n}} \textcolor{#7B4B8C}{\sim} t_{n-1} \quad \text{under } H_0: \mu = \textcolor{#0b7285}{\mu_0}$$</p>
             <p>The same form covers three cases: <strong>one-sample</strong> checks a mean against μ₀ (above); <strong>paired</strong> reduces differences Dᵢ = Xᵢ − Yᵢ to a one-sample test on D̄; <strong>two-sample</strong> compares X̄ − Ȳ directly.</p>
             <p class="math">$$T = \frac{\bar X - \bar Y}{S_p\sqrt{\tfrac{1}{n_1}+\tfrac{1}{n_2}}} \textcolor{#7B4B8C}{\sim} t_{n_1+n_2-2} \quad \text{(pooled, assumes equal variances)}$$</p>
-            <p>When the two variances aren't actually equal, <strong>Welch's t-test</strong> uses each sample's own variance instead of pooling them, at the cost of an approximate degrees of freedom.</p>
-            <p class="math">$$T = \frac{\bar X - \bar Y}{\sqrt{S_1^2/n_1 \,+\, S_2^2/n_2}} \ \overset{\cdot}{\sim}\ t_{\nu} \quad \text{(Welch–Satterthwaite } \nu\text{, approximate)}$$</p>
-            <p>Welch's is valid whether or not the variances match, which is why it's the more common default.</p>
           </div>
           <div class="topic" id="likelihood-ratio">
             <h2>Likelihood Ratio Test</h2>
