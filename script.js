@@ -1293,7 +1293,7 @@ if (window.renderMathInElement) {
     const cb = toScreen(zCrit, 0);
     svg.appendChild(el('line', { x1: cs.x, y1: cs.y, x2: cb.x, y2: cb.y, stroke: '#c92a2a', 'stroke-width': '1.25', 'stroke-dasharray': '3,3' }));
     const critLabel = el('text', { x: cs.x, y: padT - 5, 'font-size': '12', fill: '#c92a2a', 'text-anchor': 'middle' });
-    critLabel.textContent = `z* = ${zCrit}`;
+    critLabel.textContent = 'z*';
     svg.appendChild(critLabel);
 
     // alpha label — sits just above the axis out past the observed marker,
@@ -1310,7 +1310,7 @@ if (window.renderMathInElement) {
     svg.appendChild(el('line', { x1: os.x, y1: os.y, x2: ob.x, y2: ob.y, stroke: '#1a1a1a', 'stroke-width': '1.25' }));
     svg.appendChild(el('circle', { cx: os.x.toFixed(1), cy: os.y.toFixed(1), r: 3, fill: '#1a1a1a' }));
     const obsLabel = el('text', { x: os.x, y: os.y - 8, 'font-size': '12', fill: '#1a1a1a', 'text-anchor': 'middle' });
-    obsLabel.textContent = `z = ${zObs}`;
+    obsLabel.textContent = 'observed';
     svg.appendChild(obsLabel);
 
     container.innerHTML = '';
@@ -1320,10 +1320,9 @@ if (window.renderMathInElement) {
       { type: 'fill', color: '#c92a2a', label: 'rejection region' },
       { type: 'dot', color: '#1a1a1a', label: 'observed statistic' }
     ]);
-    // No trailing caption here — unlike the MLE/Bayesian charts, this
-    // example's numbers (α = 0.05, z* = 1.645, z = 2.1) are already woven
-    // into the surrounding prose above, so a repeated caption would just
-    // restate it.
+    // No trailing caption here, and no plugged-in numbers on the chart
+    // either — matches the symbolic style used elsewhere (the Method of
+    // Moments/MLE charts carry no numbers in their labels).
   }
 
   // Size and power: the null distribution N(0,1) against an alternative
