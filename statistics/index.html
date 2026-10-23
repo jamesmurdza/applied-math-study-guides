@@ -132,7 +132,7 @@
           </div>
           <div class="topic" id="likelihood-ratio">
             <h2>Likelihood Ratio Test</h2>
-            <p>Another way to test a restriction: compare the best fit <em>under</em> the restriction against the best fit <em>without</em> it. If forcing the restriction barely hurts the fit, it looks plausible.</p>
+            <p>The <strong>likelihood ratio test</strong> compares the best fit <em>under</em> a restriction on the parameter against the best fit <em>without</em> it. If forcing the restriction barely hurts the fit, it looks plausible.</p>
             <p class="math">$$\Lambda = \frac{\sup_{\theta \in \Theta_0} L(\theta)}{\sup_{\theta \in \Theta} L(\theta)}$$</p>
             <p>Θ₀ ⊂ Θ is the restricted space under H₀, so Λ ∈ (0, 1] — near 1 means the restriction barely hurt the fit, near 0 means it hurt a lot.</p>
             <p class="math">$$-2\log \Lambda \ \xrightarrow{d}\ \chi^2_{k}, \quad k = \dim(\Theta) - \dim(\Theta_0)$$</p>
@@ -140,7 +140,7 @@
           </div>
           <div class="topic" id="regression-models">
             <h2>Regression Models</h2>
-            <p>A different question from estimation so far: not the best value of a single parameter, but how one variable moves with another. Regression treats the response as a trend plus random noise, not an exact function of the predictor.</p>
+            <p>Regression models how one variable moves with another, treating the response as a trend plus random noise rather than an exact function of the predictor.</p>
             <p class="math">$$Y_i = \textcolor{#0b7285}{\beta_0} + \textcolor{#0b7285}{\beta_1} x_i + \varepsilon_i, \quad \varepsilon_i \textcolor{#7B4B8C}{\sim} N(0, \sigma^2)$$</p>
             <p>Yᵢ is the response, xᵢ the predictor; β₀, β₁ are the intercept and slope to estimate; εᵢ is leftover randomness, assumed normal with constant variance σ².</p>
             <p>Fitting means choosing the coefficients that make the residuals — the leftover noise once the line is drawn — as small as possible.</p>
