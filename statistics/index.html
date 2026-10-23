@@ -34,21 +34,21 @@
             <p>Method of moments matches the model's theoretical moments to the sample's own — one equation per unknown parameter — then solves for whatever makes them agree.</p>
             <p class="math">$$E[X^k] = \frac{1}{n}\sum_{i=1}^{n} X_i^k, \quad k = 1, 2, \dots$$</p>
 
-            <p>For a Normal mean with one unknown, μ, the mean of the model is set equal to the mean of the data:</p>
+            <p>A Normal distribution with one unknown, its mean, is the simplest case. The model's mean is set equal to the data's mean:</p>
 
             <div class="stat-chart" id="mom-normal-chart-root"></div>
 
             <p>That means the estimator is just the sample mean:</p>
             <p class="math">$$\hat{\textcolor{#0b7285}{\mu}} = \bar X$$</p>
 
-            <p>For X ~ Uniform(0, θ) with one unknown, θ, the mean of the model sits halfway between the two endpoints, so the first moment is θ/2, not θ itself.</p>
+            <p>A less trivial case: a Uniform distribution with one unknown, its upper endpoint. The model's mean sits halfway between the two endpoints — half the unknown one, not all of it.</p>
 
             <div class="stat-chart" id="mom-uniform-chart-root"></div>
 
             <p>That means the estimator is twice the sample mean:</p>
             <p class="math">$$\hat{\textcolor{#0b7285}{\theta}} = 2\bar X$$</p>
 
-            <p>If a model had two unknown parameters instead of one, both the first and second moments (k = 1 and k = 2) would be needed to solve for them.</p>
+            <p>If a model had two unknowns instead of one, both the first and second moments would be needed to solve for them.</p>
           </div>
           <div class="topic" id="mles">
             <h2>MLEs</h2>
