@@ -1216,6 +1216,24 @@ if (window.renderMathInElement) {
     }).join(' ');
   }
 
+  // A letter with a drawn circumflex above it (μ̂, θ̂, ...), used for
+  // "estimate of" labels. The Unicode combining circumflex (U+0302) does
+  // NOT render reliably over Greek letters in SVG <text> — it shows up as
+  // a disconnected mark floating above-and-beside the glyph rather than
+  // centered on top of it, varying by font/browser. Drawing the accent as
+  // its own small path, centered on the letter's own x, sidesteps that
+  // entirely.
+  function hatLabel(svg, x, y, letter, color) {
+    const t = el('text', { x, y, 'font-size': '12', fill: color, 'text-anchor': 'middle', 'font-weight': '600' });
+    t.textContent = letter;
+    svg.appendChild(t);
+    const hatY = y - 12.5;
+    svg.appendChild(el('path', {
+      d: `M${(x - 4).toFixed(1)},${hatY.toFixed(1)} L${x.toFixed(1)},${(hatY - 3).toFixed(1)} L${(x + 4).toFixed(1)},${hatY.toFixed(1)}`,
+      fill: 'none', stroke: color, 'stroke-width': '1.3', 'stroke-linecap': 'round', 'stroke-linejoin': 'round'
+    }));
+  }
+
   // Standard normal curve with a shaded right-tail rejection region, the
   // critical value z*, and an observed test statistic marked.
   function renderHypothesisChart(container) {
@@ -1480,11 +1498,12 @@ if (window.renderMathInElement) {
   }
 
   // Method of Moments, Normal case: the true N(μ,σ²) the data was drawn
-  // from, against the curve implied by plugging the moment-matched θ̂ = X̄
+  // from, against the curve implied by plugging the moment-matched μ̂ = X̄
   // back into the model, both drawn as shaded regions (not bare outlines)
   // so overlap between the two densities is visible as blended fill, not
-  // just two close-together lines. Same color convention as the Bias/MSE
-  // chart above (true in dashed gray, estimated in solid teal).
+  // just two close-together lines. True is teal (solid), estimated is
+  // gray (dashed) — the reverse of the Bias/MSE chart's convention above,
+  // by request, so the ground truth reads as the salient curve here.
   function renderMomNormalChart(container) {
     const data = [4.1, 4.6, 5.0, 5.3, 5.5];
     const trueMu = 5.0, sigma = 0.6;
@@ -1501,26 +1520,24 @@ if (window.renderMathInElement) {
       y: axisY - (y / maxY) * plotH
     });
 
-    function areaPath(fn, color, dash) {
+    function areaPath(fn) {
       const pts = sample(fn, xMin, xMax, 200);
       const left = toScreen(xMin, 0), right = toScreen(xMax, 0);
       let d = `M${left.x.toFixed(1)},${left.y.toFixed(1)} `;
       d += pts.map(p => { const s = toScreen(p.x, p.y); return `L${s.x.toFixed(1)},${s.y.toFixed(1)}`; }).join(' ');
       d += ` L${right.x.toFixed(1)},${right.y.toFixed(1)} Z`;
-      return { d, color, dash };
+      return d;
     }
 
     const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'True and estimated Normal densities, shaded, over five data points' });
 
-    const trueArea = areaPath(x => normalPdf(x, trueMu, sigma), '#999');
-    svg.appendChild(el('path', { d: trueArea.d, fill: '#999', 'fill-opacity': '0.2', stroke: 'none' }));
-    const estArea = areaPath(x => normalPdf(x, xHat, sigma), '#0b7285');
-    svg.appendChild(el('path', { d: estArea.d, fill: '#0b7285', 'fill-opacity': '0.25', stroke: 'none' }));
+    svg.appendChild(el('path', { d: areaPath(x => normalPdf(x, trueMu, sigma)), fill: '#0b7285', 'fill-opacity': '0.25', stroke: 'none' }));
+    svg.appendChild(el('path', { d: areaPath(x => normalPdf(x, xHat, sigma)), fill: '#999', 'fill-opacity': '0.2', stroke: 'none' }));
 
     const truePts = sample(x => normalPdf(x, trueMu, sigma), xMin, xMax, 200);
-    svg.appendChild(el('path', { d: pathFor(truePts, toScreen), fill: 'none', stroke: '#999', 'stroke-width': '1.75', 'stroke-dasharray': '4,3' }));
+    svg.appendChild(el('path', { d: pathFor(truePts, toScreen), fill: 'none', stroke: '#0b7285', 'stroke-width': '2' }));
     const estPts = sample(x => normalPdf(x, xHat, sigma), xMin, xMax, 200);
-    svg.appendChild(el('path', { d: pathFor(estPts, toScreen), fill: 'none', stroke: '#0b7285', 'stroke-width': '2' }));
+    svg.appendChild(el('path', { d: pathFor(estPts, toScreen), fill: 'none', stroke: '#999', 'stroke-width': '1.75', 'stroke-dasharray': '4,3' }));
 
     svg.appendChild(el('line', { x1: padL, y1: axisY, x2: padL + plotW, y2: axisY, stroke: '#333' }));
     data.forEach(x => {
@@ -1533,20 +1550,18 @@ if (window.renderMathInElement) {
     // instead of vertically, so both labels stay above the curves (not
     // one dropped down to the axis) while still not colliding.
     const truePeak = toScreen(trueMu, normalPdf(trueMu, trueMu, sigma));
-    const trueLabel = el('text', { x: truePeak.x - 14, y: truePeak.y - 8, 'font-size': '12', fill: '#999', 'text-anchor': 'middle', 'font-weight': '600' });
+    const trueLabel = el('text', { x: truePeak.x - 14, y: truePeak.y - 8, 'font-size': '12', fill: '#0b7285', 'text-anchor': 'middle', 'font-weight': '600' });
     trueLabel.textContent = `μ`;
     svg.appendChild(trueLabel);
 
     const estPeak = toScreen(xHat, normalPdf(xHat, xHat, sigma));
-    const estLabel = el('text', { x: estPeak.x + 14, y: estPeak.y - 8, 'font-size': '12', fill: '#0b7285', 'text-anchor': 'middle', 'font-weight': '600' });
-    estLabel.textContent = `μ̂`;
-    svg.appendChild(estLabel);
+    hatLabel(svg, estPeak.x + 16, estPeak.y - 8, 'μ', '#999');
 
     container.innerHTML = '';
     container.appendChild(svg);
     renderLegend(container, [
-      { type: 'fill', color: '#999', label: 'true N(μ, σ²)' },
-      { type: 'fill', color: '#0b7285', label: 'estimated N(μ̂, σ²)' },
+      { type: 'fill', color: '#0b7285', label: 'true N(μ, σ²)' },
+      { type: 'fill', color: '#999', label: 'estimated N(μ̂, σ²)' },
       { type: 'dot', color: '#1a1a1a', label: 'data' }
     ]);
     // No trailing caption — the numbers are already in the prose right
@@ -1557,7 +1572,9 @@ if (window.renderMathInElement) {
   // rectangles on a shared baseline — true density is 1/θ, so the wider
   // (true) region is shorter and the narrower (estimated) region is taller,
   // overlapping near the origin with the true region's uncovered tail
-  // visible as the one part of it the estimate missed entirely.
+  // visible as the one part of it the estimate missed entirely. True is
+  // teal (solid), estimated is gray (dashed) — same swapped convention as
+  // the Normal chart above.
   function renderMomUniformChart(container) {
     const data = [1.0, 1.5, 3.0, 4.0, 5.5];
     const trueTheta = 7, xHat = 2 * (data.reduce((a, b) => a + b, 0) / data.length);
@@ -1572,7 +1589,7 @@ if (window.renderMathInElement) {
 
     const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'True and estimated Uniform densities, shaded, with five data points' });
 
-    [[trueTheta, '#999', '4,3', 'θ'], [xHat, '#0b7285', null, 'θ̂']].forEach(([end, color, dash, sym]) => {
+    [[trueTheta, '#0b7285', null, false], [xHat, '#999', '4,3', true]].forEach(([end, color, dash, isEstimate]) => {
       const h = 1 / end;
       const top = toY(h);
       const attrs = { d: `M${toX(0)},${axisY} L${toX(0)},${top.toFixed(1)} L${toX(end)},${top.toFixed(1)} L${toX(end)},${axisY} Z`, fill: color, 'fill-opacity': '0.25', stroke: 'none' };
@@ -1583,9 +1600,13 @@ if (window.renderMathInElement) {
       svg.appendChild(el('line', { x1: toX(end), y1: top, x2: toX(end), y2: axisY, stroke: color, 'stroke-width': dash ? '1.5' : '2', 'stroke-dasharray': dash || 'none' }));
       // minimal parameter mark: just the symbol, right at the edge it
       // belongs to, instead of only naming it in the legend below
-      const paramLabel = el('text', { x: toX(end), y: top - 6, 'font-size': '12', fill: color, 'text-anchor': 'middle', 'font-weight': '600' });
-      paramLabel.textContent = sym;
-      svg.appendChild(paramLabel);
+      if (isEstimate) {
+        hatLabel(svg, toX(end) + 8, top - 6, 'θ', color);
+      } else {
+        const paramLabel = el('text', { x: toX(end), y: top - 6, 'font-size': '12', fill: color, 'text-anchor': 'middle', 'font-weight': '600' });
+        paramLabel.textContent = 'θ';
+        svg.appendChild(paramLabel);
+      }
     });
 
     svg.appendChild(el('line', { x1: padL, y1: axisY, x2: padL + plotW, y2: axisY, stroke: '#333' }));
@@ -1596,8 +1617,8 @@ if (window.renderMathInElement) {
     container.innerHTML = '';
     container.appendChild(svg);
     renderLegend(container, [
-      { type: 'fill', color: '#999', label: `true θ = ${trueTheta}` },
-      { type: 'fill', color: '#0b7285', label: `estimated θ̂ = ${xHat}` },
+      { type: 'fill', color: '#0b7285', label: `true θ = ${trueTheta}` },
+      { type: 'fill', color: '#999', label: `estimated θ̂ = ${xHat}` },
       { type: 'dot', color: '#1a1a1a', label: 'data' }
     ]);
     // No trailing caption — same reasoning as the Normal chart above.
