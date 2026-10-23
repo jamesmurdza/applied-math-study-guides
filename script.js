@@ -1557,11 +1557,15 @@ if (window.renderMathInElement) {
     // peaks sit almost on top of each other — staggered horizontally
     // instead of vertically, so both labels stay above the curves (not
     // one dropped down to the axis) while still not colliding.
+    // trueMu > xHat here, so the true peak sits to the right of the
+    // estimated one — offset each label further toward its own side
+    // (true right, estimated left) rather than assuming a fixed direction,
+    // or they cross over and the labels read in the wrong left-right order.
     const truePeak = toScreen(trueMu, normalPdf(trueMu, trueMu, sigma));
-    texLabel(svg, truePeak.x - 14, truePeak.y - 8, '\\mu', '#0b7285');
-
     const estPeak = toScreen(xHat, normalPdf(xHat, xHat, sigma));
-    texLabel(svg, estPeak.x + 16, estPeak.y - 8, '\\hat{\\mu}', '#999');
+    const trueOffset = truePeak.x >= estPeak.x ? 14 : -14;
+    texLabel(svg, truePeak.x + trueOffset, truePeak.y - 8, '\\mu', '#0b7285');
+    texLabel(svg, estPeak.x - trueOffset, estPeak.y - 8, '\\hat{\\mu}', '#999');
 
     container.innerHTML = '';
     container.appendChild(svg);
