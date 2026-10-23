@@ -1047,11 +1047,17 @@ if (window.renderMathInElement) {
     return node;
   }
 
+  // Positions scaled to ~80% of the original layout to shrink the graph
+  // itself (node spacing, radius) without touching font-size — SVG text
+  // size is an absolute unit, not relative to the coordinate system, so
+  // shrinking the viewBox and max-width together by the same factor keeps
+  // labels rendering at the same actual pixel size (still 1:1 per
+  // AGENTS.md) while the graph they sit on gets visibly more compact.
   const nodePos = {
-    A: { x: 30, y: 140 },
-    B: { x: 150, y: 50 },
-    C: { x: 150, y: 230 },
-    D: { x: 270, y: 140 }
+    A: { x: 24, y: 112 },
+    B: { x: 120, y: 40 },
+    C: { x: 120, y: 184 },
+    D: { x: 216, y: 112 }
   };
   const edgeList = [
     ['A', 'B', 4], ['A', 'C', 2], ['B', 'C', 1], ['B', 'D', 5], ['C', 'D', 8]
@@ -1095,8 +1101,8 @@ if (window.renderMathInElement) {
   function renderStep(cur, idx) {
     const dist = cur.dist, prev = cur.prev, visited = cur.visited;
     const svg = el('svg', {
-      viewBox: '0 0 300 260',
-      style: `width:100%;max-width:300px${idx > 0 ? ';margin-top:24px' : ''}`,
+      viewBox: '0 0 240 208',
+      style: `width:100%;max-width:240px${idx > 0 ? ';margin-top:24px' : ''}`,
       role: 'img',
       'aria-label': `Dijkstra step ${idx + 1}: settle ${cur.settled}`
     });
@@ -1129,7 +1135,7 @@ if (window.renderMathInElement) {
       const isCurrent = cur.settled === n;
       const isFrontier = !isSettled && dist[n] < Infinity;
       svg.appendChild(el('circle', {
-        cx: p.x, cy: p.y, r: 16,
+        cx: p.x, cy: p.y, r: 13,
         fill: isSettled ? '#1a1a1a' : '#fff',
         stroke: isCurrent ? '#c0392b' : (isFrontier ? '#1a1a1a' : '#ccc'),
         'stroke-width': isCurrent ? '3' : '1.5'
