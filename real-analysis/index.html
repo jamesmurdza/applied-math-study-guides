@@ -257,12 +257,12 @@
               </svg>
               <p>Keeping <strong>x</strong> within δ of <strong>x₀</strong> (vertical band) keeps <strong>f(x)</strong> within ε of <strong>f(x₀)</strong> (horizontal band).</p>
             </div>
-          </div>
-          <div class="topic" id="uniform-continuity">
-            <h2>Uniform Continuity</h2>
-            <p><em>Placeholder: definition — one δ works for every point at once, not chosen per x₀.</em></p>
-            <p><em>Placeholder: formula, contrasted against the Continuity formula above (quantifier order change).</em></p>
-            <p><em>Placeholder: example pair — x² on [0,1] (uniformly continuous, ties to Compactness/Heine–Cantor) vs 1/x on (0,1) (not uniformly continuous, ties to Completeness/Bolzano–Weierstrass).</em></p>
+
+            <p>Continuity only promises a δ for each x₀ separately — it can shrink as x₀ varies. A function is <strong>uniformly continuous</strong> when one δ works for every point at once.</p>
+            <p class="math">$$\textcolor{#4078F2}{f} \text{ uniformly continuous} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\forall} \varepsilon \textcolor{#7B4B8C}{>} 0\,\textcolor{#7B4B8C}{\exists} \delta \textcolor{#7B4B8C}{>} 0\,\textcolor{#7B4B8C}{\forall} x,x_0\textcolor{#7B4B8C}{:}\,\textcolor{#4078F2}{d}(x_0,x) \textcolor{#7B4B8C}{<} \delta \textcolor{#7B4B8C}{\implies} \textcolor{#4078F2}{\rho}(\textcolor{#4078F2}{f}(x_0),\textcolor{#4078F2}{f}(x)) \textcolor{#7B4B8C}{<} \varepsilon$$</p>
+            <p>The only change from continuity above is where δ is chosen: after x₀ (∀x₀∃δ) versus before it (∃δ∀x₀). x² is continuous but not uniformly continuous on ℝ — as x₀ grows, the same ε forces δ smaller. A <strong>Lipschitz</strong> function is a stronger, concrete case: distances in the output are capped by a constant multiple of distances in the input, which hands δ = ε/L directly, independent of x₀.</p>
+            <p class="math">$$\textcolor{#4078F2}{f} \text{ Lipschitz} \textcolor{#7B4B8C}{\iff} \textcolor{#7B4B8C}{\exists}\, L \textcolor{#7B4B8C}{>} 0\ \textcolor{#7B4B8C}{\forall} x,x_0\textcolor{#7B4B8C}{:}\ \textcolor{#4078F2}{\rho}(\textcolor{#4078F2}{f}(x_0),\textcolor{#4078F2}{f}(x)) \textcolor{#7B4B8C}{\le} L \cdot \textcolor{#4078F2}{d}(x_0,x)$$</p>
+            <p>Every Lipschitz function is uniformly continuous, but not conversely — √x on [0,∞) is uniformly continuous without being Lipschitz, since its slope near 0 is unbounded.</p>
           </div>
           <div class="topic" id="homeomorphisms">
             <h2>Homeomorphisms</h2>
