@@ -132,11 +132,15 @@
           </div>
           <div class="topic" id="likelihood-ratio">
             <h2>Likelihood Ratio Test</h2>
-            <p>The <strong>likelihood ratio test</strong> compares the best fit <em>under</em> a restriction on the parameter against the best fit <em>without</em> it. If forcing the restriction barely hurts the fit, it looks plausible.</p>
-            <p class="math">$$\Lambda = \frac{\sup_{\theta \in \Theta_0} L(\theta)}{\sup_{\theta \in \Theta} L(\theta)}$$</p>
-            <p>Θ₀ ⊂ Θ is the restricted space under H₀, so Λ ∈ (0, 1] — near 1 means the restriction barely hurt the fit, near 0 means it hurt a lot.</p>
-            <p class="math">$$-2\log \Lambda \ \xrightarrow{d}\ \chi^2_{k}, \quad k = \dim(\Theta) - \dim(\Theta_0)$$</p>
-            <p>k is the number of parameters the restriction fixes to specific values. Reject H₀ when −2log Λ is too large to plausibly come from that χ² distribution.</p>
+            <p>The <strong>likelihood ratio test</strong> checks whether fixing a parameter to a specific value makes the model fit the data significantly worse.</p>
+            <p class="math">$$\Lambda = \frac{\text{best fit under } H_0}{\text{best fit overall}} = \frac{\sup_{\theta \in \Theta_0} L(\theta)}{\sup_{\theta \in \Theta} L(\theta)}$$</p>
+            <ul>
+              <li>Λ near 1: the fit barely changes, so H₀ is plausible.</li>
+              <li>Λ near 0: the fit gets much worse, suggesting H₀ may be false.</li>
+            </ul>
+            <p>Under H₀, the test statistic approximately follows a chi-squared distribution:</p>
+            <p class="math">$$-2\log \Lambda \ \sim\ \chi^2_{k}$$</p>
+            <p>Here, k is the number of independent restrictions imposed on the parameters. Reject H₀ if the test statistic is large enough to indicate a significantly worse fit.</p>
           </div>
           <div class="topic" id="regression-models">
             <h2>Regression Models</h2>

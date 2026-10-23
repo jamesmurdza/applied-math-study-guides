@@ -292,7 +292,8 @@ body {
   margin-top: 22px;
 }
 
-.topic > * + ol {
+.topic > * + ol,
+.topic > * + ul {
   margin-top: 16px;
 }
 
@@ -304,7 +305,8 @@ body {
   text-underline-offset: 2px;
 }
 
-.topic ol {
+.topic ol,
+.topic ul {
   margin: 0;
   padding-left: 22px;
   color: #555;
@@ -312,7 +314,8 @@ body {
   line-height: 1.6;
 }
 
-.topic ol li + li {
+.topic ol li + li,
+.topic ul li + li {
   margin-top: 6px;
 }
 
