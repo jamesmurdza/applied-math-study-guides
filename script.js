@@ -1535,12 +1535,12 @@ if (window.renderMathInElement) {
     const trueBase = toScreen(trueMu, 0);
     svg.appendChild(el('line', { x1: trueBase.x, y1: trueBase.y, x2: trueBase.x, y2: trueBase.y + 6, stroke: '#999', 'stroke-width': '1.5' }));
     const trueLabel = el('text', { x: trueBase.x, y: trueBase.y + 18, 'font-size': '12', fill: '#999', 'text-anchor': 'middle', 'font-weight': '600' });
-    trueLabel.textContent = `μ = ${trueMu.toFixed(1)}`;
+    trueLabel.textContent = `μ`;
     svg.appendChild(trueLabel);
 
     const estPeak = toScreen(xHat, normalPdf(xHat, xHat, sigma));
     const estLabel = el('text', { x: estPeak.x, y: estPeak.y - 8, 'font-size': '12', fill: '#0b7285', 'text-anchor': 'middle', 'font-weight': '600' });
-    estLabel.textContent = `θ̂ = ${xHat}`;
+    estLabel.textContent = `θ̂`;
     svg.appendChild(estLabel);
 
     container.innerHTML = '';
@@ -1583,10 +1583,10 @@ if (window.renderMathInElement) {
       if (dash) outline['stroke-dasharray'] = dash;
       svg.appendChild(el('line', outline));
       svg.appendChild(el('line', { x1: toX(end), y1: top, x2: toX(end), y2: axisY, stroke: color, 'stroke-width': dash ? '1.5' : '2', 'stroke-dasharray': dash || 'none' }));
-      // minimal parameter mark: the symbol and its value, right at the edge
-      // it belongs to, instead of only naming it in the legend below
+      // minimal parameter mark: just the symbol, right at the edge it
+      // belongs to, instead of only naming it in the legend below
       const paramLabel = el('text', { x: toX(end), y: top - 6, 'font-size': '12', fill: color, 'text-anchor': 'middle', 'font-weight': '600' });
-      paramLabel.textContent = `${sym} = ${end}`;
+      paramLabel.textContent = sym;
       svg.appendChild(paramLabel);
     });
 
