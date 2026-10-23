@@ -115,8 +115,10 @@
 
             <p>Equivalently: the p-value is the probability of a test statistic at least as extreme as the one observed, assuming H₀ is true. Reject when p &lt; α — the same decision, expressed as a probability rather than a region.</p>
 
-            <p>A test can fail in two ways: rejecting a true H₀ (<strong>Type I error</strong>), or failing to reject a false one (<strong>Type II error</strong>). Size (α) is the Type I error rate — how often the test wrongly rejects a true H₀; power is one minus the Type II error rate — how often it correctly rejects a false one.</p>
-            <p class="math">$$\textcolor{#c92a2a}{\alpha} = P(\text{reject } H_0 \mid H_0) \qquad 1-\textcolor{#0b7285}{\beta} = P(\text{reject } H_0 \mid H_1)$$</p>
+            <p>A test can fail in two ways: rejecting a true H₀ (<strong>Type I error</strong>), or failing to reject a false one (<strong>Type II error</strong>). Size (α) is the Type I error rate — how often the test wrongly rejects a true H₀:</p>
+            <p class="math">$$\textcolor{#c92a2a}{\alpha} = P(\text{reject } H_0 \mid H_0)$$</p>
+            <p>Power is one minus the Type II error rate — how often the test correctly rejects a false H₀:</p>
+            <p class="math">$$1-\textcolor{#0b7285}{\beta} = P(\text{reject } H_0 \mid H_1)$$</p>
             <p>Below, the same rejection region is checked against both the null distribution and a specific alternative. The red tail is still α; the teal tail is the power.</p>
 
             <div class="stat-chart" id="power-chart-root"></div>
