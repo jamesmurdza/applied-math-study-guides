@@ -1216,16 +1216,16 @@ if (window.renderMathInElement) {
     }).join(' ');
   }
 
-  // A letter with a proper circumflex above it (μ̂, θ̂, ...), used for
-  // "estimate of" labels. The Unicode combining circumflex (U+0302) does
-  // NOT render reliably over Greek letters in SVG <text> — it shows up as
-  // a disconnected mark floating above-and-beside the glyph rather than
-  // centered on top of it, varying by font/browser. A hand-drawn accent
-  // shape (tried first) looked crude next to KaTeX's own hats used
-  // everywhere else on the page — so this renders the real thing via
-  // KaTeX itself, through a <foreignObject>, matching every other hat on
-  // the site exactly instead of approximating one.
-  function hatLabel(svg, x, y, letter, color) {
+  // A small parameter label (μ, θ̂, ...) rendered through KaTeX via a
+  // <foreignObject> rather than plain SVG <text>. Two reasons: the
+  // Unicode combining circumflex (U+0302) doesn't render reliably over
+  // Greek letters in SVG <text> (shows up disconnected, floating beside
+  // the glyph), and a hand-drawn accent shape looked crude next to
+  // KaTeX's own hats used everywhere else on the page. Routing every such
+  // label through KaTeX — hatted or not — also keeps a true/estimate pair
+  // (e.g. μ next to μ̂) visually matched: same font, weight, and
+  // baseline, instead of mixing plain SVG text with KaTeX output.
+  function texLabel(svg, x, y, tex, color) {
     const w = 26, h = 22;
     const fo = document.createElementNS(SVG_NS, 'foreignObject');
     fo.setAttribute('x', (x - w / 2).toFixed(1));
@@ -1237,7 +1237,7 @@ if (window.renderMathInElement) {
     div.style.fontSize = '13px';
     div.style.fontWeight = '600';
     div.style.textAlign = 'center';
-    katex.render(`\\hat{${letter}}`, div, { throwOnError: false });
+    katex.render(tex, div, { throwOnError: false });
     fo.appendChild(div);
     svg.appendChild(fo);
   }
@@ -1558,12 +1558,10 @@ if (window.renderMathInElement) {
     // instead of vertically, so both labels stay above the curves (not
     // one dropped down to the axis) while still not colliding.
     const truePeak = toScreen(trueMu, normalPdf(trueMu, trueMu, sigma));
-    const trueLabel = el('text', { x: truePeak.x - 14, y: truePeak.y - 8, 'font-size': '12', fill: '#0b7285', 'text-anchor': 'middle', 'font-weight': '600' });
-    trueLabel.textContent = `μ`;
-    svg.appendChild(trueLabel);
+    texLabel(svg, truePeak.x - 14, truePeak.y - 8, '\\mu', '#0b7285');
 
     const estPeak = toScreen(xHat, normalPdf(xHat, xHat, sigma));
-    hatLabel(svg, estPeak.x + 16, estPeak.y - 8, 'μ', '#999');
+    texLabel(svg, estPeak.x + 16, estPeak.y - 8, '\\hat{\\mu}', '#999');
 
     container.innerHTML = '';
     container.appendChild(svg);
@@ -1609,11 +1607,9 @@ if (window.renderMathInElement) {
       // minimal parameter mark: just the symbol, right at the edge it
       // belongs to, instead of only naming it in the legend below
       if (isEstimate) {
-        hatLabel(svg, toX(end) + 8, top - 6, 'θ', color);
+        texLabel(svg, toX(end) + 8, top - 6, '\\hat{\\theta}', color);
       } else {
-        const paramLabel = el('text', { x: toX(end), y: top - 6, 'font-size': '12', fill: color, 'text-anchor': 'middle', 'font-weight': '600' });
-        paramLabel.textContent = 'θ';
-        svg.appendChild(paramLabel);
+        texLabel(svg, toX(end), top - 6, '\\theta', color);
       }
     });
 
