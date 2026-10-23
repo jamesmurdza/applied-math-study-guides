@@ -1528,6 +1528,21 @@ if (window.renderMathInElement) {
       svg.appendChild(el('circle', { cx: s.x, cy: s.y, r: 3, fill: '#1a1a1a' }));
     });
 
+    // minimal parameter marks: μ and θ̂ are only 0.1 apart here, too close
+    // for two peak-top labels to avoid colliding, so they're staggered —
+    // μ's tick+label sits below the axis, θ̂'s sits above its own peak —
+    // rather than fighting for the same sliver of space.
+    const trueBase = toScreen(trueMu, 0);
+    svg.appendChild(el('line', { x1: trueBase.x, y1: trueBase.y, x2: trueBase.x, y2: trueBase.y + 6, stroke: '#999', 'stroke-width': '1.5' }));
+    const trueLabel = el('text', { x: trueBase.x, y: trueBase.y + 18, 'font-size': '12', fill: '#999', 'text-anchor': 'middle', 'font-weight': '600' });
+    trueLabel.textContent = `μ = ${trueMu.toFixed(1)}`;
+    svg.appendChild(trueLabel);
+
+    const estPeak = toScreen(xHat, normalPdf(xHat, xHat, sigma));
+    const estLabel = el('text', { x: estPeak.x, y: estPeak.y - 8, 'font-size': '12', fill: '#0b7285', 'text-anchor': 'middle', 'font-weight': '600' });
+    estLabel.textContent = `θ̂ = ${xHat}`;
+    svg.appendChild(estLabel);
+
     container.innerHTML = '';
     container.appendChild(svg);
     renderLegend(container, [
@@ -1559,7 +1574,7 @@ if (window.renderMathInElement) {
 
     const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'True and estimated Uniform densities, shaded, with five data points' });
 
-    [[trueTheta, '#999', '4,3'], [xHat, '#0b7285', null]].forEach(([end, color, dash]) => {
+    [[trueTheta, '#999', '4,3', 'θ'], [xHat, '#0b7285', null, 'θ̂']].forEach(([end, color, dash, sym]) => {
       const h = 1 / end;
       const top = toY(h);
       const attrs = { d: `M${toX(0)},${axisY} L${toX(0)},${top.toFixed(1)} L${toX(end)},${top.toFixed(1)} L${toX(end)},${axisY} Z`, fill: color, 'fill-opacity': '0.25', stroke: 'none' };
@@ -1568,6 +1583,11 @@ if (window.renderMathInElement) {
       if (dash) outline['stroke-dasharray'] = dash;
       svg.appendChild(el('line', outline));
       svg.appendChild(el('line', { x1: toX(end), y1: top, x2: toX(end), y2: axisY, stroke: color, 'stroke-width': dash ? '1.5' : '2', 'stroke-dasharray': dash || 'none' }));
+      // minimal parameter mark: the symbol and its value, right at the edge
+      // it belongs to, instead of only naming it in the legend below
+      const paramLabel = el('text', { x: toX(end), y: top - 6, 'font-size': '12', fill: color, 'text-anchor': 'middle', 'font-weight': '600' });
+      paramLabel.textContent = `${sym} = ${end}`;
+      svg.appendChild(paramLabel);
     });
 
     svg.appendChild(el('line', { x1: padL, y1: axisY, x2: padL + plotW, y2: axisY, stroke: '#333' }));
