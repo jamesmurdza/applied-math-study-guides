@@ -1488,8 +1488,8 @@ if (window.renderMathInElement) {
     container.innerHTML = '';
     container.appendChild(svg);
     renderLegend(container, [
-      { type: 'fill', color: '#0b7285', label: `true θ = ${trueTheta}` },
-      { type: 'fill', color: '#999', label: `estimated θ̂ = ${xHat}` },
+      { type: 'fill', color: '#0b7285', label: 'true θ' },
+      { type: 'fill', color: '#999', label: 'estimated θ̂' },
       { type: 'dot', color: '#1a1a1a', label: 'data' }
     ]);
     // No trailing caption — the setup is already stated in the prose
@@ -1605,7 +1605,7 @@ if (window.renderMathInElement) {
     const trueTop = toScreen(trueMu, yMax), trueBase = toScreen(trueMu, 0);
     svg.appendChild(el('line', { x1: trueTop.x, y1: trueTop.y, x2: trueBase.x, y2: trueBase.y, stroke: '#999', 'stroke-width': '1.25', 'stroke-dasharray': '3,3' }));
     const trueLabel = el('text', { x: trueTop.x, y: padT - 5, 'font-size': '12', fill: '#999', 'text-anchor': 'middle' });
-    trueLabel.textContent = `true μ = ${trueMu}`;
+    trueLabel.textContent = 'true μ';
     svg.appendChild(trueLabel);
 
     const oY = padT + plotH;
@@ -1754,8 +1754,8 @@ if (window.renderMathInElement) {
     container.innerHTML = '';
     container.appendChild(svg);
     renderLegend(container, [
-      { type: 'fill', color: '#0b7285', label: `true θ = ${trueTheta}` },
-      { type: 'fill', color: '#999', label: `estimated θ̂ = ${xHat}` },
+      { type: 'fill', color: '#0b7285', label: 'true θ' },
+      { type: 'fill', color: '#999', label: 'estimated θ̂' },
       { type: 'dot', color: '#1a1a1a', label: 'data' }
     ]);
     // No trailing caption — same reasoning as the Normal chart above.

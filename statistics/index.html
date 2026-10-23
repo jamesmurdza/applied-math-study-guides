@@ -87,7 +87,7 @@
             <p class="math">$$\text{Bias}(\hat{\textcolor{#0b7285}{\theta}}) = E[\hat{\textcolor{#0b7285}{\theta}}] - \textcolor{#0b7285}{\theta}$$</p>
             <p>Mean squared error folds bias and variance into one number, so a biased estimator can still win on MSE as long as its variance drops enough to compensate.</p>
             <p class="math">$$\text{MSE}(\hat{\textcolor{#0b7285}{\theta}}) = E[(\hat{\textcolor{#0b7285}{\theta}}-\textcolor{#0b7285}{\theta})^2] = \text{Var}(\hat{\textcolor{#0b7285}{\theta}}) + \text{Bias}(\hat{\textcolor{#0b7285}{\theta}})^2$$</p>
-            <p>With the normal example's data and a hypothetical true μ = 4.2: the MLE X̄ is unbiased but has higher variance (MSE ≈ 0.072), while the biased Bayesian posterior mean has lower variance and wins on MSE (≈ 0.030).</p>
+            <p>With the normal example's data and a hypothetical true μ different from the prior's center: the MLE X̄ is unbiased but has higher variance, while the biased Bayesian posterior mean has lower variance and wins on MSE.</p>
 
             <div class="stat-chart" id="bias-mse-chart-root"></div>
           </div>
@@ -101,7 +101,7 @@
             <h2>Confidence Intervals</h2>
             <p>Inverting a pivotal quantity asks which parameter values would make the observed pivot land in its typical range — that range of values is the confidence interval.</p>
             <p class="math">$$P\!\left(-t^*_{n-1} \le \frac{\bar X - \textcolor{#0b7285}{\mu}}{S/\sqrt{n}} \le t^*_{n-1}\right) = 1-\textcolor{#c92a2a}{\alpha} \quad\Longrightarrow\quad \textcolor{#0b7285}{\mu} \in \bar X \pm t^*_{n-1}\frac{S}{\sqrt{n}}$$</p>
-            <p>If you repeated this process on fresh data many times, about 95% of the resulting intervals would contain the true μ — that's what "95% confidence" means. Once you've computed one actual interval, it simply does or doesn't contain μ; there's no probability left to assign.</p>
+            <p>If you repeated this process on fresh data many times, the stated confidence level is the fraction of resulting intervals that would contain the true μ. Once you've computed one actual interval, it simply does or doesn't contain μ; there's no probability left to assign.</p>
             <p>This coverage is exact only when the data is actually normal. Otherwise a near-pivot serves the same role: its distribution isn't exactly known, only approximated using a large sample, so coverage is only approximate too.</p>
           </div>
           <div class="topic" id="hypothesis-testing">
