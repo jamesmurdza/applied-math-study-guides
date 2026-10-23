@@ -1708,6 +1708,12 @@ if (window.renderMathInElement) {
   const momUniformMount = document.getElementById('mom-uniform-chart-root');
   if (momUniformMount) renderMomUniformChart(momUniformMount);
 
+  // Reuses the exact same chart as Method of Moments' normal example —
+  // MLE and method of moments give the identical estimator (X̄) here, so
+  // the chart itself (not just the number) is identical, not just similar.
+  const mleNormalMount = document.getElementById('mle-normal-chart-root');
+  if (mleNormalMount) renderMomNormalChart(mleNormalMount);
+
   const mleUniformMount = document.getElementById('mle-uniform-chart-root');
   if (mleUniformMount) renderMleUniformChart(mleUniformMount);
 
