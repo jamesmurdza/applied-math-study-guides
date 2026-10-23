@@ -33,7 +33,6 @@
             <h2>Method of Moments</h2>
             <p>Method of moments matches the model's theoretical moments to the sample's own — one equation per unknown parameter — then solves for whatever makes them agree.</p>
             <p class="math">$$E[X^k] = \frac{1}{n}\sum_{i=1}^{n} X_i^k, \quad k = 1, 2, \dots$$</p>
-            <p>Both examples below have a single unknown parameter, so only the first moment — the mean — is needed.</p>
 
             <p>For a Normal mean, the mean of the model is set equal to the mean of the data:</p>
 
@@ -46,6 +45,8 @@
             <div class="stat-chart" id="mom-uniform-chart-root"></div>
 
             <p class="math">$$\hat{\textcolor{#0b7285}{\theta}} = 2\bar X$$</p>
+
+            <p>If a model had two unknown parameters instead of one, both the first and second moments (k = 1 and k = 2) would be needed to solve for them.</p>
           </div>
           <div class="topic" id="mles">
             <h2>MLEs</h2>
