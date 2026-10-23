@@ -1528,10 +1528,10 @@ if (window.renderMathInElement) {
       svg.appendChild(el('circle', { cx: s.x, cy: s.y, r: 3, fill: '#1a1a1a' }));
     });
 
-    // minimal parameter marks: μ and θ̂ are only 0.1 apart here, too close
+    // minimal parameter marks: μ and μ̂ are only 0.1 apart here, too close
     // for two peak-top labels to avoid colliding side by side — staggered
     // by height instead, both above the axis: μ gets a short tick near the
-    // axis, θ̂ sits up at its own peak, well clear of each other vertically.
+    // axis, μ̂ sits up at its own peak, well clear of each other vertically.
     const trueBase = toScreen(trueMu, 0);
     svg.appendChild(el('line', { x1: trueBase.x, y1: trueBase.y, x2: trueBase.x, y2: trueBase.y - 10, stroke: '#999', 'stroke-width': '1.5' }));
     const trueLabel = el('text', { x: trueBase.x, y: trueBase.y - 16, 'font-size': '12', fill: '#999', 'text-anchor': 'middle', 'font-weight': '600' });
@@ -1540,14 +1540,14 @@ if (window.renderMathInElement) {
 
     const estPeak = toScreen(xHat, normalPdf(xHat, xHat, sigma));
     const estLabel = el('text', { x: estPeak.x, y: estPeak.y - 8, 'font-size': '12', fill: '#0b7285', 'text-anchor': 'middle', 'font-weight': '600' });
-    estLabel.textContent = `θ̂`;
+    estLabel.textContent = `μ̂`;
     svg.appendChild(estLabel);
 
     container.innerHTML = '';
     container.appendChild(svg);
     renderLegend(container, [
       { type: 'fill', color: '#999', label: 'true N(μ, σ²)' },
-      { type: 'fill', color: '#0b7285', label: 'estimated N(θ̂, σ²)' },
+      { type: 'fill', color: '#0b7285', label: 'estimated N(μ̂, σ²)' },
       { type: 'dot', color: '#1a1a1a', label: 'data' }
     ]);
     // No trailing caption — the numbers are already in the prose right
