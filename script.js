@@ -1529,12 +1529,12 @@ if (window.renderMathInElement) {
     });
 
     // minimal parameter marks: μ and θ̂ are only 0.1 apart here, too close
-    // for two peak-top labels to avoid colliding, so they're staggered —
-    // μ's tick+label sits below the axis, θ̂'s sits above its own peak —
-    // rather than fighting for the same sliver of space.
+    // for two peak-top labels to avoid colliding side by side — staggered
+    // by height instead, both above the axis: μ gets a short tick near the
+    // axis, θ̂ sits up at its own peak, well clear of each other vertically.
     const trueBase = toScreen(trueMu, 0);
-    svg.appendChild(el('line', { x1: trueBase.x, y1: trueBase.y, x2: trueBase.x, y2: trueBase.y + 6, stroke: '#999', 'stroke-width': '1.5' }));
-    const trueLabel = el('text', { x: trueBase.x, y: trueBase.y + 18, 'font-size': '12', fill: '#999', 'text-anchor': 'middle', 'font-weight': '600' });
+    svg.appendChild(el('line', { x1: trueBase.x, y1: trueBase.y, x2: trueBase.x, y2: trueBase.y - 10, stroke: '#999', 'stroke-width': '1.5' }));
+    const trueLabel = el('text', { x: trueBase.x, y: trueBase.y - 16, 'font-size': '12', fill: '#999', 'text-anchor': 'middle', 'font-weight': '600' });
     trueLabel.textContent = `μ`;
     svg.appendChild(trueLabel);
 
