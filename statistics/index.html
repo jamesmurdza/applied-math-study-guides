@@ -53,7 +53,7 @@
           </div>
           <div class="topic" id="mles">
             <h2>Maximum Likelihood Estimators</h2>
-            <p>A natural question: of every possible parameter value, which one makes the data actually observed the most likely outcome? <strong>Maximum likelihood estimation</strong> answers it directly.</p>
+            <p><strong>Maximum likelihood estimation</strong> picks the parameter value that makes the data actually observed the most probable outcome — out of every value the parameter could take.</p>
             <p class="math">$$\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}} = \textcolor{#7B4B8C}{\arg\max_{\theta}}\ L(\theta) = \textcolor{#7B4B8C}{\arg\max_{\theta}} \prod_{i=1}^{n} f(x_i; \theta)$$</p>
             <p>Products are awkward to differentiate, so in practice the log-likelihood is maximized instead — log is increasing, so it has the same maximizer, with much easier calculus.</p>
             <p class="math">$$\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}} = \textcolor{#7B4B8C}{\arg\max_{\theta}}\ \ell(\theta), \quad \ell(\theta) = \sum_{i=1}^{n} \log f(x_i;\theta)$$</p>
