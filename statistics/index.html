@@ -72,9 +72,14 @@
             <h2>Bayesian Inference</h2>
             <p>MLE answers "what explains the data best," treating θ as fixed but unknown. Bayesian inference asks a different question: given what was believed about θ before, how should this data update that belief? Here θ itself is treated as random, with its own distribution.</p>
             <p class="math">$$\pi(\textcolor{#0b7285}{\theta} \mid x) \textcolor{#7B4B8C}{\propto} f(x \mid \textcolor{#0b7285}{\theta})\, \pi(\textcolor{#0b7285}{\theta})$$</p>
-            <p><strong>π(θ)</strong> is the prior — belief about θ before seeing data; <strong>f(x∣θ)</strong> is the likelihood — how probable the data is for each θ; <strong>π(θ∣x)</strong> is the posterior — updated belief after seeing it. Posterior ∝ likelihood × prior: data reshapes belief, it doesn't replace it.</p>
+            <p><strong>π(θ)</strong> is the prior — belief about θ before seeing data; <strong>f(x∣θ)</strong> is the likelihood — how probable the data is for each θ; <strong>π(θ∣x)</strong> is the posterior — updated belief after seeing it. The ∝ drops a constant that doesn't depend on θ, so it only rescales the curve, not its shape.</p>
+
+            <p>A normal prior μ ~ N(μ₀, τ²) on a normal mean gives a normal posterior. Its center is a weighted average of the prior's center and the sample mean:</p>
+            <p class="math">$$\hat{\textcolor{#0b7285}{\mu}}_{\text{Bayes}} = w\bar X + (1-w)\mu_0, \quad w = \frac{n/\sigma^2}{n/\sigma^2 + 1/\tau^2}$$</p>
 
             <div class="stat-chart" id="bayes-chart-root"></div>
+
+            <p>As n grows, w → 1 and the estimate approaches the MLE — the prior matters most when data is scarce.</p>
           </div>
           <div class="topic" id="bias-and-mse">
             <h2>Bias and Mean Squared Error</h2>

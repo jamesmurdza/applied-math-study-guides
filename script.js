@@ -1380,23 +1380,31 @@ if (window.renderMathInElement) {
 
   // Prior, likelihood, and posterior curves overlaid (Beta-Binomial),
   // each normalized to its own peak so the three shapes are comparable.
+  // Normal prior on a normal mean (known σ), continuing the same running
+  // normal example as Method of Moments/MLEs: data [4.1,4.6,5.0,5.3,5.5],
+  // X̄ = 4.9, σ = 0.6, n = 5. Prior μ ~ N(4.0, 0.3²). Each curve normalized
+  // to its own peak (prior/likelihood/posterior scale on different axes).
   function renderBayesChart(container) {
-    const xMin = 0, xMax = 1;
-    const n = 10, k = 7;
-    const priorFn = x => x * (1 - x);                       // Beta(2,2), unnormalized
-    const likelihoodFn = x => Math.pow(x, k) * Math.pow(1 - x, n - k);
-    const posteriorFn = x => priorFn(x) * likelihoodFn(x);  // Beta(9,5), unnormalized
+    const sigma = 0.6, n = 5, xBar = 4.9;
+    const mu0 = 4.0, tau = 0.3;
+    const likSigma = sigma / Math.sqrt(n);
+    const w = (n / sigma ** 2) / (n / sigma ** 2 + 1 / tau ** 2);
+    const postMean = w * xBar + (1 - w) * mu0;
+    const postSd = Math.sqrt(1 / (n / sigma ** 2 + 1 / tau ** 2));
+
+    const normalPdf = (x, mu, sd) => Math.exp(-0.5 * ((x - mu) / sd) ** 2) / (sd * Math.sqrt(2 * Math.PI));
+    const xMin = 3.0, xMax = 5.8;
 
     const width = 380, height = 190, padL = 16, padR = 16, padT = 18, padB = 24;
     const plotW = width - padL - padR, plotH = height - padT - padB;
 
     const curves = [
-      { fn: priorFn, color: '#868e96', dash: '4,3', weight: '1.5' },
-      { fn: likelihoodFn, color: '#e8590c', dash: '4,3', weight: '1.5' },
-      { fn: posteriorFn, color: '#0b7285', dash: null, weight: '2' }
+      { fn: x => normalPdf(x, mu0, tau), color: '#868e96', dash: '4,3', weight: '1.5' },
+      { fn: x => normalPdf(x, xBar, likSigma), color: '#e8590c', dash: '4,3', weight: '1.5' },
+      { fn: x => normalPdf(x, postMean, postSd), color: '#0b7285', dash: null, weight: '2' }
     ];
 
-    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'Prior, likelihood, and posterior curves' });
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'Prior, likelihood, and posterior curves over μ' });
 
     curves.forEach(c => {
       const pts = sample(c.fn, xMin, xMax, 200);
@@ -1413,15 +1421,15 @@ if (window.renderMathInElement) {
     const oY = padT + plotH;
     svg.appendChild(el('line', { x1: padL, y1: oY, x2: padL + plotW, y2: oY, stroke: '#333' }));
     svg.appendChild(el('line', { x1: padL, y1: oY, x2: padL, y2: padT, stroke: '#333' }));
-    [0, 1].forEach(v => {
+    [3.0, 4.0, 5.0].forEach(v => {
       const sx = padL + (v - xMin) / (xMax - xMin) * plotW;
       const t = el('text', { x: sx, y: oY + 16, 'font-size': '12', fill: '#555', 'text-anchor': 'middle' });
-      t.textContent = v;
+      t.textContent = v.toFixed(1);
       svg.appendChild(t);
     });
 
     const xAxisLabel = el('text', { x: width - 4, y: oY + 4, 'font-size': '12', fill: '#555', 'text-anchor': 'end' });
-    xAxisLabel.textContent = 'θ';
+    xAxisLabel.textContent = 'μ';
     svg.appendChild(xAxisLabel);
     const yAxisLabel = el('text', { x: padL, y: padT + 10, 'font-size': '12', fill: '#555', 'text-anchor': 'start' });
     yAxisLabel.textContent = 'density';
@@ -1435,7 +1443,7 @@ if (window.renderMathInElement) {
       { type: 'line', color: '#0b7285', label: 'posterior' }
     ]);
     const caption = document.createElement('p');
-    caption.innerHTML = `Starting from a <span class="var-prior">prior</span> centered on "fair" and updating with the <span class="var-likelihood">likelihood</span> of 7 heads in 10 flips produces a <span class="var-posterior">posterior</span> peaked near 0.67 — pulled toward the data, but not all the way to the data's own peak at 0.7.`;
+    caption.innerHTML = `With a <span class="var-prior">prior</span> centered at μ₀ = 4.0 and five measurements averaging to X̄ = 4.9, the <span class="var-likelihood">likelihood</span> pulls toward 4.9 and the <span class="var-posterior">posterior</span> lands at μ = 4.5 — a weighted average favoring the data, since w ≈ 0.56.`;
     container.appendChild(caption);
   }
 
