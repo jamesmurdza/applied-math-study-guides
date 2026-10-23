@@ -1191,6 +1191,7 @@ if (window.renderMathInElement) {
       const swatch = document.createElement('span');
       swatch.className = `chart-legend-swatch ${item.type}`;
       swatch.style.color = item.color;
+      if (item.opacity != null) swatch.style.opacity = item.opacity;
       entry.appendChild(swatch);
       const label = document.createElement('span');
       label.textContent = item.label;
@@ -1269,6 +1270,18 @@ if (window.renderMathInElement) {
     shadeD += ` L${baseRight.x.toFixed(1)},${baseRight.y.toFixed(1)} Z`;
     svg.appendChild(el('path', { d: shadeD, fill: '#c92a2a', 'fill-opacity': '0.25' }));
 
+    // p-value region nested inside it: zObs..xMax, the same tail but
+    // starting from the observed statistic instead of the critical value.
+    // Stacking a second, equally-opaque fill of the same color on top
+    // darkens just the overlap, making "p sits inside α" visible rather
+    // than only asserted in the prose underneath.
+    const pPts = sample(normalPdf, zObs, xMax, 60);
+    const pBaseLeft = toScreen(zObs, 0), pBaseRight = toScreen(xMax, 0);
+    let pShadeD = `M${pBaseLeft.x.toFixed(1)},${pBaseLeft.y.toFixed(1)} `;
+    pShadeD += pPts.map(p => { const s = toScreen(p.x, p.y); return `L${s.x.toFixed(1)},${s.y.toFixed(1)}`; }).join(' ');
+    pShadeD += ` L${pBaseRight.x.toFixed(1)},${pBaseRight.y.toFixed(1)} Z`;
+    svg.appendChild(el('path', { d: pShadeD, fill: '#c92a2a', 'fill-opacity': '0.35' }));
+
     // x axis
     const o = toScreen(xMin, 0), oR = toScreen(xMax, 0);
     svg.appendChild(el('line', { x1: o.x, y1: o.y, x2: oR.x, y2: oR.y, stroke: '#333' }));
@@ -1309,19 +1322,27 @@ if (window.renderMathInElement) {
     obsLabel.textContent = 'observed';
     svg.appendChild(obsLabel);
 
-    // alpha label — sits above the axis, past the observed marker, in the
-    // thin tail where nothing else is drawn
-    const alphaScreenX = toScreen((xMax + zObs) / 2 + 0.3, 0).x;
-    const alphaLabel = el('text', { x: alphaScreenX, y: padT + plotH - 12, 'font-size': '12', fill: '#c92a2a', 'text-anchor': 'middle', 'font-weight': '600' });
+    // alpha label — sits just above its own line's top, in the same spot
+    // z*'s label used to float before it moved down to an axis tick,
+    // marking where the full (lighter) rejection region starts
+    const alphaLabel = el('text', { x: cs.x, y: cs.y - 8, 'font-size': '12', fill: '#c92a2a', 'text-anchor': 'middle', 'font-weight': '600' });
     alphaLabel.textContent = 'α';
     svg.appendChild(alphaLabel);
+
+    // p label — sits inside the darker nested region, away from both the
+    // observed marker above it and the alpha label to its left
+    const pScreenX = toScreen((zObs + xMax) / 2 + 0.2, 0).x;
+    const pLabel = el('text', { x: pScreenX, y: padT + plotH - 12, 'font-size': '12', fill: '#c92a2a', 'text-anchor': 'middle', 'font-weight': '600' });
+    pLabel.textContent = 'p';
+    svg.appendChild(pLabel);
 
     container.innerHTML = '';
     container.appendChild(svg);
     renderLegend(container, [
       { type: 'line', color: '#1a1a1a', label: 'null distribution' },
-      { type: 'fill', color: '#c92a2a', label: 'rejection region' },
-      { type: 'dot', color: '#1a1a1a', label: 'observed statistic' }
+      { type: 'dot', color: '#1a1a1a', label: 'observed statistic' },
+      { type: 'fill', color: '#c92a2a', label: 'rejection region (α)' },
+      { type: 'fill', color: '#c92a2a', label: 'p-value region', opacity: 0.5 }
     ]);
     // No trailing caption here, and no plugged-in numbers on the chart
     // either — matches the symbolic style used elsewhere (the Method of
