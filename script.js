@@ -1532,7 +1532,7 @@ if (window.renderMathInElement) {
       { type: 'line', color: '#0b7285', label: 'posterior' }
     ]);
     const caption = document.createElement('p');
-    caption.innerHTML = `With a <span class="var-prior">prior</span> centered at μ₀ = 4.0 and five measurements averaging to X̄ = 4.9, the <span class="var-likelihood">likelihood</span> pulls toward 4.9 and the <span class="var-posterior">posterior</span> lands at μ = 4.5 — a weighted average favoring the data, since w ≈ 0.56.`;
+    caption.innerHTML = `The <span class="var-posterior">posterior</span> sits between the <span class="var-prior">prior</span> and the <span class="var-likelihood">likelihood</span>, closer to the data since more weight falls on the likelihood here.`;
     container.appendChild(caption);
   }
 
