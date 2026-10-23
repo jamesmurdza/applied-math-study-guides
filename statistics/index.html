@@ -53,12 +53,16 @@
           </div>
           <div class="topic" id="mles">
             <h2>MLEs</h2>
-            <p>A natural question: of every possible parameter value, which one makes the data actually observed the most likely outcome? Maximum likelihood answers it directly.</p>
+            <p>A natural question: of every possible parameter value, which one makes the data actually observed the most likely outcome? <strong>Maximum likelihood estimation</strong> answers it directly.</p>
             <p class="math">$$\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}} = \textcolor{#7B4B8C}{\arg\max_{\theta}}\ L(\theta) = \textcolor{#7B4B8C}{\arg\max_{\theta}} \prod_{i=1}^{n} f(x_i; \theta)$$</p>
             <p>Products are awkward to differentiate, so in practice the log-likelihood is maximized instead — log is increasing, so it has the same maximizer, with much easier calculus.</p>
             <p class="math">$$\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}} = \textcolor{#7B4B8C}{\arg\max_{\theta}}\ \ell(\theta), \quad \ell(\theta) = \sum_{i=1}^{n} \log f(x_i;\theta)$$</p>
 
+            <p>For 10 coin flips with 7 heads, the likelihood of a single unknown, the coin's bias, peaks at the value that makes exactly this data most probable:</p>
+
             <div class="stat-chart" id="mle-chart-root"></div>
+
+            <p>If there were multiple unknown parameters instead of one, the same arg max would be taken jointly over all of them at once, not one at a time.</p>
           </div>
           <div class="topic" id="bayesian-inference">
             <h2>Bayesian Inference</h2>

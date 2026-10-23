@@ -1225,8 +1225,8 @@ if (window.renderMathInElement) {
   // label through KaTeX — hatted or not — also keeps a true/estimate pair
   // (e.g. μ next to μ̂) visually matched: same font, weight, and
   // baseline, instead of mixing plain SVG text with KaTeX output.
-  function texLabel(svg, x, y, tex, color) {
-    const w = 26, h = 22;
+  function texLabel(svg, x, y, tex, color, w = 26) {
+    const h = 22;
     const fo = document.createElementNS(SVG_NS, 'foreignObject');
     fo.setAttribute('x', (x - w / 2).toFixed(1));
     fo.setAttribute('y', (y - h + 5).toFixed(1));
@@ -1332,7 +1332,7 @@ if (window.renderMathInElement) {
     const n = 10, k = 7;
     const likelihood = theta => Math.pow(theta, k) * Math.pow(1 - theta, n - k);
     const thetaHat = k / n;
-    const width = 380, height = 170, padL = 30, padR = 22, padT = 20, padB = 24;
+    const width = 380, height = 170, padL = 30, padR = 22, padT = 36, padB = 24;
     const plotW = width - padL - padR, plotH = height - padT - padB;
     const pts = sample(likelihood, xMin, xMax, 200);
     const maxY = Math.max(...pts.map(p => p.y));
@@ -1359,9 +1359,7 @@ if (window.renderMathInElement) {
     const peakBase = toScreen(thetaHat, 0);
     svg.appendChild(el('line', { x1: peak.x, y1: peak.y, x2: peakBase.x, y2: peakBase.y, stroke: '#0b7285', 'stroke-width': '1.25', 'stroke-dasharray': '3,3' }));
     svg.appendChild(el('circle', { cx: peak.x.toFixed(1), cy: peak.y.toFixed(1), r: 3, fill: '#0b7285' }));
-    const label = el('text', { x: peak.x, y: peak.y - 8, 'font-size': '12', fill: '#0b7285', 'text-anchor': 'middle', 'font-weight': '600' });
-    label.textContent = `θ̂ = ${thetaHat}`;
-    svg.appendChild(label);
+    texLabel(svg, peak.x, peak.y - 8, `\\hat{\\theta} = ${thetaHat}`, '#0b7285', 52);
 
     [0, 1].forEach(v => {
       const s = toScreen(v, 0);
@@ -1376,9 +1374,8 @@ if (window.renderMathInElement) {
       { type: 'line', color: '#0b7285', label: 'likelihood L(θ)' },
       { type: 'dot', color: '#0b7285', label: 'MLE θ̂' }
     ]);
-    const caption = document.createElement('p');
-    caption.textContent = `With 7 heads in 10 flips, the likelihood L(θ) = θ⁷(1−θ)³ peaks at θ̂ = 0.7 — the value that makes this exact data most probable.`;
-    container.appendChild(caption);
+    // No trailing caption — the setup is already stated in the prose
+    // right above this chart (same precedent as Method of Moments).
   }
 
   // Prior, likelihood, and posterior curves overlaid (Beta-Binomial),
