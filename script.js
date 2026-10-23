@@ -1528,18 +1528,17 @@ if (window.renderMathInElement) {
       svg.appendChild(el('circle', { cx: s.x, cy: s.y, r: 3, fill: '#1a1a1a' }));
     });
 
-    // minimal parameter marks: μ and μ̂ are only 0.1 apart here, too close
-    // for two peak-top labels to avoid colliding side by side — staggered
-    // by height instead, both above the axis: μ gets a short tick near the
-    // axis, μ̂ sits up at its own peak, well clear of each other vertically.
-    const trueBase = toScreen(trueMu, 0);
-    svg.appendChild(el('line', { x1: trueBase.x, y1: trueBase.y, x2: trueBase.x, y2: trueBase.y - 10, stroke: '#999', 'stroke-width': '1.5' }));
-    const trueLabel = el('text', { x: trueBase.x, y: trueBase.y - 16, 'font-size': '12', fill: '#999', 'text-anchor': 'middle', 'font-weight': '600' });
+    // minimal parameter marks: μ and μ̂ are only 0.1 apart here, so both
+    // peaks sit almost on top of each other — staggered horizontally
+    // instead of vertically, so both labels stay above the curves (not
+    // one dropped down to the axis) while still not colliding.
+    const truePeak = toScreen(trueMu, normalPdf(trueMu, trueMu, sigma));
+    const trueLabel = el('text', { x: truePeak.x - 14, y: truePeak.y - 8, 'font-size': '12', fill: '#999', 'text-anchor': 'middle', 'font-weight': '600' });
     trueLabel.textContent = `μ`;
     svg.appendChild(trueLabel);
 
     const estPeak = toScreen(xHat, normalPdf(xHat, xHat, sigma));
-    const estLabel = el('text', { x: estPeak.x, y: estPeak.y - 8, 'font-size': '12', fill: '#0b7285', 'text-anchor': 'middle', 'font-weight': '600' });
+    const estLabel = el('text', { x: estPeak.x + 14, y: estPeak.y - 8, 'font-size': '12', fill: '#0b7285', 'text-anchor': 'middle', 'font-weight': '600' });
     estLabel.textContent = `μ̂`;
     svg.appendChild(estLabel);
 
