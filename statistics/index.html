@@ -35,11 +35,13 @@
             <p>Match the sample's average to what the model predicts it should be, then solve for the parameter that makes them agree.</p>
             <p class="math">$$E[X^k] = \frac{1}{n}\sum_{i=1}^{n} X_i^k, \quad k = 1, 2, \dots$$</p>
 
-            <p>For a Normal mean, the first moment is just μ itself, so θ̂ = X̄. Five measurements (4.1, 4.6, 5.0, 5.3, 5.5) average to 4.9, close to the true μ = 5.0 — the same estimator MLE would also give.</p>
+            <p>For a Normal mean, the first moment is just μ itself.</p>
+            <p class="math">$$\hat{\textcolor{#0b7285}{\theta}} = \bar X$$</p>
 
             <div class="stat-chart" id="mom-normal-chart-root"></div>
 
-            <p>For X ~ Uniform(0, θ), the first moment is θ/2, not θ, so matching gives θ̂ = 2X̄ instead — a different formula from MLE's sample maximum. Five measurements averaging to X̄ = 3 give θ̂ = 6, short of the true θ = 7 and different from what MLE (the sample max, 5.5) would give.</p>
+            <p>For X ~ Uniform(0, θ), the first moment is θ/2, not θ, so matching gives a different formula instead — not the same as MLE's sample maximum.</p>
+            <p class="math">$$\hat{\textcolor{#0b7285}{\theta}} = 2\bar X$$</p>
 
             <div class="stat-chart" id="mom-uniform-chart-root"></div>
           </div>
