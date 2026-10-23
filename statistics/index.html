@@ -53,16 +53,16 @@
           </div>
           <div class="topic" id="mles">
             <h2>Maximum Likelihood Estimators</h2>
-            <p><strong>Maximum likelihood estimation</strong> picks, out of every value the parameter could take, the one that makes the observed data most probable.</p>
+            <p><strong>Maximum likelihood estimation</strong> picks the parameter value that makes the observed data most probable.</p>
             <p class="math">$$\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}} = \textcolor{#7B4B8C}{\arg\max_{\theta}}\ L(\theta) = \textcolor{#7B4B8C}{\arg\max_{\theta}} \prod_{i=1}^{n} f(x_i; \theta)$$</p>
             <p>Products are awkward to differentiate, so in practice the log-likelihood is maximized instead — log is increasing, so it has the same maximizer, with much easier calculus.</p>
             <p class="math">$$\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}} = \textcolor{#7B4B8C}{\arg\max_{\theta}}\ \ell(\theta), \quad \ell(\theta) = \sum_{i=1}^{n} \log f(x_i;\theta)$$</p>
 
-            <p>For the normal distribution from Method of Moments, the likelihood is maximized when μ̂ is equal to the sample mean too — the same estimator either way:</p>
+            <p>For the normal distribution, the likelihood is maximized when μ̂ is equal to the sample mean too — the same estimator either way:</p>
 
             <div class="stat-chart" id="mle-normal-chart-root"></div>
 
-            <p>For the uniform distribution from Method of Moments, the likelihood is instead maximized when θ̂ is equal to the largest value actually observed — the sample maximum, not twice the mean:</p>
+            <p>For the uniform distribution, the likelihood is instead maximized when θ̂ is equal to the largest value actually observed — the sample maximum, not twice the mean:</p>
 
             <div class="stat-chart" id="mle-uniform-chart-root"></div>
 
@@ -87,7 +87,7 @@
             <p class="math">$$\text{Bias}(\hat{\textcolor{#0b7285}{\theta}}) = E[\hat{\textcolor{#0b7285}{\theta}}] - \textcolor{#0b7285}{\theta}$$</p>
             <p>Mean squared error folds bias and variance into one number, so a biased estimator can still win on MSE as long as its variance drops enough to compensate.</p>
             <p class="math">$$\text{MSE}(\hat{\textcolor{#0b7285}{\theta}}) = E[(\hat{\textcolor{#0b7285}{\theta}}-\textcolor{#0b7285}{\theta})^2] = \text{Var}(\hat{\textcolor{#0b7285}{\theta}}) + \text{Bias}(\hat{\textcolor{#0b7285}{\theta}})^2$$</p>
-            <p>Revisiting the normal data above with a hypothetical true μ = 4.2: the MLE X̄ is unbiased but has higher variance (MSE ≈ 0.072), while the biased Bayesian posterior mean has lower variance and wins on MSE (≈ 0.030).</p>
+            <p>With the normal example's data and a hypothetical true μ = 4.2: the MLE X̄ is unbiased but has higher variance (MSE ≈ 0.072), while the biased Bayesian posterior mean has lower variance and wins on MSE (≈ 0.030).</p>
 
             <div class="stat-chart" id="bias-mse-chart-root"></div>
           </div>
@@ -95,11 +95,11 @@
             <h2>Pivotal Quantities</h2>
             <p>A recurring problem: a statistic's distribution usually depends on the very parameter being estimated, which seems circular to work with. A pivotal quantity breaks that circularity — built from the data and the parameter together, yet its own distribution doesn't depend on the parameter's actual value.</p>
             <p class="math">$$\frac{\bar{X} - \textcolor{#0b7285}{\mu}}{S/\sqrt{n}} \textcolor{#7B4B8C}{\sim} t_{n-1} \quad \text{for every value of } \textcolor{#0b7285}{\mu}$$</p>
-            <p>Because that distribution is known exactly regardless of the true μ, it can be inverted directly into a confidence interval — exactly what Confidence Intervals below does with this one.</p>
+            <p>Because that distribution is known exactly regardless of the true μ, it can be inverted directly into a confidence interval.</p>
           </div>
           <div class="topic" id="confidence-intervals">
             <h2>Confidence Intervals</h2>
-            <p>Inverting a pivotal quantity means asking: which parameter values would make the observed pivot land in its typical range? That range of values is the confidence interval.</p>
+            <p>Inverting a pivotal quantity asks which parameter values would make the observed pivot land in its typical range — that range of values is the confidence interval.</p>
             <p class="math">$$P\!\left(-t^*_{n-1} \le \frac{\bar X - \textcolor{#0b7285}{\mu}}{S/\sqrt{n}} \le t^*_{n-1}\right) = 1-\textcolor{#c92a2a}{\alpha} \quad\Longrightarrow\quad \textcolor{#0b7285}{\mu} \in \bar X \pm t^*_{n-1}\frac{S}{\sqrt{n}}$$</p>
             <p>"95% confidence" describes the procedure, not this one interval: 95% of intervals built this way would contain the true μ. A specific computed interval either does or doesn't — there's no probability left to assign to it.</p>
             <p>This coverage is exact only when the data is actually normal. Otherwise a near-pivot — approximately pivotal via a large-sample approximation — serves the same role, with coverage that's only approximate.</p>
@@ -125,7 +125,7 @@
           </div>
           <div class="topic" id="students-t-tests">
             <h2>Student's t-tests</h2>
-            <p>When the data is approximately normal and the population variance is unknown, estimating it from the sample turns the z-statistic above into a t-statistic.</p>
+            <p>When the data is approximately normal and the population variance is unknown, estimating that variance from the sample turns a z-statistic into a t-statistic.</p>
             <p class="math">$$T = \frac{\bar X - \textcolor{#0b7285}{\mu_0}}{S/\sqrt{n}} \textcolor{#7B4B8C}{\sim} t_{n-1} \quad \text{under } H_0: \mu = \textcolor{#0b7285}{\mu_0}$$</p>
             <p>The same form covers three cases: the <strong>one-sample</strong> test checks a mean against μ₀ (above); the <strong>paired</strong> test reduces differences Dᵢ = Xᵢ − Yᵢ to a one-sample test on D̄; the <strong>two-sample</strong> test compares X̄ − Ȳ directly.</p>
             <p class="math">$$T = \frac{\bar X - \bar Y}{S_p\sqrt{\tfrac{1}{n_1}+\tfrac{1}{n_2}}} \textcolor{#7B4B8C}{\sim} t_{n_1+n_2-2} \quad \text{(pooled, assumes equal variances)}$$</p>
