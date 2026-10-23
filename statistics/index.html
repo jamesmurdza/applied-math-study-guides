@@ -31,7 +31,7 @@
         <div class="topics">
           <div class="topic" id="method-of-moments">
             <h2>Method of Moments</h2>
-            <p>An estimator is a formula for estimating an unknown population parameter based on sample data. Sometimes, we know the form of the population distribution but not the values of its parameters, so we use sample data to estimate them.</p>
+            <p>An estimator is a formula for approximating an unknown population parameter from sample data. Sometimes, we know the form of the population distribution but not the values of its parameters, so we use sample data to estimate them.</p>
             <p>The <strong>method of moments</strong> matches the model's theoretical moments to the sample's own — one equation per unknown parameter — then solves for whatever makes them agree.</p>
             <p class="math">$$E[X^k] = \frac{1}{n}\sum_{i=1}^{n} X_i^k, \quad k = 1, 2, \dots$$</p>
 
@@ -42,7 +42,7 @@
             <p>That means the estimator is just the sample mean:</p>
             <p class="math">$$\hat{\textcolor{#0b7285}{\mu}} = \bar X$$</p>
 
-            <p>A more interesting case is a uniform distribution with one unknown parameter, its upper endpoint. Its mean sits halfway between the two endpoints — half the unknown one, not all of it.</p>
+            <p>A more interesting case is a uniform distribution with one unknown parameter, its upper endpoint. Its mean sits halfway between the two endpoints, so it only reflects half the unknown endpoint's value.</p>
 
             <div class="stat-chart" id="mom-uniform-chart-root"></div>
 
@@ -53,7 +53,7 @@
           </div>
           <div class="topic" id="mles">
             <h2>Maximum Likelihood Estimators</h2>
-            <p><strong>Maximum likelihood estimation</strong> picks the parameter value that makes the data actually observed the most probable outcome — out of every value the parameter could take.</p>
+            <p><strong>Maximum likelihood estimation</strong> picks, out of every value the parameter could take, the one that makes the observed data most probable.</p>
             <p class="math">$$\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}} = \textcolor{#7B4B8C}{\arg\max_{\theta}}\ L(\theta) = \textcolor{#7B4B8C}{\arg\max_{\theta}} \prod_{i=1}^{n} f(x_i; \theta)$$</p>
             <p>Products are awkward to differentiate, so in practice the log-likelihood is maximized instead — log is increasing, so it has the same maximizer, with much easier calculus.</p>
             <p class="math">$$\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}} = \textcolor{#7B4B8C}{\arg\max_{\theta}}\ \ell(\theta), \quad \ell(\theta) = \sum_{i=1}^{n} \log f(x_i;\theta)$$</p>
@@ -70,7 +70,7 @@
           </div>
           <div class="topic" id="bayesian-inference">
             <h2>Bayesian Inference</h2>
-            <p>MLE answers "what explains the data best," treating θ as fixed but unknown. Bayesian inference asks a different question: given what was believed about θ before, how should this data update that belief? Here θ itself is treated as random, with its own distribution.</p>
+            <p>MLE answers "what explains the data best," treating θ as fixed but unknown. Bayesian inference asks instead how this data should update what was already believed about θ. Here θ itself is treated as random, with its own distribution.</p>
             <p class="math">$$\pi(\textcolor{#0b7285}{\theta} \mid x) \textcolor{#7B4B8C}{\propto} f(x \mid \textcolor{#0b7285}{\theta})\, \pi(\textcolor{#0b7285}{\theta})$$</p>
             <p><strong>π(θ)</strong> is the prior — belief about θ before seeing data; <strong>f(x∣θ)</strong> is the likelihood — how probable the data is for each θ; <strong>π(θ∣x)</strong> is the posterior — updated belief after seeing it. The ∝ drops a constant that doesn't depend on θ, so it only rescales the curve, not its shape.</p>
 
@@ -83,11 +83,11 @@
           </div>
           <div class="topic" id="bias-and-mse">
             <h2>Bias and Mean Squared Error</h2>
-            <p>Bias measures whether an estimator gets the right answer on average — an unbiased estimator does, even though any single sample can still land off target.</p>
+            <p>An unbiased estimator gets the right answer on average, even though any single sample can still land off target.</p>
             <p class="math">$$\text{Bias}(\hat{\textcolor{#0b7285}{\theta}}) = E[\hat{\textcolor{#0b7285}{\theta}}] - \textcolor{#0b7285}{\theta}$$</p>
-            <p>Mean squared error folds bias and variance into one number, so an estimator can win on MSE despite being biased, if its variance drops enough to compensate.</p>
+            <p>Mean squared error folds bias and variance into one number, so a biased estimator can still win on MSE as long as its variance drops enough to compensate.</p>
             <p class="math">$$\text{MSE}(\hat{\textcolor{#0b7285}{\theta}}) = E[(\hat{\textcolor{#0b7285}{\theta}}-\textcolor{#0b7285}{\theta})^2] = \text{Var}(\hat{\textcolor{#0b7285}{\theta}}) + \text{Bias}(\hat{\textcolor{#0b7285}{\theta}})^2$$</p>
-            <p>Revisiting the normal data above with a hypothetical true μ = 4.2: the MLE X̄ is unbiased but has the larger variance (MSE ≈ 0.072), while the biased Bayesian posterior mean has smaller variance and wins on MSE (≈ 0.030).</p>
+            <p>Revisiting the normal data above with a hypothetical true μ = 4.2: the MLE X̄ is unbiased but has higher variance (MSE ≈ 0.072), while the biased Bayesian posterior mean has lower variance and wins on MSE (≈ 0.030).</p>
 
             <div class="stat-chart" id="bias-mse-chart-root"></div>
           </div>
@@ -115,7 +115,7 @@
 
             <p>Equivalently: the p-value is the probability of a test statistic at least as extreme as the one observed, assuming H₀ is true. Reject when p &lt; α — the same decision, expressed as a probability rather than a region.</p>
 
-            <p>A test can fail two ways: rejecting a true H₀ (<strong>Type I error</strong>), or failing to reject a false one (<strong>Type II error</strong>). Size is the Type I rate, α; power against a given alternative is one minus the Type II rate.</p>
+            <p>A test can fail in two ways: rejecting a true H₀ (<strong>Type I error</strong>), or failing to reject a false one (<strong>Type II error</strong>). Size is the Type I rate, α; power against a given alternative is one minus the Type II rate.</p>
             <p class="math">$$\textcolor{#c92a2a}{\alpha} = P(\text{reject } H_0 \mid H_0) \qquad 1-\textcolor{#0b7285}{\beta} = P(\text{reject } H_0 \mid H_1)$$</p>
             <p>Below, the same rejection region is checked against both the null N(0,1) and an alternative N(δ,1), δ = 2.5. The red tail is still α; the teal tail is the power, about 0.80.</p>
 
@@ -127,7 +127,7 @@
             <h2>Student's t-tests</h2>
             <p>When the data is approximately normal and the population variance is unknown, estimating it from the sample turns the z-statistic above into a t-statistic.</p>
             <p class="math">$$T = \frac{\bar X - \textcolor{#0b7285}{\mu_0}}{S/\sqrt{n}} \textcolor{#7B4B8C}{\sim} t_{n-1} \quad \text{under } H_0: \mu = \textcolor{#0b7285}{\mu_0}$$</p>
-            <p>The same form covers three cases: <strong>one-sample</strong> checks a mean against μ₀ (above); <strong>paired</strong> reduces differences Dᵢ = Xᵢ − Yᵢ to a one-sample test on D̄; <strong>two-sample</strong> compares X̄ − Ȳ directly.</p>
+            <p>The same form covers three cases: the <strong>one-sample</strong> test checks a mean against μ₀ (above); the <strong>paired</strong> test reduces differences Dᵢ = Xᵢ − Yᵢ to a one-sample test on D̄; the <strong>two-sample</strong> test compares X̄ − Ȳ directly.</p>
             <p class="math">$$T = \frac{\bar X - \bar Y}{S_p\sqrt{\tfrac{1}{n_1}+\tfrac{1}{n_2}}} \textcolor{#7B4B8C}{\sim} t_{n_1+n_2-2} \quad \text{(pooled, assumes equal variances)}$$</p>
           </div>
           <div class="topic" id="likelihood-ratio">
