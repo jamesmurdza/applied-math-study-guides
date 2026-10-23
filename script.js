@@ -1481,9 +1481,10 @@ if (window.renderMathInElement) {
 
   // Method of Moments, Normal case: the true N(μ,σ²) the data was drawn
   // from, against the curve implied by plugging the moment-matched θ̂ = X̄
-  // back into the model. Same color convention as the Bias/MSE chart above
-  // (true in dashed gray, estimated in solid teal) so "true vs. estimated"
-  // reads the same way across both charts.
+  // back into the model, both drawn as shaded regions (not bare outlines)
+  // so overlap between the two densities is visible as blended fill, not
+  // just two close-together lines. Same color convention as the Bias/MSE
+  // chart above (true in dashed gray, estimated in solid teal).
   function renderMomNormalChart(container) {
     const data = [4.1, 4.6, 5.0, 5.3, 5.5];
     const trueMu = 5.0, sigma = 0.6;
@@ -1500,7 +1501,21 @@ if (window.renderMathInElement) {
       y: axisY - (y / maxY) * plotH
     });
 
-    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'True and estimated Normal curves over five data points' });
+    function areaPath(fn, color, dash) {
+      const pts = sample(fn, xMin, xMax, 200);
+      const left = toScreen(xMin, 0), right = toScreen(xMax, 0);
+      let d = `M${left.x.toFixed(1)},${left.y.toFixed(1)} `;
+      d += pts.map(p => { const s = toScreen(p.x, p.y); return `L${s.x.toFixed(1)},${s.y.toFixed(1)}`; }).join(' ');
+      d += ` L${right.x.toFixed(1)},${right.y.toFixed(1)} Z`;
+      return { d, color, dash };
+    }
+
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'True and estimated Normal densities, shaded, over five data points' });
+
+    const trueArea = areaPath(x => normalPdf(x, trueMu, sigma), '#999');
+    svg.appendChild(el('path', { d: trueArea.d, fill: '#999', 'fill-opacity': '0.2', stroke: 'none' }));
+    const estArea = areaPath(x => normalPdf(x, xHat, sigma), '#0b7285');
+    svg.appendChild(el('path', { d: estArea.d, fill: '#0b7285', 'fill-opacity': '0.25', stroke: 'none' }));
 
     const truePts = sample(x => normalPdf(x, trueMu, sigma), xMin, xMax, 200);
     svg.appendChild(el('path', { d: pathFor(truePts, toScreen), fill: 'none', stroke: '#999', 'stroke-width': '1.75', 'stroke-dasharray': '4,3' }));
@@ -1516,8 +1531,8 @@ if (window.renderMathInElement) {
     container.innerHTML = '';
     container.appendChild(svg);
     renderLegend(container, [
-      { type: 'dashed', color: '#999', label: 'true N(μ, σ²)' },
-      { type: 'line', color: '#0b7285', label: 'estimated N(θ̂, σ²)' },
+      { type: 'fill', color: '#999', label: 'true N(μ, σ²)' },
+      { type: 'fill', color: '#0b7285', label: 'estimated N(θ̂, σ²)' },
       { type: 'dot', color: '#1a1a1a', label: 'data' }
     ]);
     const caption = document.createElement('p');
@@ -1525,28 +1540,34 @@ if (window.renderMathInElement) {
     container.appendChild(caption);
   }
 
-  // Method of Moments, Uniform(0,θ) case: drawn as two stacked support bars
-  // rather than density curves, since a Uniform density is just a flat line
-  // — the only thing worth comparing is how far each support reaches, which
-  // a bar's length shows directly.
+  // Method of Moments, Uniform(0,θ) case: both supports drawn as shaded
+  // rectangles on a shared baseline — true density is 1/θ, so the wider
+  // (true) region is shorter and the narrower (estimated) region is taller,
+  // overlapping near the origin with the true region's uncovered tail
+  // visible as the one part of it the estimate missed entirely.
   function renderMomUniformChart(container) {
     const data = [1.0, 1.5, 3.0, 4.0, 5.5];
     const trueTheta = 7, xHat = 2 * (data.reduce((a, b) => a + b, 0) / data.length);
 
     const xMin = 0, xMax = 7.6;
-    const width = 320, height = 130, padL = 16, padR = 16, padT = 18, padB = 30;
-    const plotW = width - padL - padR;
-    const axisY = padT + 70;
+    const width = 320, height = 150, padL = 16, padR = 16, padT = 18, padB = 30;
+    const plotW = width - padL - padR, plotH = height - padT - padB;
+    const axisY = padT + plotH;
     const toX = x => padL + (x - xMin) / (xMax - xMin) * plotW;
+    const maxDensity = 1 / xHat;
+    const toY = h => axisY - (h / maxDensity) * (plotH * 0.85);
 
-    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'True and estimated support of a Uniform distribution, with five data points' });
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'True and estimated Uniform densities, shaded, with five data points' });
 
-    const trueY = padT + 10, estY = padT + 34;
-    [[trueY, trueTheta, '#999', '11,6'], [estY, xHat, '#0b7285', null]].forEach(([y, end, color, dash]) => {
-      const attrs = { x1: toX(0), y1: y, x2: toX(end), y2: y, stroke: color, 'stroke-width': '4' };
-      if (dash) attrs['stroke-dasharray'] = dash;
-      svg.appendChild(el('line', attrs));
-      svg.appendChild(el('line', { x1: toX(end), y1: y - 6, x2: toX(end), y2: y + 6, stroke: color, 'stroke-width': '1.5' }));
+    [[trueTheta, '#999', '4,3'], [xHat, '#0b7285', null]].forEach(([end, color, dash]) => {
+      const h = 1 / end;
+      const top = toY(h);
+      const attrs = { d: `M${toX(0)},${axisY} L${toX(0)},${top.toFixed(1)} L${toX(end)},${top.toFixed(1)} L${toX(end)},${axisY} Z`, fill: color, 'fill-opacity': '0.25', stroke: 'none' };
+      svg.appendChild(el('path', attrs));
+      const outline = { x1: toX(0), y1: top, x2: toX(end), y2: top, stroke: color, 'stroke-width': '2' };
+      if (dash) outline['stroke-dasharray'] = dash;
+      svg.appendChild(el('line', outline));
+      svg.appendChild(el('line', { x1: toX(end), y1: top, x2: toX(end), y2: axisY, stroke: color, 'stroke-width': dash ? '1.5' : '2', 'stroke-dasharray': dash || 'none' }));
     });
 
     svg.appendChild(el('line', { x1: padL, y1: axisY, x2: padL + plotW, y2: axisY, stroke: '#333' }));
@@ -1557,8 +1578,8 @@ if (window.renderMathInElement) {
     container.innerHTML = '';
     container.appendChild(svg);
     renderLegend(container, [
-      { type: 'dashed', color: '#999', label: `true θ = ${trueTheta}` },
-      { type: 'line', color: '#0b7285', label: `estimated θ̂ = ${xHat}` },
+      { type: 'fill', color: '#999', label: `true θ = ${trueTheta}` },
+      { type: 'fill', color: '#0b7285', label: `estimated θ̂ = ${xHat}` },
       { type: 'dot', color: '#1a1a1a', label: 'data' }
     ]);
     const caption = document.createElement('p');
