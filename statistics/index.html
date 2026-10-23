@@ -122,6 +122,16 @@
 
             <p>Equivalently: the p-value is the probability, assuming H₀ is true, of a test statistic at least as extreme as the one observed. Reject when p &lt; α — the same decision as checking the rejection region, just expressed as a probability. A small p-value does <strong>not</strong> mean H₀ is unlikely to be true; it means the data would be unlikely <em>if</em> H₀ were true — a statement about the data conditioned on H₀, not a statement about H₀ itself.</p>
           </div>
+          <div class="topic" id="size-and-power">
+            <h2>Size and Power</h2>
+            <p>A test can fail in two directions: rejecting H₀ when it's actually true (a <strong>Type I error</strong>), or failing to reject it when some specific alternative is actually true (a <strong>Type II error</strong>). The test's size is the Type I rate, already fixed at α above; its power against a given alternative is one minus the Type II rate — the chance of correctly rejecting H₀ when that alternative holds.</p>
+            <p class="math">$$\textcolor{#c92a2a}{\alpha} = P(\text{reject } H_0 \mid H_0) \qquad 1-\textcolor{#0b7285}{\beta} = P(\text{reject } H_0 \mid H_1)$$</p>
+            <p>Below, the same rejection region (z* = 1.645) is now checked against two distributions at once: the null N(0,1), and a specific alternative N(δ,1) shifted by δ = 2.5. The red tail is still α. The teal tail — the alternative's own area past z* — is the power, about 0.80 here; the unshaded area of the alternative curve left of z* is β, the 0.20 chance of missing a real effect of that size.</p>
+
+            <div class="stat-chart" id="power-chart-root"></div>
+
+            <p>Power grows with a larger δ (an easier, more obvious effect to detect), a larger n (shrinking both curves' spread), or a larger α (a wider rejection region) — the last one trading a higher Type I rate for a lower Type II rate, never eliminating both at once.</p>
+          </div>
           <div class="topic" id="students-t-tests">
             <h2>Student's t-tests</h2>
             <p>The general hypothesis-testing machinery above specializes into a concrete, named test whenever the data is (approximately) normal and the population variance is unknown — estimating that variance from the sample is exactly what turns a z-statistic into a t-statistic. It's the same pivotal quantity as in Pivotal Quantities above, used here as a test statistic instead of being inverted into an interval.</p>

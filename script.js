@@ -1326,6 +1326,95 @@ if (window.renderMathInElement) {
     // restate it.
   }
 
+  // Size and power: the null distribution N(0,1) against an alternative
+  // N(δ,1) shifted by δ = 2.5, both drawn over the same rejection region
+  // (z* = 1.645) as the Hypothesis Testing chart above. α is the red tail
+  // of the null past z*; power (1−β) is the teal tail of the alternative
+  // past the same z* — the chance of correctly rejecting H₀ when the
+  // alternative is actually true. The unshaded area of the alternative
+  // curve left of z* is β, the miss rate, left as visual complement to
+  // power rather than shaded a third color to avoid clutter.
+  function renderPowerChart(container) {
+    const xMin = -4, xMax = 6.5;
+    const zCrit = 1.645, delta = 2.5;
+    const normalPdf = (x, mu) => Math.exp(-0.5 * (x - mu) * (x - mu)) / Math.sqrt(2 * Math.PI);
+    const width = 380, height = 190, padL = 16, padR = 20, padT = 18, padB = 24;
+    const plotW = width - padL - padR, plotH = height - padT - padB;
+    const yMax = normalPdf(0, 0) * 1.15;
+    const toScreen = (x, y) => ({
+      x: padL + (x - xMin) / (xMax - xMin) * plotW,
+      y: padT + plotH - (y / yMax) * plotH
+    });
+
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'Null and alternative distributions with the rejection region, showing size and power' });
+
+    // shaded power region first (under the alternative, past z*) so the
+    // null curve and its own α shading draw on top and stay legible
+    const powerPts = sample(x => normalPdf(x, delta), zCrit, xMax, 60);
+    const pBaseLeft = toScreen(zCrit, 0), pBaseRight = toScreen(xMax, 0);
+    let powerD = `M${pBaseLeft.x.toFixed(1)},${pBaseLeft.y.toFixed(1)} `;
+    powerD += powerPts.map(p => { const s = toScreen(p.x, p.y); return `L${s.x.toFixed(1)},${s.y.toFixed(1)}`; }).join(' ');
+    powerD += ` L${pBaseRight.x.toFixed(1)},${pBaseRight.y.toFixed(1)} Z`;
+    svg.appendChild(el('path', { d: powerD, fill: '#0b7285', 'fill-opacity': '0.25' }));
+
+    // shaded α region (under the null, past z*)
+    const tailPts = sample(x => normalPdf(x, 0), zCrit, xMax, 60);
+    const baseLeft = toScreen(zCrit, 0), baseRight = toScreen(xMax, 0);
+    let shadeD = `M${baseLeft.x.toFixed(1)},${baseLeft.y.toFixed(1)} `;
+    shadeD += tailPts.map(p => { const s = toScreen(p.x, p.y); return `L${s.x.toFixed(1)},${s.y.toFixed(1)}`; }).join(' ');
+    shadeD += ` L${baseRight.x.toFixed(1)},${baseRight.y.toFixed(1)} Z`;
+    svg.appendChild(el('path', { d: shadeD, fill: '#c92a2a', 'fill-opacity': '0.35' }));
+
+    const nullPts = sample(x => normalPdf(x, 0), xMin, xMax, 200);
+    svg.appendChild(el('path', { d: pathFor(nullPts, toScreen), fill: 'none', stroke: '#1a1a1a', 'stroke-width': '1.75' }));
+    const altPts = sample(x => normalPdf(x, delta), xMin, xMax, 200);
+    svg.appendChild(el('path', { d: pathFor(altPts, toScreen), fill: 'none', stroke: '#0b7285', 'stroke-width': '1.75', 'stroke-dasharray': '5,3' }));
+
+    const o = toScreen(xMin, 0), oR = toScreen(xMax, 0);
+    svg.appendChild(el('line', { x1: o.x, y1: o.y, x2: oR.x, y2: oR.y, stroke: '#333' }));
+    const zeroPt = toScreen(0, 0), topPt = toScreen(0, yMax);
+    svg.appendChild(el('line', { x1: zeroPt.x, y1: zeroPt.y, x2: topPt.x, y2: topPt.y, stroke: '#333' }));
+    const zeroTick = el('text', { x: zeroPt.x, y: zeroPt.y + 15, 'font-size': '12', fill: '#555', 'text-anchor': 'middle' });
+    zeroTick.textContent = '0';
+    svg.appendChild(zeroTick);
+
+    const xAxisLabel = el('text', { x: width - 4, y: o.y + 4, 'font-size': '12', fill: '#555', 'text-anchor': 'end' });
+    xAxisLabel.textContent = 'z';
+    svg.appendChild(xAxisLabel);
+    const yAxisLabel = el('text', { x: padL, y: padT + 10, 'font-size': '12', fill: '#555', 'text-anchor': 'start' });
+    yAxisLabel.textContent = 'f(z)';
+    svg.appendChild(yAxisLabel);
+
+    const cs = toScreen(zCrit, normalPdf(zCrit, delta));
+    const cb = toScreen(zCrit, 0);
+    svg.appendChild(el('line', { x1: cs.x, y1: cs.y, x2: cb.x, y2: cb.y, stroke: '#333', 'stroke-width': '1.25', 'stroke-dasharray': '3,3' }));
+    const critLabel = el('text', { x: cs.x, y: padT - 5, 'font-size': '12', fill: '#555', 'text-anchor': 'middle' });
+    critLabel.textContent = `z* = ${zCrit}`;
+    svg.appendChild(critLabel);
+
+    const alphaScreenX = toScreen(zCrit + 0.55, 0).x;
+    const alphaLabel = el('text', { x: alphaScreenX, y: padT + plotH - 12, 'font-size': '12', fill: '#c92a2a', 'text-anchor': 'middle', 'font-weight': '600' });
+    alphaLabel.textContent = 'α';
+    svg.appendChild(alphaLabel);
+
+    const powerScreenX = toScreen(delta + 0.3, 0).x;
+    const powerLabel = el('text', { x: powerScreenX, y: padT + plotH - 12, 'font-size': '12', fill: '#0b7285', 'text-anchor': 'middle', 'font-weight': '600' });
+    powerLabel.textContent = '1−β';
+    svg.appendChild(powerLabel);
+
+    container.innerHTML = '';
+    container.appendChild(svg);
+    renderLegend(container, [
+      { type: 'line', color: '#1a1a1a', label: 'null distribution' },
+      { type: 'dashed', color: '#0b7285', label: 'alternative distribution' },
+      { type: 'fill', color: '#c92a2a', label: 'α (size)' },
+      { type: 'fill', color: '#0b7285', label: '1−β (power)' }
+    ]);
+    // No trailing caption — δ, z*, and the resulting α/power are already
+    // stated in the prose above, matching the Hypothesis Testing chart's
+    // own pattern.
+  }
+
   // MLE, Uniform(0,θ) case: the same five data points and true θ as
   // Method of Moments' Uniform chart, but the estimated support now ends
   // at the sample maximum (5.5) instead of 2X̄ (6) — a genuinely different
@@ -1736,6 +1825,8 @@ if (window.renderMathInElement) {
 
   const hypMount = document.getElementById('hyp-chart-root');
   if (hypMount) renderHypothesisChart(hypMount);
+  const powerMount = document.getElementById('power-chart-root');
+  if (powerMount) renderPowerChart(powerMount);
 
   const biasMseMount = document.getElementById('bias-mse-chart-root');
   if (biasMseMount) renderBiasMseChart(biasMseMount);
