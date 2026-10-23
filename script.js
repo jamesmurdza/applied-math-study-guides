@@ -1326,56 +1326,56 @@ if (window.renderMathInElement) {
     // restate it.
   }
 
-  // Likelihood curve over θ for a Bernoulli sample, peaked at the MLE.
-  function renderMLEChart(container) {
-    const xMin = 0, xMax = 1;
-    const n = 10, k = 7;
-    const likelihood = theta => Math.pow(theta, k) * Math.pow(1 - theta, n - k);
-    const thetaHat = k / n;
-    const width = 380, height = 170, padL = 30, padR = 22, padT = 36, padB = 24;
+  // MLE, Uniform(0,θ) case: the same five data points and true θ as
+  // Method of Moments' Uniform chart, but the estimated support now ends
+  // at the sample maximum (5.5) instead of 2X̄ (6) — a genuinely different
+  // number on identical data, making the method-of-moments-vs-MLE
+  // divergence visible as two different charts over the same points
+  // rather than something only stated in prose.
+  function renderMleUniformChart(container) {
+    const data = [1.0, 1.5, 3.0, 4.0, 5.5];
+    const trueTheta = 7, xHat = Math.max(...data);
+
+    const xMin = 0, xMax = 7.6;
+    const width = 320, height = 150, padL = 16, padR = 16, padT = 18, padB = 30;
     const plotW = width - padL - padR, plotH = height - padT - padB;
-    const pts = sample(likelihood, xMin, xMax, 200);
-    const maxY = Math.max(...pts.map(p => p.y));
-    const toScreen = (x, y) => ({
-      x: padL + (x - xMin) / (xMax - xMin) * plotW,
-      y: padT + plotH - (y / maxY) * plotH
+    const axisY = padT + plotH;
+    const toX = x => padL + (x - xMin) / (xMax - xMin) * plotW;
+    const maxDensity = 1 / xHat;
+    const toY = h => axisY - (h / maxDensity) * (plotH * 0.85);
+
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'True and MLE-estimated Uniform densities, shaded, with five data points' });
+
+    [[trueTheta, '#0b7285', null, false], [xHat, '#999', '4,3', true]].forEach(([end, color, dash, isEstimate]) => {
+      const h = 1 / end;
+      const top = toY(h);
+      const attrs = { d: `M${toX(0)},${axisY} L${toX(0)},${top.toFixed(1)} L${toX(end)},${top.toFixed(1)} L${toX(end)},${axisY} Z`, fill: color, 'fill-opacity': '0.25', stroke: 'none' };
+      svg.appendChild(el('path', attrs));
+      const outline = { x1: toX(0), y1: top, x2: toX(end), y2: top, stroke: color, 'stroke-width': '2' };
+      if (dash) outline['stroke-dasharray'] = dash;
+      svg.appendChild(el('line', outline));
+      svg.appendChild(el('line', { x1: toX(end), y1: top, x2: toX(end), y2: axisY, stroke: color, 'stroke-width': dash ? '1.5' : '2', 'stroke-dasharray': dash || 'none' }));
+      if (isEstimate) {
+        texLabel(svg, toX(end) + 8, top - 6, '\\hat{\\theta}', color);
+      } else {
+        texLabel(svg, toX(end), top - 6, '\\theta', color);
+      }
     });
 
-    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'Likelihood curve peaked at the MLE' });
-    svg.appendChild(el('path', { d: pathFor(pts, toScreen), fill: 'none', stroke: '#0b7285', 'stroke-width': '1.75' }));
-
-    const o = toScreen(xMin, 0), oR = toScreen(xMax, 0), oT = toScreen(xMin, maxY);
-    svg.appendChild(el('line', { x1: o.x, y1: o.y, x2: oR.x, y2: oR.y, stroke: '#333' }));
-    svg.appendChild(el('line', { x1: o.x, y1: o.y, x2: oT.x, y2: oT.y, stroke: '#333' }));
-
-    const xAxisLabel = el('text', { x: width - 4, y: o.y + 4, 'font-size': '12', fill: '#555', 'text-anchor': 'end' });
-    xAxisLabel.textContent = 'θ';
-    svg.appendChild(xAxisLabel);
-    const yAxisLabel = el('text', { x: o.x, y: oT.y - 6, 'font-size': '12', fill: '#555', 'text-anchor': 'start' });
-    yAxisLabel.textContent = 'L(θ)';
-    svg.appendChild(yAxisLabel);
-
-    const peak = toScreen(thetaHat, maxY);
-    const peakBase = toScreen(thetaHat, 0);
-    svg.appendChild(el('line', { x1: peak.x, y1: peak.y, x2: peakBase.x, y2: peakBase.y, stroke: '#0b7285', 'stroke-width': '1.25', 'stroke-dasharray': '3,3' }));
-    svg.appendChild(el('circle', { cx: peak.x.toFixed(1), cy: peak.y.toFixed(1), r: 3, fill: '#0b7285' }));
-    texLabel(svg, peak.x, peak.y - 8, `\\hat{\\theta} = ${thetaHat}`, '#0b7285', 52);
-
-    [0, 1].forEach(v => {
-      const s = toScreen(v, 0);
-      const t = el('text', { x: s.x, y: s.y + 16, 'font-size': '12', fill: '#555', 'text-anchor': 'middle' });
-      t.textContent = v;
-      svg.appendChild(t);
+    svg.appendChild(el('line', { x1: padL, y1: axisY, x2: padL + plotW, y2: axisY, stroke: '#333' }));
+    data.forEach(x => {
+      svg.appendChild(el('circle', { cx: toX(x), cy: axisY, r: 3, fill: '#1a1a1a' }));
     });
 
     container.innerHTML = '';
     container.appendChild(svg);
     renderLegend(container, [
-      { type: 'line', color: '#0b7285', label: 'likelihood L(θ)' },
-      { type: 'dot', color: '#0b7285', label: 'MLE θ̂' }
+      { type: 'fill', color: '#0b7285', label: `true θ = ${trueTheta}` },
+      { type: 'fill', color: '#999', label: `estimated θ̂ = ${xHat}` },
+      { type: 'dot', color: '#1a1a1a', label: 'data' }
     ]);
     // No trailing caption — the setup is already stated in the prose
-    // right above this chart (same precedent as Method of Moments).
+    // right above this chart.
   }
 
   // Prior, likelihood, and posterior curves overlaid (Beta-Binomial),
@@ -1708,8 +1708,8 @@ if (window.renderMathInElement) {
   const momUniformMount = document.getElementById('mom-uniform-chart-root');
   if (momUniformMount) renderMomUniformChart(momUniformMount);
 
-  const mleMount = document.getElementById('mle-chart-root');
-  if (mleMount) renderMLEChart(mleMount);
+  const mleUniformMount = document.getElementById('mle-uniform-chart-root');
+  if (mleUniformMount) renderMleUniformChart(mleUniformMount);
 
   const bayesMount = document.getElementById('bayes-chart-root');
   if (bayesMount) renderBayesChart(bayesMount);
