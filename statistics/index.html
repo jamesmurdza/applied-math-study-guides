@@ -87,7 +87,7 @@
             <p class="math">$$\text{Bias}(\hat{\textcolor{#0b7285}{\theta}}) = E[\hat{\textcolor{#0b7285}{\theta}}] - \textcolor{#0b7285}{\theta}$$</p>
             <p>But low bias alone isn't the whole story — an estimator can be perfectly unbiased yet swing wildly from sample to sample. Mean squared error folds both effects into one number, splitting cleanly into variance plus bias squared.</p>
             <p class="math">$$\text{MSE}(\hat{\textcolor{#0b7285}{\theta}}) = E[(\hat{\textcolor{#0b7285}{\theta}}-\textcolor{#0b7285}{\theta})^2] = \text{Var}(\hat{\textcolor{#0b7285}{\theta}}) + \text{Bias}(\hat{\textcolor{#0b7285}{\theta}})^2$$</p>
-            <p>Revisiting the coin-flip data above, hypothetically with true p = 0.7: the MLE p̂ = X/n is unbiased (Bias = 0, Var = p(1−p)/n = 0.021, so MSE = 0.021). The Bayesian posterior mean (X+2)/(n+4) is biased toward the prior's center (Bias ≈ −0.057) but has smaller variance (≈ 0.011), so its MSE (≈ 0.014) actually wins — a little bias bought a bigger cut in variance.</p>
+            <p>Revisiting the normal data above, hypothetically with true μ = 4.2: the MLE X̄ is unbiased (Bias = 0, Var = σ²/n = 0.072, so MSE = 0.072). The Bayesian posterior mean is biased toward the prior's center μ₀ = 4.0 (Bias ≈ −0.089) but has smaller variance (≈ 0.022), so its MSE (≈ 0.030) actually wins — a little bias bought a bigger cut in variance.</p>
 
             <div class="stat-chart" id="bias-mse-chart-root"></div>
           </div>

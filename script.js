@@ -1447,20 +1447,26 @@ if (window.renderMathInElement) {
     container.appendChild(caption);
   }
 
-  // Approximate sampling distributions of two estimators of a Bernoulli p
-  // (the same 7-heads-in-10-flips setup as MLEs/Bayesian inference above):
-  // the unbiased MLE vs. the Bayesian posterior mean, whose bias trades for
-  // a smaller variance. Both curves share one y-scale (unlike the prior/
-  // likelihood/posterior curves above, each normalized to its own peak) so
-  // the relative spread — the actual bias/variance tradeoff — is visible
-  // directly: the narrower, taller curve has lower variance.
+  // Approximate sampling distributions of two estimators of a normal mean
+  // (the same running example as Method of Moments/MLEs/Bayesian inference
+  // above, with σ = 0.6, n = 5, and a prior μ₀ = 4.0, τ = 0.3 as in
+  // Bayesian Inference): the unbiased MLE X̄ vs. the Bayesian posterior
+  // mean, whose bias trades for a smaller variance. Both curves share one
+  // y-scale (unlike the prior/likelihood/posterior curves above, each
+  // normalized to its own peak) so the relative spread — the actual
+  // bias/variance tradeoff — is visible directly: the narrower, taller
+  // curve has lower variance. True μ here is hypothetically 4.2 (rather
+  // than the 5.0 used earlier) so the prior sits close enough to it for
+  // the bias/variance tradeoff to actually favor the Bayes estimate.
   function renderBiasMseChart(container) {
-    const n = 10, p = 0.7;
-    const mleMean = p, mleSd = Math.sqrt(p * (1 - p) / n);
-    const bayesMean = (n * p + 2) / (n + 4), bayesSd = Math.sqrt(n * p * (1 - p)) / (n + 4);
+    const sigma = 0.6, n = 5, trueMu = 4.2;
+    const mu0 = 4.0, tau = 0.3;
+    const w = (n / sigma ** 2) / (n / sigma ** 2 + 1 / tau ** 2);
+    const mleMean = trueMu, mleSd = sigma / Math.sqrt(n);
+    const bayesMean = w * trueMu + (1 - w) * mu0, bayesSd = w * mleSd;
     const normalPdf = (x, mu, sigma) => Math.exp(-0.5 * ((x - mu) / sigma) ** 2) / (sigma * Math.sqrt(2 * Math.PI));
 
-    const xMin = 0.15, xMax = 1.05;
+    const xMin = 3.5, xMax = 4.9;
     const width = 380, height = 190, padL = 16, padR = 16, padT = 18, padB = 24;
     const plotW = width - padL - padR, plotH = height - padT - padB;
     const yMax = Math.max(normalPdf(mleMean, mleMean, mleSd), normalPdf(bayesMean, bayesMean, bayesSd)) * 1.15;
@@ -1476,21 +1482,21 @@ if (window.renderMathInElement) {
     const bayesPts = sample(x => normalPdf(x, bayesMean, bayesSd), xMin, xMax, 200);
     svg.appendChild(el('path', { d: pathFor(bayesPts, toScreen), fill: 'none', stroke: '#0b7285', 'stroke-width': '1.75', 'stroke-dasharray': '5,3' }));
 
-    // true p — the fixed target both estimators are judged against, so it's
+    // true μ — the fixed target both estimators are judged against, so it's
     // a secondary reference line rather than one of the two main curves
-    const trueTop = toScreen(p, yMax), trueBase = toScreen(p, 0);
+    const trueTop = toScreen(trueMu, yMax), trueBase = toScreen(trueMu, 0);
     svg.appendChild(el('line', { x1: trueTop.x, y1: trueTop.y, x2: trueBase.x, y2: trueBase.y, stroke: '#999', 'stroke-width': '1.25', 'stroke-dasharray': '3,3' }));
     const trueLabel = el('text', { x: trueTop.x, y: padT - 5, 'font-size': '12', fill: '#999', 'text-anchor': 'middle' });
-    trueLabel.textContent = `true p = ${p}`;
+    trueLabel.textContent = `true μ = ${trueMu}`;
     svg.appendChild(trueLabel);
 
     const oY = padT + plotH;
     svg.appendChild(el('line', { x1: padL, y1: oY, x2: padL + plotW, y2: oY, stroke: '#333' }));
     svg.appendChild(el('line', { x1: padL, y1: oY, x2: padL, y2: padT, stroke: '#333' }));
-    [0.25, 0.5, 0.75, 1].forEach(v => {
+    [3.6, 4.0, 4.4, 4.8].forEach(v => {
       const sx = toScreen(v, 0).x;
       const t = el('text', { x: sx, y: oY + 16, 'font-size': '12', fill: '#555', 'text-anchor': 'middle' });
-      t.textContent = v;
+      t.textContent = v.toFixed(1);
       svg.appendChild(t);
     });
 
@@ -1504,9 +1510,9 @@ if (window.renderMathInElement) {
     container.innerHTML = '';
     container.appendChild(svg);
     renderLegend(container, [
-      { type: 'line', color: '#1a1a1a', label: 'MLE p̂ (unbiased, higher variance)' },
+      { type: 'line', color: '#1a1a1a', label: 'MLE X̄ (unbiased, higher variance)' },
       { type: 'dashed', color: '#0b7285', label: 'Bayes estimate (biased, lower variance)' },
-      { type: 'dashed', color: '#999', label: 'true p' }
+      { type: 'dashed', color: '#999', label: 'true μ' }
     ]);
   }
 
