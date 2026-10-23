@@ -127,7 +127,7 @@
           </div>
           <div class="topic" id="students-t-tests">
             <h2>Student's t-tests</h2>
-            <p>When the population variance is unknown, we estimate it from the sample. This adds uncertainty, which is why we use a t-statistic rather than a z-statistic.</p>
+            <p>When the population variance is unknown, we estimate it from the sample. The extra uncertainty this introduces is accounted for by the t-statistic, which follows a t-distribution rather than a normal distribution.</p>
             <p class="math">$$T = \frac{\bar X - \textcolor{#0b7285}{\mu_0}}{S/\sqrt{n}} \textcolor{#7B4B8C}{\sim} t_{n-1} \quad \text{under } H_0: \mu = \textcolor{#0b7285}{\mu_0}$$</p>
             <p>The same form covers three cases: the <strong>one-sample</strong> test checks a mean against μ₀ (above); the <strong>paired</strong> test reduces differences Dᵢ = Xᵢ − Yᵢ to a one-sample test on D̄; the <strong>two-sample</strong> test compares X̄ − Ȳ directly.</p>
             <p class="math">$$T = \frac{\bar X - \bar Y}{S_p\sqrt{\tfrac{1}{n_1}+\tfrac{1}{n_2}}} \textcolor{#7B4B8C}{\sim} t_{n_1+n_2-2} \quad \text{(pooled, assumes equal variances)}$$</p>
