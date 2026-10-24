@@ -32,7 +32,7 @@
           <div class="topic" id="method-of-moments">
             <h2>Method of Moments</h2>
             <p>Often we know the shape of a population's distribution but not the values of its parameters. An estimator is a formula for approximating those unknown parameters from sample data.</p>
-            <p>The <strong>method of moments</strong> matches the model's theoretical moments to the sample's own — one equation per unknown parameter — then solves for whatever makes them agree.</p>
+            <p>The <strong>method of moments</strong> is one of the oldest and simplest ways to build an estimator: it chooses parameter values so that the model's moments match the sample's. The first moment is the mean, E[X]; the second is E[X²]; and so on, one equation per unknown parameter.</p>
             <p class="math">$$E[X^k] = \frac{1}{n}\sum_{i=1}^{n} X_i^k, \quad k = 1, 2, \dots$$</p>
 
             <p>A normal distribution with one unknown, its mean, is the simplest case. The model's mean is set equal to the data's mean:</p>
