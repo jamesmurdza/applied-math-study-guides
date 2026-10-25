@@ -1604,14 +1604,14 @@ if (window.renderMathInElement) {
     const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'Sampling distributions of two estimators, compared by bias and variance' });
 
     const mlePts = sample(x => normalPdf(x, mleMean, mleSd), xMin, xMax, 200);
-    svg.appendChild(el('path', { d: pathFor(mlePts, toScreen), fill: 'none', stroke: '#1a1a1a', 'stroke-width': '1.75' }));
+    svg.appendChild(el('path', { d: pathFor(mlePts, toScreen), fill: 'none', stroke: '#1a1a1a', 'stroke-width': '1.75', 'stroke-dasharray': '5,3' }));
     const bayesPts = sample(x => normalPdf(x, bayesMean, bayesSd), xMin, xMax, 200);
     svg.appendChild(el('path', { d: pathFor(bayesPts, toScreen), fill: 'none', stroke: '#0b7285', 'stroke-width': '1.75', 'stroke-dasharray': '5,3' }));
 
     // true μ — the fixed target both estimators are judged against, so it's
     // a secondary reference line rather than one of the two main curves
     const trueTop = toScreen(trueMu, yMax), trueBase = toScreen(trueMu, 0);
-    svg.appendChild(el('line', { x1: trueTop.x, y1: trueTop.y, x2: trueBase.x, y2: trueBase.y, stroke: '#999', 'stroke-width': '1.25', 'stroke-dasharray': '3,3' }));
+    svg.appendChild(el('line', { x1: trueTop.x, y1: trueTop.y, x2: trueBase.x, y2: trueBase.y, stroke: '#999', 'stroke-width': '1.25' }));
     const trueLabel = el('text', { x: trueTop.x, y: padT - 5, 'font-size': '12', fill: '#999', 'text-anchor': 'middle' });
     trueLabel.textContent = 'true μ';
     svg.appendChild(trueLabel);
@@ -1636,9 +1636,9 @@ if (window.renderMathInElement) {
     container.innerHTML = '';
     container.appendChild(svg);
     renderLegend(container, [
-      { type: 'line', color: '#1a1a1a', label: 'MLE X̅ (unbiased, higher variance)' },
+      { type: 'dashed', color: '#1a1a1a', label: 'MLE X̅ (unbiased, higher variance)' },
       { type: 'dashed', color: '#0b7285', label: 'Bayes estimate (biased, lower variance)' },
-      { type: 'dashed', color: '#999', label: 'true μ' }
+      { type: 'line', color: '#999', label: 'true μ' }
     ]);
   }
 
