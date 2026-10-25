@@ -1593,7 +1593,7 @@ if (window.renderMathInElement) {
     const normalPdf = (x, mu, sigma) => Math.exp(-0.5 * ((x - mu) / sigma) ** 2) / (sigma * Math.sqrt(2 * Math.PI));
 
     const xMin = 3.5, xMax = 4.9;
-    const width = 380, height = 190, padL = 16, padR = 16, padT = 18, padB = 24;
+    const width = 380, height = 200, padL = 16, padR = 16, padT = 18, padB = 34;
     const plotW = width - padL - padR, plotH = height - padT - padB;
     const yMax = Math.max(normalPdf(mleMean, mleMean, mleSd), normalPdf(bayesMean, bayesMean, bayesSd)) * 1.15;
     const toScreen = (x, y) => ({
@@ -1626,10 +1626,10 @@ if (window.renderMathInElement) {
       svg.appendChild(t);
     });
 
-    const xAxisLabel = el('text', { x: width - 4, y: oY + 4, 'font-size': '12', fill: '#555', 'text-anchor': 'end' });
+    const xAxisLabel = el('text', { x: width - 4, y: oY + 28, 'font-size': '12', fill: '#555', 'text-anchor': 'end' });
     xAxisLabel.textContent = 'estimate';
     svg.appendChild(xAxisLabel);
-    const yAxisLabel = el('text', { x: padL, y: padT + 10, 'font-size': '12', fill: '#555', 'text-anchor': 'start' });
+    const yAxisLabel = el('text', { x: padL, y: padT - 6, 'font-size': '12', fill: '#555', 'text-anchor': 'start' });
     yAxisLabel.textContent = 'density';
     svg.appendChild(yAxisLabel);
 
