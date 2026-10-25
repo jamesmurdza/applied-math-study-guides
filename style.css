@@ -519,6 +519,17 @@ body {
   background: currentColor;
 }
 
+.chart-legend-swatch.hatch {
+  background: repeating-linear-gradient(
+    45deg,
+    currentColor,
+    currentColor 1.5px,
+    transparent 1.5px,
+    transparent 4px
+  );
+  border-radius: 2px;
+}
+
 .var-prior {
   color: #868e96;
   font-weight: 600;

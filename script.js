@@ -1268,6 +1268,15 @@ if (window.renderMathInElement) {
     const curvePts = sample(normalPdf, xMin, xMax, 200);
     svg.appendChild(el('path', { d: pathFor(curvePts, toScreen), fill: 'none', stroke: '#1a1a1a', 'stroke-width': '1.75' }));
 
+    // diagonal-hatch pattern for the p-value region, so it reads as an
+    // overlay on top of the solid α fill instead of just a darker patch
+    // of the same color (which looked like one merged region)
+    const defs = el('defs', {});
+    const hatch = el('pattern', { id: 'pValueHatch', patternUnits: 'userSpaceOnUse', width: '5', height: '5', patternTransform: 'rotate(45)' });
+    hatch.appendChild(el('line', { x1: '0', y1: '0', x2: '0', y2: '5', stroke: '#c92a2a', 'stroke-width': '2.5' }));
+    defs.appendChild(hatch);
+    svg.appendChild(defs);
+
     // shaded rejection region: zCrit..xMax, closed down to the x-axis
     const tailPts = sample(normalPdf, zCrit, xMax, 60);
     const baseLeft = toScreen(zCrit, 0), baseRight = toScreen(xMax, 0);
@@ -1278,15 +1287,15 @@ if (window.renderMathInElement) {
 
     // p-value region nested inside it: zObs..xMax, the same tail but
     // starting from the observed statistic instead of the critical value.
-    // Stacking a second, equally-opaque fill of the same color on top
-    // darkens just the overlap, making "p sits inside α" visible rather
-    // than only asserted in the prose underneath.
+    // Drawn as diagonal hatching rather than a second solid fill, so the
+    // α shading underneath stays visible through it — p sits inside α,
+    // not just stacked darker on top of it.
     const pPts = sample(normalPdf, zObs, xMax, 60);
     const pBaseLeft = toScreen(zObs, 0), pBaseRight = toScreen(xMax, 0);
     let pShadeD = `M${pBaseLeft.x.toFixed(1)},${pBaseLeft.y.toFixed(1)} `;
     pShadeD += pPts.map(p => { const s = toScreen(p.x, p.y); return `L${s.x.toFixed(1)},${s.y.toFixed(1)}`; }).join(' ');
     pShadeD += ` L${pBaseRight.x.toFixed(1)},${pBaseRight.y.toFixed(1)} Z`;
-    svg.appendChild(el('path', { d: pShadeD, fill: '#c92a2a', 'fill-opacity': '0.35' }));
+    svg.appendChild(el('path', { d: pShadeD, fill: 'url(#pValueHatch)' }));
 
     // x axis
     const o = toScreen(xMin, 0), oR = toScreen(xMax, 0);
@@ -1338,7 +1347,7 @@ if (window.renderMathInElement) {
       { type: 'line', color: '#1a1a1a', label: 'null distribution' },
       { type: 'dot', color: '#1a1a1a', label: 'observed statistic' },
       { type: 'fill', color: '#c92a2a', label: 'rejection region (α)' },
-      { type: 'fill', color: '#c92a2a', label: 'p-value region', opacity: 0.5 }
+      { type: 'hatch', color: '#c92a2a', label: 'p-value region' }
     ]);
     // No trailing caption here, and no plugged-in numbers on the chart
     // either — matches the symbolic style used elsewhere (the Method of
