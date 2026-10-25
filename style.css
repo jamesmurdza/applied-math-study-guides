@@ -521,7 +521,7 @@ body {
 
 .chart-legend-swatch.hatch {
   background: repeating-linear-gradient(
-    45deg,
+    -45deg,
     currentColor,
     currentColor 1.5px,
     transparent 1.5px,
