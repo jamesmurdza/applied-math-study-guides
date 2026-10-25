@@ -446,7 +446,7 @@ body {
 
 .lp-graph-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 24px;
   margin-top: 24px;
 }
@@ -454,12 +454,6 @@ body {
 .lp-graph-row .lp-graph {
   margin-top: 0;
   min-width: 0;
-}
-
-@media (max-width: 640px) {
-  .lp-graph-row {
-    grid-template-columns: 1fr;
-  }
 }
 
 .lp-graph svg {

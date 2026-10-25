@@ -832,6 +832,31 @@ if (window.renderMathInElement) {
       referencePoint: { x: 3, y: 1, label: 'integer optimum = 31' }
     });
   }
+
+  // Fourth round: this cut's own optimum lands exactly on the integer
+  // optimum, so there's no separate reference point to draw — the "after
+  // cut" marker and label are the integer optimum.
+  const gomoryMount4 = document.getElementById('gomory-graph-root-4');
+  if (gomoryMount4) {
+    renderLPGraph(gomoryMount4, {
+      xMax: 6,
+      yMax: 5,
+      varNames: ['x₁', 'x₂'],
+      varColors: ['#2f9e44', '#c2525c'],
+      axisLabels: ['green eggs', 'ham'],
+      objective: { a: 7, b: 10 },
+      objectiveLabel: 'protein',
+      constraints: [
+        { a: 0.7, b: 0.9, c: 3 },
+        { a: 0, b: 1, c: 3 },
+        { a: 1, b: 2, c: 6 },
+        { a: 3, b: 4, c: 13 }
+      ],
+      cut: { a: 2, b: 3, c: 9, color: '#c0392b', label: 'cut: 2x₁ + 3x₂ ≤ 9' },
+      showLattice: true,
+      optimalLabel: 'integer optimum'
+    });
+  }
 })();
 
 // ---------------------------------------------------------------------------
