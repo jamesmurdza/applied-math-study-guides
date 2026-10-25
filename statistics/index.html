@@ -94,37 +94,41 @@
           <div class="topic" id="pivotal-quantities">
             <h2>Pivotal Quantities</h2>
             <p>When we calculate a quantity from a sample, its distribution can depend on unknown parameters. However, we can build a quantity whose distribution is fully known but still contains the unknown parameters. This kind of quantity is called a <strong>pivotal quantity</strong>.</p>
-            <p>For example, if the data comes from a normal distribution with unknown μ and σ, the quantity below always follows a t distribution with n − 1 degrees of freedom:</p>
+            <p>For example, if the data comes from a normal distribution with unknown μ and σ, the quantity below follows a t distribution with n − 1 degrees of freedom:</p>
             <p class="math">$$\frac{\bar{X} - \textcolor{#0b7285}{\mu}}{S/\sqrt{n}} \textcolor{#7B4B8C}{\sim} t_{n-1} \quad \text{for every value of } \textcolor{#0b7285}{\mu}$$</p>
             <p>Since we know this distribution, we can use it to find the probability that the pivot falls in a range of values.</p>
           </div>
           <div class="topic" id="confidence-intervals">
             <h2>Confidence Intervals</h2>
-            <p>The confidence interval is the range of parameter values for which the observed pivot would land in its typical range.</p>
+            <p>A <strong>confidence interval</strong> is a range of values used to estimate an unknown parameter from sample data. It is calculated by choosing a confidence level and finding the parameter values for which the pivot falls in a range with that probability.</p>
+            <p>For the t pivot, this gives:</p>
             <p class="math">$$P\!\left(-t^*_{n-1} \le \frac{\bar X - \textcolor{#0b7285}{\mu}}{S/\sqrt{n}} \le t^*_{n-1}\right) = 1-\textcolor{#c92a2a}{\alpha} \quad\Longrightarrow\quad \textcolor{#0b7285}{\mu} \in \bar X \pm t^*_{n-1}\frac{S}{\sqrt{n}}$$</p>
-            <p>Before the data is collected, the confidence level is the probability that the interval will contain the true μ. Once computed, a specific interval either contains μ or it doesn't — there's no probability left to assign to it.</p>
-            <p>This coverage is exact only when the data is actually normal. Otherwise a near-pivot serves the same role: its distribution isn't exactly known, only approximated using a large sample, so coverage is only approximate too.</p>
+            <p>We write the confidence level as 1 − α. Before we collect the data, there is a 1 − α chance that the interval we are about to compute will contain the true μ.</p>
+            <p>The t interval above assumes the data is normal. If it isn't, the pivot no longer follows a t distribution exactly, but with a large sample it comes close, so the interval contains μ about 1 − α of the time.</p>
           </div>
           <div class="topic" id="hypothesis-testing">
             <h2>Hypothesis Testing</h2>
-            <p>A hypothesis test rejects the null hypothesis when the observed data would be too unlikely if the null were actually true.</p>
+            <p>Sometimes we start with a specific claim about the parameter, called the <strong>null hypothesis</strong>, H₀. A hypothesis test asks whether the data fits this claim.</p>
+            <p>To decide, we calculate a test statistic and check whether it falls in the <strong>rejection region</strong>: a set of values that would be unusual if H₀ were true.</p>
             <p class="math">$$\textcolor{#7B4B8C}{\text{reject } H_0} \textcolor{#7B4B8C}{\iff} \text{test statistic} \textcolor{#7B4B8C}{\in} \text{rejection region}$$</p>
-            <p>The rejection region is sized so a true H₀ is wrongly rejected only a small fraction of the time. Below, the observed test statistic falls past the critical value z*, inside the shaded tail, so H₀ is rejected.</p>
+            <p>We choose the rejection region so that, if H₀ is true, the test statistic lands in it only a small fraction of the time. We call that fraction α.</p>
             <p class="math">$$P(\textcolor{#7B4B8C}{\text{reject } H_0} \mid H_0 \text{ true}) = \textcolor{#c92a2a}{\alpha}$$</p>
+            <p>In the figure below, the curve shows how the test statistic is distributed when H₀ is true. The rejection region is the shaded tail past the critical value z*. The observed statistic falls past z*, so we reject H₀.</p>
 
             <div class="stat-chart" id="hyp-chart-root"></div>
 
-            <p>Equivalently: the p-value is the probability of a test statistic at least as extreme as the one observed, assuming H₀ is true. Reject when p &lt; α — the same decision, expressed as a probability rather than a region.</p>
-
-            <p>Size (α) is the <strong>Type I error</strong> rate — how often the test wrongly rejects a true H₀:</p>
-            <p class="math">$$\textcolor{#c92a2a}{\alpha} = P(\text{reject } H_0 \mid H_0)$$</p>
-            <p>Power is one minus the <strong>Type II error</strong> rate — how often the test correctly rejects a false H₀:</p>
+            <p>We can make the same decision using the p-value. The p-value is the probability, assuming H₀ is true, of getting a test statistic at least as extreme as the one we observed. We reject H₀ when p &lt; α, which always gives the same decision as the rejection region.</p>
+          </div>
+          <div class="topic" id="test-performance">
+            <h2>Test Performance</h2>
+            <p>One error is rejecting H₀ when it is actually true. This is called a <strong>Type I error</strong>, and it happens with probability α, the size of the test.</p>
+            <p>The other is failing to reject H₀ when it is actually false, meaning some other claim, the <strong>alternative hypothesis</strong> H₁, is true. This is called a <strong>Type II error</strong>, and its probability is called β. We usually look at 1 − β instead, which is called the <strong>power</strong>: the probability that the test correctly rejects a false H₀.</p>
             <p class="math">$$1-\textcolor{#0b7285}{\beta} = P(\text{reject } H_0 \mid H_1)$$</p>
-            <p>Below, the same rejection region is checked against both the null distribution and a specific alternative. The red tail is still α; the teal tail is the power.</p>
+            <p>The figure below uses the same rejection region but shows two curves: one for when H₀ is true and one for a specific alternative. The red area under the null curve is α. The teal area under the alternative curve is the power.</p>
 
             <div class="stat-chart" id="power-chart-root"></div>
 
-            <p>Power increases with a larger δ, n, or α. Increasing δ and n don't increase the Type I rate, but increasing α does.</p>
+            <p>Power goes up in three situations: when the true value is farther from the value claimed by H₀ (a larger δ), when the sample is larger, and when we allow a larger α. Only a larger α also raises the Type I error rate.</p>
           </div>
           <div class="topic" id="students-t-tests">
             <h2>Student's t-tests</h2>
