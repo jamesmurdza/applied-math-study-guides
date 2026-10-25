@@ -544,15 +544,17 @@ if (window.renderMathInElement) {
         // above-right placement collides with the post-cut optimum's own
         // label below — drop this one below-left instead whenever they're
         // close enough to crowd each other.
-        const bs = toScreen(bestCont.x, bestCont.y);
-        const closeBy = Math.hypot(cs.x - bs.x, cs.y - bs.y) < 45;
-        const clabel = el('text', {
-          x: (cs.x + 10).toFixed(1),
-          y: (closeBy ? cs.y + 18 : cs.y - 8).toFixed(1),
-          'font-size': '12', fill: '#999', 'text-anchor': 'start'
-        });
-        clabel.textContent = `before cut: (${fmt(baseBest.x)}, ${fmt(baseBest.y)})`;
-        svg.appendChild(clabel);
+        if (!config.hideOptimumLabels) {
+          const bs = toScreen(bestCont.x, bestCont.y);
+          const closeBy = Math.hypot(cs.x - bs.x, cs.y - bs.y) < 45;
+          const clabel = el('text', {
+            x: (cs.x + 10).toFixed(1),
+            y: (closeBy ? cs.y + 18 : cs.y - 8).toFixed(1),
+            'font-size': '12', fill: '#999', 'text-anchor': 'start'
+          });
+          clabel.textContent = `before cut: (${fmt(baseBest.x)}, ${fmt(baseBest.y)})`;
+          svg.appendChild(clabel);
+        }
       }
     }
 
@@ -644,12 +646,18 @@ if (window.renderMathInElement) {
     const bs = toScreen(best.x, best.y);
     svg.appendChild(el('circle', { cx: bs.x.toFixed(1), cy: bs.y.toFixed(1), r: 4, fill: '#1a1a1a' }));
     hoverTargets.push({ x: bs.x, y: bs.y, r: 6, title: pointTitle(best) });
-    const label = el('text', {
-      x: (bs.x + 10).toFixed(1), y: (bs.y - 8).toFixed(1),
-      'font-size': '12', fill: '#1a1a1a'
-    });
-    label.textContent = `${config.optimalLabel || 'optimal'}: (${fmt(best.x)}, ${fmt(best.y)})`;
-    svg.appendChild(label);
+    // config.labelText overrides with a fixed string (e.g. just "integer
+    // optimum", no coordinates); config.hideOptimumLabels drops the label
+    // entirely unless labelText is also set.
+    const bestLabelText = config.labelText || (!config.hideOptimumLabels ? `${config.optimalLabel || 'optimal'}: (${fmt(best.x)}, ${fmt(best.y)})` : null);
+    if (bestLabelText) {
+      const label = el('text', {
+        x: (bs.x + 10).toFixed(1), y: (bs.y - 8).toFixed(1),
+        'font-size': '12', fill: '#1a1a1a'
+      });
+      label.textContent = bestLabelText;
+      svg.appendChild(label);
+    }
 
     // Append every hover target last so it's painted on top of everything
     // else (axis lines, labels, markers) and reliably catches the pointer.
@@ -778,8 +786,8 @@ if (window.renderMathInElement) {
       ],
       cut: { a: 0, b: 1, c: 3, color: '#c0392b', label: 'cut: x₂ ≤ 3' },
       showLattice: true,
-      optimalLabel: 'after cut',
-      referencePoint: { x: 3, y: 1, label: 'integer optimum = 31' }
+      hideOptimumLabels: true,
+      referencePoint: { x: 3, y: 1, label: 'integer optimum' }
     });
   }
 
@@ -806,8 +814,8 @@ if (window.renderMathInElement) {
       ],
       cut: { a: 1, b: 2, c: 6, color: '#c0392b', label: 'cut: x₁ + 2x₂ ≤ 6' },
       showLattice: true,
-      optimalLabel: 'after cut',
-      referencePoint: { x: 3, y: 1, label: 'integer optimum = 31' }
+      hideOptimumLabels: true,
+      referencePoint: { x: 3, y: 1, label: 'integer optimum' }
     });
   }
 
@@ -828,8 +836,8 @@ if (window.renderMathInElement) {
       ],
       cut: { a: 3, b: 4, c: 13, color: '#c0392b', label: 'cut: 3x₁ + 4x₂ ≤ 13' },
       showLattice: true,
-      optimalLabel: 'after cut',
-      referencePoint: { x: 3, y: 1, label: 'integer optimum = 31' }
+      hideOptimumLabels: true,
+      referencePoint: { x: 3, y: 1, label: 'integer optimum' }
     });
   }
 
@@ -854,7 +862,8 @@ if (window.renderMathInElement) {
       ],
       cut: { a: 2, b: 3, c: 9, color: '#c0392b', label: 'cut: 2x₁ + 3x₂ ≤ 9' },
       showLattice: true,
-      optimalLabel: 'integer optimum'
+      hideOptimumLabels: true,
+      labelText: 'integer optimum'
     });
   }
 })();
