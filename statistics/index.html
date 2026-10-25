@@ -42,7 +42,7 @@
             <p>That means the estimator is just the sample mean:</p>
             <p class="math">$$\hat{\textcolor{#0b7285}{\mu}} = \bar X$$</p>
 
-            <p>A more interesting case is a uniform distribution with one unknown parameter, its upper endpoint. Its mean sits halfway between the two endpoints, so it only reflects half the unknown endpoint's value.</p>
+            <p>A more interesting case is a uniform distribution on [0, θ], whose one unknown parameter is its upper endpoint θ. Its mean sits halfway between the two endpoints, so it only reflects half the unknown endpoint's value.</p>
 
             <div class="stat-chart" id="mom-uniform-chart-root"></div>
 
@@ -89,14 +89,14 @@
             <p class="math">$$\text{Bias}(\hat{\textcolor{#0b7285}{\theta}}) = E[\hat{\textcolor{#0b7285}{\theta}}] - \textcolor{#0b7285}{\theta}$$</p>
             <p>Mean squared error folds bias and variance into one number, so a biased estimator can still win on MSE as long as its variance drops enough to compensate.</p>
             <p class="math">$$\text{MSE}(\hat{\textcolor{#0b7285}{\theta}}) = E[(\hat{\textcolor{#0b7285}{\theta}}-\textcolor{#0b7285}{\theta})^2] = \text{Var}(\hat{\textcolor{#0b7285}{\theta}}) + \text{Bias}(\hat{\textcolor{#0b7285}{\theta}})^2$$</p>
-            <p>With the normal example's data and a hypothetical true μ different from the prior's center: the MLE X̅ is unbiased but has higher variance, while the biased Bayesian posterior mean has lower variance and wins on MSE.</p>
+            <p>With the normal example's data and a hypothetical true μ different from the prior's center: the MLE X̅ is unbiased but has higher variance, while the biased Bayesian posterior mean has lower variance and, in this example, wins on MSE.</p>
 
             <div class="stat-chart" id="bias-mse-chart-root"></div>
           </div>
           <div class="topic" id="pivotal-quantities">
             <h2>Pivotal Quantities</h2>
             <p>When we calculate a quantity from a sample, its distribution can depend on unknown parameters. However, we can build a quantity whose distribution is fully known but still contains the unknown parameters. This kind of quantity is called a <strong>pivotal quantity</strong>.</p>
-            <p>For example, if the data comes from a normal distribution with known σ, the quantity below follows a standard normal distribution:</p>
+            <p>For example, if the data comes from a normal distribution with known σ, the quantity below, called the z-statistic, follows a standard normal distribution:</p>
             <p class="math">$$\frac{\bar{X} - \textcolor{#0b7285}{\mu}}{\sigma/\sqrt{n}} \textcolor{#7B4B8C}{\sim} N(0,1) \quad \text{for every value of } \textcolor{#0b7285}{\mu}$$</p>
             <p>If σ is unknown — the usual case — we estimate it with the sample's own S instead, which gives a t distribution with n − 1 degrees of freedom:</p>
             <p class="math">$$\frac{\bar{X} - \textcolor{#0b7285}{\mu}}{S/\sqrt{n}} \textcolor{#7B4B8C}{\sim} t_{n-1} \quad \text{for every value of } \textcolor{#0b7285}{\mu}$$</p>
@@ -115,7 +115,7 @@
             <p>A hypothesis test starts with a specific claim about the parameter, called the <strong>null hypothesis</strong>, H₀, and asks whether the data fits this claim.</p>
             <p>To decide, we calculate a test statistic and check whether it falls in the <strong>rejection region</strong>: a set of values that would be unusual if H₀ were true.</p>
             <p class="math">$$\textcolor{#7B4B8C}{\text{reject } H_0} \textcolor{#7B4B8C}{\iff} \text{test statistic} \textcolor{#7B4B8C}{\in} \text{rejection region}$$</p>
-            <p>Testing a normal mean with known variance σ reuses the z-statistic above, centered on the claimed μ₀ instead of the true μ.</p>
+            <p>Testing a normal mean with known standard deviation σ reuses the z-statistic above, centered on the claimed μ₀ instead of the true μ.</p>
             <p>We choose the rejection region so that, if H₀ is true, the test statistic lands in it only a small fraction of the time. We call that fraction α.</p>
             <p class="math">$$P(\textcolor{#7B4B8C}{\text{reject } H_0} \mid H_0 \text{ true}) = \textcolor{#c92a2a}{\alpha}$$</p>
             <p>In the figure below, the curve shows its distribution when H₀ is true. The rejection region is the shaded tail past the critical value z*. The observed statistic falls past z*, so we reject H₀.</p>
