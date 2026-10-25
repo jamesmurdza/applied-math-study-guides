@@ -1636,7 +1636,7 @@ if (window.renderMathInElement) {
     container.innerHTML = '';
     container.appendChild(svg);
     renderLegend(container, [
-      { type: 'line', color: '#1a1a1a', label: 'MLE X̄ (unbiased, higher variance)' },
+      { type: 'line', color: '#1a1a1a', label: 'MLE X̅ (unbiased, higher variance)' },
       { type: 'dashed', color: '#0b7285', label: 'Bayes estimate (biased, lower variance)' },
       { type: 'dashed', color: '#999', label: 'true μ' }
     ]);
