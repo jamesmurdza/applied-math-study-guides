@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Statistics · Math Topics</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+</head>
+<body>
+
+  <div class="container">
+    <details class="menu-nav">
+      <summary class="menu-button" aria-label="Switch subject">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </summary>
+      <div class="menu-dropdown">
+        <a class="menu-item" href="/real-analysis/">Real Analysis</a>
+        <a class="menu-item" href="/optimization/">Optimization</a>
+        <a class="menu-item active" href="/statistics/">Statistics</a>
+      </div>
+    </details>
+
+    <main class="panels">
+      <section class="panel" id="statistics">
+        <h1>Statistics</h1>
+        <p>The discipline of collecting, analyzing, interpreting, and presenting data to uncover patterns and inform decisions.</p>
+
+        <div class="topics">
+          <div class="topic" id="method-of-moments">
+            <h2>Method of Moments</h2>
+            <p>Often we know the shape of a population's distribution but not the values of its parameters. An estimator is a formula for approximating those unknown parameters from sample data.</p>
+            <p>The <strong>method of moments</strong> is one of the simplest ways to build an estimator: it chooses parameter values so that the model's moments match the sample's. The first moment is the mean, E[X]; the second is E[X²]; and so on, one equation per unknown parameter.</p>
+            <p class="math">$$E[X^k] = \frac{1}{n}\sum_{i=1}^{n} X_i^k, \quad k = 1, 2, \dots$$</p>
+
+            <p>A normal distribution with one unknown, its mean, is the simplest case. The model's mean is set equal to the data's mean:</p>
+
+            <div class="stat-chart" id="mom-normal-chart-root"></div>
+
+            <p>That means the estimator is just the sample mean:</p>
+            <p class="math">$$\hat{\textcolor{#0b7285}{\mu}} = \bar X$$</p>
+
+            <p>A more interesting case is a uniform distribution on [0, θ], whose one unknown parameter is its upper endpoint θ. Its mean sits halfway between the two endpoints, so it only reflects half the unknown endpoint's value.</p>
+
+            <div class="stat-chart" id="mom-uniform-chart-root"></div>
+
+            <p>That means the estimator is twice the sample mean:</p>
+            <p class="math">$$\hat{\textcolor{#0b7285}{\theta}} = 2\bar X$$</p>
+
+            <p>For a model with n unknowns, the first n moments are needed to solve for them.</p>
+          </div>
+          <div class="topic" id="mles">
+            <h2>Maximum Likelihood Estimators</h2>
+            <p><strong>Maximum likelihood estimation</strong> is another way to build an estimator: it picks the parameter value that makes the observed data most probable.</p>
+            <p class="math">$$\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}} = \textcolor{#7B4B8C}{\arg\max_{\theta}}\ L(\theta) = \textcolor{#7B4B8C}{\arg\max_{\theta}} \prod_{i=1}^{n} f(x_i; \theta)$$</p>
+            <p>Products are awkward to differentiate, so in practice the log-likelihood is maximized instead — log is increasing, so it has the same maximizer, with much easier calculus.</p>
+            <p class="math">$$\hat{\textcolor{#0b7285}{\theta}}_{\text{MLE}} = \textcolor{#7B4B8C}{\arg\max_{\theta}}\ \ell(\theta), \quad \ell(\theta) = \sum_{i=1}^{n} \log f(x_i;\theta)$$</p>
+
+            <p>For the normal distribution, the likelihood is maximized when μ̂ is equal to the sample mean too — the same estimator either way:</p>
+
+            <div class="stat-chart" id="mle-normal-chart-root"></div>
+
+            <p>For the uniform distribution, the likelihood is instead maximized when θ̂ is equal to the largest value actually observed — the sample maximum, not twice the mean:</p>
+
+            <div class="stat-chart" id="mle-uniform-chart-root"></div>
+
+            <p>If there were multiple unknown parameters instead of one, the likelihood would be maximized jointly over all of them at once, not one at a time.</p>
+          </div>
+          <div class="topic" id="bayesian-inference">
+            <h2>Bayesian Inference</h2>
+            <p>Bayesian inference treats θ as random, with its own distribution, and uses the data to update what we believed about θ before seeing it.</p>
+            <p class="math">$$\pi(\textcolor{#0b7285}{\theta} \mid x) \textcolor{#7B4B8C}{\propto} f(x \mid \textcolor{#0b7285}{\theta})\, \pi(\textcolor{#0b7285}{\theta})$$</p>
+            <p>The prior <strong>π(θ)</strong> is our belief about θ before seeing the data. The likelihood <strong>f(x∣θ)</strong> is how probable the data is for each θ. The posterior <strong>π(θ∣x)</strong> is our updated belief. The ∝ leaves out a constant that doesn't depend on θ, so it changes the curve's height but not its shape.</p>
+
+            <p>For example, if the data is normal and the prior is μ ~ N(μ₀, τ²), the posterior is also normal. Its center is a weighted average of the prior's center and the sample mean:</p>
+            <p class="math">$$\hat{\textcolor{#0b7285}{\mu}}_{\text{Bayes}} = w\bar X + (1-w)\mu_0, \quad w = \frac{n/\sigma^2}{n/\sigma^2 + 1/\tau^2}$$</p>
+
+            <p>In the figure below, the posterior sits between the prior and the likelihood, pulled toward whichever curve is more precise (narrower), in this case the likelihood.</p>
+
+            <div class="stat-chart" id="bayes-chart-root"></div>
+
+            <p>As n grows, w gets closer to 1 and the estimate approaches the MLE, so the prior matters most when there is little data.</p>
+          </div>
+          <div class="topic" id="bias-and-mse">
+            <h2>Bias and Mean Squared Error</h2>
+            <p>An unbiased estimator gets the right answer on average, even though any single sample can still land off target.</p>
+            <p class="math">$$\text{Bias}(\hat{\textcolor{#0b7285}{\theta}}) = E[\hat{\textcolor{#0b7285}{\theta}}] - \textcolor{#0b7285}{\theta}$$</p>
+            <p>Mean squared error folds bias and variance into one number, so a biased estimator can still win on MSE as long as its variance drops enough to compensate.</p>
+            <p class="math">$$\text{MSE}(\hat{\textcolor{#0b7285}{\theta}}) = E[(\hat{\textcolor{#0b7285}{\theta}}-\textcolor{#0b7285}{\theta})^2] = \text{Var}(\hat{\textcolor{#0b7285}{\theta}}) + \text{Bias}(\hat{\textcolor{#0b7285}{\theta}})^2$$</p>
+            <p>With the normal example's data and a hypothetical true μ different from the prior's center: the MLE X̅ is unbiased but has higher variance, while the biased Bayesian posterior mean has lower variance and, in this example, wins on MSE.</p>
+
+            <div class="stat-chart" id="bias-mse-chart-root"></div>
+          </div>
+          <div class="topic" id="pivotal-quantities">
+            <h2>Pivotal Quantities</h2>
+            <p>When we calculate a quantity from a sample, its distribution can depend on unknown parameters. However, we can build a quantity whose distribution is fully known but still contains the unknown parameters. This kind of quantity is called a <strong>pivotal quantity</strong>.</p>
+            <p>For example, if the data comes from a normal distribution with known σ, the quantity below, called the z-statistic, follows a standard normal distribution:</p>
+            <p class="math">$$\frac{\bar{X} - \textcolor{#0b7285}{\mu}}{\sigma/\sqrt{n}} \textcolor{#7B4B8C}{\sim} N(0,1) \quad \text{for every value of } \textcolor{#0b7285}{\mu}$$</p>
+            <p>If σ is unknown — the usual case — we estimate it with the sample's own S instead, which gives a t distribution with n − 1 degrees of freedom:</p>
+            <p class="math">$$\frac{\bar{X} - \textcolor{#0b7285}{\mu}}{S/\sqrt{n}} \textcolor{#7B4B8C}{\sim} t_{n-1} \quad \text{for every value of } \textcolor{#0b7285}{\mu}$$</p>
+            <p>Since we know these distributions, we can use them to find the probability that the pivot falls in a range of values.</p>
+          </div>
+          <div class="topic" id="confidence-intervals">
+            <h2>Confidence Intervals</h2>
+            <p>A <strong>confidence interval</strong> is a range of values used to estimate an unknown parameter from sample data. It is calculated by choosing a confidence level and finding the parameter values for which the pivot falls in a range with that probability.</p>
+            <p>For the t pivot, this gives:</p>
+            <p class="math">$$P\!\left(-t^*_{n-1} \le \frac{\bar X - \textcolor{#0b7285}{\mu}}{S/\sqrt{n}} \le t^*_{n-1}\right) = 1-\textcolor{#c92a2a}{\alpha} \quad\Longrightarrow\quad \textcolor{#0b7285}{\mu} \in \bar X \pm t^*_{n-1}\frac{S}{\sqrt{n}}$$</p>
+            <p>We write the confidence level as 1 − α. Before we collect the data, there is a 1 − α chance that the interval we are about to compute will contain the true μ.</p>
+            <p>The t interval above assumes the data is normal. If it isn't, the pivot no longer follows a t distribution exactly, but with a large sample it comes close, so the interval contains μ about 1 − α of the time.</p>
+          </div>
+          <div class="topic" id="hypothesis-testing">
+            <h2>Hypothesis Testing</h2>
+            <p>A hypothesis test starts with a specific claim about the parameter, called the <strong>null hypothesis</strong>, H₀, and asks whether the data fits this claim.</p>
+            <p>To decide, we calculate a test statistic and check whether it falls in the <strong>rejection region</strong>: a set of values that would be unusual if H₀ were true.</p>
+            <p class="math">$$\textcolor{#7B4B8C}{\text{reject } H_0} \textcolor{#7B4B8C}{\iff} \text{test statistic} \textcolor{#7B4B8C}{\in} \text{rejection region}$$</p>
+            <p>Testing a normal mean with known standard deviation σ reuses the z-statistic above, centered on the claimed μ₀ instead of the true μ.</p>
+            <p>We choose the rejection region so that, if H₀ is true, the test statistic lands in it only a small fraction of the time. We call that fraction α.</p>
+            <p class="math">$$P(\textcolor{#7B4B8C}{\text{reject } H_0} \mid H_0 \text{ true}) = \textcolor{#c92a2a}{\alpha}$$</p>
+            <p>In the figure below, the curve shows its distribution when H₀ is true. The rejection region is the shaded tail past the critical value z*. The observed statistic falls past z*, so we reject H₀.</p>
+
+            <div class="stat-chart" id="hyp-chart-root"></div>
+
+            <p>We can make the same decision using the p-value, the probability, assuming H₀ is true, of getting a test statistic at least as extreme as the one we observed. Since the rejection region holds the most extreme α of outcomes under H₀, landing in it is the same as getting p &lt; α, so both approaches always agree.</p>
+          </div>
+          <div class="topic" id="test-performance">
+            <h2>Test Performance</h2>
+            <p>One error is rejecting H₀ when it is actually true. This is called a <strong>Type I error</strong>, and it happens with probability α, the size of the test.</p>
+            <p>The other is failing to reject H₀ when it is actually false, meaning some other claim, the <strong>alternative hypothesis</strong> H₁, is true. This is called a <strong>Type II error</strong>, and its probability is called β. We usually look at 1 − β instead, which is called the <strong>power</strong>: the probability that the test correctly rejects a false H₀.</p>
+            <p class="math">$$1-\textcolor{#0b7285}{\beta} = P(\text{reject } H_0 \mid H_1)$$</p>
+            <p>The figure below uses the same rejection region but shows two curves: one for when H₀ is true and one for a specific alternative. The red area under the null curve is α. The teal area under the alternative curve is the power.</p>
+
+            <div class="stat-chart" id="power-chart-root"></div>
+
+            <p>Power goes up in three situations: when the true value is farther from the value claimed by H₀ (a larger δ), when the sample is larger, and when we allow a larger α. Only a larger α also raises the Type I error rate.</p>
+          </div>
+          <div class="topic" id="students-t-tests">
+            <h2>Student's t-tests</h2>
+            <p>Testing a normal mean when σ is unknown uses the t-statistic instead of the z-statistic:</p>
+            <p class="math">$$T = \frac{\bar X - \textcolor{#0b7285}{\mu_0}}{S/\sqrt{n}} \textcolor{#7B4B8C}{\sim} t_{n-1} \quad \text{under } H_0: \mu = \textcolor{#0b7285}{\mu_0}$$</p>
+            <p>The same form covers three cases: the <strong>one-sample</strong> test checks a mean against μ₀ (above); the <strong>paired</strong> test reduces differences Dᵢ = Xᵢ − Yᵢ to a one-sample test on D̅; the <strong>two-sample</strong> test compares X̅ − Ȳ directly.</p>
+            <p class="math">$$T = \frac{\bar X - \bar Y}{S_p\sqrt{\tfrac{1}{n_1}+\tfrac{1}{n_2}}} \textcolor{#7B4B8C}{\sim} t_{n_1+n_2-2} \quad \text{(pooled, assumes equal variances)}$$</p>
+          </div>
+          <div class="topic" id="likelihood-ratio">
+            <h2>Likelihood Ratio Test</h2>
+            <p>The <strong>likelihood ratio test</strong> checks whether fixing a parameter to a specific value makes the model fit the data significantly worse.</p>
+            <p class="math">$$\Lambda = \frac{\text{best fit under } H_0}{\text{best fit overall}} = \frac{\sup_{\theta \in \Theta_0} L(\theta)}{\sup_{\theta \in \Theta} L(\theta)}$$</p>
+            <p>Λ near 1 means the fit barely changes, so H₀ is plausible; Λ near 0 means the fit gets much worse, suggesting H₀ may be false.</p>
+            <p>Under H₀, the test statistic approximately follows a chi-squared distribution:</p>
+            <p class="math">$$-2\log \Lambda \ \sim\ \chi^2_{k}$$</p>
+            <p>Here, k is the number of independent restrictions imposed on the parameters. Reject H₀ if the test statistic is large enough to indicate a significantly worse fit.</p>
+          </div>
+          <div class="topic" id="regression-models">
+            <h2>Regression Models</h2>
+            <p>Regression models how one variable moves with another, treating the response as a trend plus random noise rather than an exact function of the predictor.</p>
+            <p class="math">$$Y_i = \textcolor{#0b7285}{\beta_0} + \textcolor{#0b7285}{\beta_1} x_i + \varepsilon_i, \quad \varepsilon_i \textcolor{#7B4B8C}{\sim} N(0, \sigma^2)$$</p>
+            <p>Yᵢ is the response, xᵢ the predictor; β₀, β₁ are the intercept and slope to estimate; εᵢ is leftover randomness, assumed normal with constant variance σ².</p>
+            <p>Fitting means choosing the coefficients that make the residuals — the leftover noise once the line is drawn — as small as possible.</p>
+            <p class="math">$$(\hat{\textcolor{#0b7285}{\beta_0}}, \hat{\textcolor{#0b7285}{\beta_1}}) = \textcolor{#7B4B8C}{\arg\min_{\beta_0,\beta_1}} \sum_{i=1}^{n} (y_i - \beta_0 - \beta_1 x_i)^2$$</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../vendor/katex/katex.min.js"></script>
+  <script src="../vendor/katex/auto-render.min.js"></script>
+  <script src="../vendor/katex/copy-tex.min.js"></script>
+  <script src="../script.js"></script>
+</body>
+</html>

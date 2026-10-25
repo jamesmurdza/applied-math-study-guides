@@ -1,30 +1,191 @@
-function activateTab(tab, updateHash) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+// Each of Real Analysis / Optimization / Statistics is now its own page
+// (real-analysis/, optimization/, statistics/) rather than a hash-toggled
+// panel, so navigation between them is just plain <a href> links the
+// browser handles natively — no tab-switching JS needed here anymore.
 
-  tab.classList.add('active');
-  document.getElementById(tab.dataset.tab).classList.add('active');
-  if (updateHash) location.hash = tab.dataset.tab;
-}
-
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => activateTab(tab, true));
+// The subject switcher is a native <details>/<summary> disclosure, so the
+// open/close toggle itself needs zero JS. This just adds the usual
+// dropdown politeness on top — click outside it, or press Escape, and it
+// closes — which <details> doesn't do on its own.
+document.querySelectorAll('details.menu-nav').forEach((menu) => {
+  document.addEventListener('click', (e) => {
+    if (menu.open && !menu.contains(e.target)) menu.open = false;
+  });
+  menu.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') menu.open = false;
+  });
 });
 
-// Tab state lives in the URL hash — shareable/bookmarkable, and gives
-// back/forward button support for free.
-function activateFromHash() {
-  const id = location.hash.slice(1);
-  const tab = id && document.querySelector(`.tab[data-tab="${id}"]`);
-  if (tab) activateTab(tab, false);
-}
+// Floating "on this page" table of contents (right-hand gutter, wide
+// viewports only — see the min-width media query in style.css). Built
+// from the same .topic[id] elements the permalink-icon loop below walks;
+// this one runs first so it reads each heading's clean title text before
+// that loop prepends a "#" anchor into it.
+(function () {
+  const topics = Array.from(document.querySelectorAll('.topic[id]'));
+  if (topics.length < 2) return; // not worth a TOC for a near-empty page
 
-window.addEventListener('hashchange', activateFromHash);
-activateFromHash();
+  const toc = document.createElement('nav');
+  toc.className = 'toc';
+  toc.setAttribute('aria-label', 'Table of contents');
+
+  const label = document.createElement('p');
+  label.className = 'toc-label';
+  label.textContent = 'On this page';
+  toc.appendChild(label);
+
+  const list = document.createElement('ul');
+  const headingToLink = new Map();
+  topics.forEach((topic) => {
+    const heading = topic.querySelector('h2');
+    if (!heading) return;
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = '#' + topic.id;
+    a.textContent = heading.textContent.trim();
+    li.appendChild(a);
+    list.appendChild(li);
+    headingToLink.set(heading, a);
+  });
+  toc.appendChild(list);
+  document.querySelector('.container').appendChild(toc);
+
+  // Scrollspy: highlight whichever section's heading you've most recently
+  // scrolled past — the usual floating-TOC behavior. Deliberately a plain
+  // scroll listener rather than IntersectionObserver: that only fires when
+  // a heading *crosses* the trigger line, so there's no event at all when
+  // you scroll back above every heading, and the last-active link would
+  // just stay stuck active forever. Recomputing from scratch on every
+  // scroll (rAF-throttled) instead picks the single heading closest to,
+  // but still above, the trigger line — and correctly clears to "none" the
+  // moment you're above all of them.
+  const headings = Array.from(headingToLink.keys());
+  let activeLink = null;
+  function updateActiveTocLink() {
+    const triggerY = window.innerHeight * 0.15;
+    let current = null;
+    for (const heading of headings) {
+      const top = heading.getBoundingClientRect().top;
+      if (top <= triggerY && (!current || top > current.top)) {
+        current = { heading, top };
+      }
+    }
+    const next = current ? headingToLink.get(current.heading) : null;
+    if (next === activeLink) return; // no change — skip the DOM churn below
+    if (activeLink) activeLink.classList.remove('active');
+    if (next) next.classList.add('active');
+    activeLink = next;
+    // Keep the active item in view within the TOC's own scrollable list as
+    // it changes — "nearest" only moves the TOC's internal scrollbar (the
+    // list is the closest scrollable ancestor; the page itself can't bring
+    // a position:fixed element into view by scrolling), smoothly rather
+    // than snapping, matching the page's own smooth-scroll anchor behavior.
+    if (next) next.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      updateActiveTocLink();
+      ticking = false;
+    });
+  });
+  updateActiveTocLink();
+})();
+
+// GitHub-markdown-style permalink icons: every .topic already carries a
+// unique id (used for the site's own cross-references, like the "complete"
+// link in Open and Closed Sets), so rather than hand-adding an anchor tag
+// to all ~30 topic headings across three pages, inject one here — any
+// topic with an id gets one for free, including ones added later.
+//
+// The anchor goes into a wrapping .heading-wrap around the h2, not into
+// the h2 itself — see the CSS comment on .heading-wrap for why: it keeps
+// the heading's own text and border-bottom flush with the body text
+// below, instead of nudging them over to make room for the icon.
+document.querySelectorAll('.topic[id]').forEach((topic) => {
+  const heading = topic.querySelector('h2');
+  if (!heading) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'heading-wrap';
+  heading.before(wrap);
+  wrap.appendChild(heading);
+  const anchor = document.createElement('a');
+  anchor.className = 'heading-anchor';
+  anchor.href = '#' + topic.id;
+  anchor.setAttribute('aria-label', 'Link to this section');
+  anchor.textContent = '#';
+  wrap.insertBefore(anchor, heading);
+});
 
 if (window.renderMathInElement) {
   renderMathInElement(document.body, {
     delimiters: [{ left: '$$', right: '$$', display: true }]
+  });
+
+  // Shrink display equations that are wider than their container instead of
+  // letting them scroll — the same "pinned at natural size, fluid below
+  // that" rule the diagrams follow, just without a viewBox to pin to.
+  //
+  // Measuring "natural width" is the subtle part: .katex-display is
+  // display:block (from katex.css), so its own offsetWidth/scrollWidth are
+  // clamped to the paragraph's width — they can't reveal that KaTeX's
+  // inner .base span (the actual formula glyphs, display:inline-block)
+  // already needs more room and is silently overflowing past it. Switching
+  // .katex-display to inline-block just for the measurement makes the
+  // browser's own shrink-to-fit sizing report that true width instead.
+  //
+  // The overflowing content also renders flush with the paragraph's left
+  // edge, not centered within it (confirmed by comparing the pre- and
+  // post-scale position of that inner span) — so the shrink has to scale
+  // from the left edge too (transform-origin: left top). Scaling from
+  // center would shrink the formula by the right amount but center it on
+  // a wider box than actually exists, leaving the same overflow on the
+  // right that we were trying to remove.
+  function fitMathBlocks() {
+    document.querySelectorAll('.topic .math .katex-display').forEach((display) => {
+      const container = display.closest('.math');
+      if (!container) return;
+      display.style.transform = 'none';
+      display.style.height = 'auto';
+      display.style.display = 'inline-block';
+      const naturalWidth = display.offsetWidth;
+      const naturalHeight = display.offsetHeight;
+      display.style.display = '';
+      // -3px safety margin: sub-pixel rounding (offsetWidth itself rounds
+      // to the nearest integer, and the transform matrix's own pixel
+      // snapping can round up) can land a formula a couple of pixels past
+      // its container even though the scale was computed "exactly" — and
+      // since .math is overflow-x:hidden, not auto, anything past the edge
+      // is a genuinely clipped glyph, not just a dormant scrollbar.
+      const scale = Math.min(1, (container.clientWidth - 3) / naturalWidth);
+      if (scale < 1) {
+        display.style.transformOrigin = 'left top';
+        display.style.transform = `scale(${scale})`;
+        display.style.height = (naturalHeight * scale) + 'px';
+      }
+    });
+  }
+  fitMathBlocks();
+  // KaTeX's own math fonts load asynchronously, after this script already
+  // ran — measuring scrollWidth before they're in means every formula is
+  // briefly measured against a fallback font's (narrower) glyph metrics, so
+  // the scale computed here can undershoot once the real font swaps in.
+  // Re-running once fonts finish loading catches that reflow.
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(fitMathBlocks);
+  }
+
+  let mathResizeTicking = false;
+  window.addEventListener('resize', () => {
+    if (mathResizeTicking) return;
+    mathResizeTicking = true;
+    requestAnimationFrame(() => {
+      fitMathBlocks();
+      mathResizeTicking = false;
+    });
   });
 }
 
@@ -230,7 +391,7 @@ if (window.renderMathInElement) {
     const originX = padL, originY = height - padB;
     const toScreen = (x, y) => ({ x: originX + x * scale, y: originY - y * scale });
 
-    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img', 'aria-label': 'Feasible region graph' });
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'Feasible region graph' });
     // Collected and appended last (so they sit on top of every other element
     // in SVG's paint order) — otherwise axis lines, labels, and markers drawn
     // afterward would intercept the hover before it reaches these.
@@ -309,7 +470,7 @@ if (window.renderMathInElement) {
       }));
       if (isCut && cut.label) {
         const mx = (s1.x + s2.x) / 2, my = (s1.y + s2.y) / 2;
-        const lbl = el('text', { x: (mx + 6).toFixed(1), y: (my - 6).toFixed(1), 'font-size': '10', fill: cut.color || '#c0392b' });
+        const lbl = el('text', { x: (mx + 6).toFixed(1), y: (my - 6).toFixed(1), 'font-size': '12', fill: cut.color || '#c0392b' });
         lbl.textContent = cut.label;
         svg.appendChild(lbl);
       }
@@ -324,12 +485,12 @@ if (window.renderMathInElement) {
     for (let x = 0; x <= xMax; x++) {
       const s = toScreen(x, 0);
       svg.appendChild(el('line', { x1: s.x, y1: s.y, x2: s.x, y2: s.y + 5, stroke: '#333' }));
-      svg.appendChild(el('text', { x: s.x, y: s.y + 18, 'font-size': '11', fill: '#555', 'text-anchor': 'middle' })).textContent = x;
+      svg.appendChild(el('text', { x: s.x, y: s.y + 18, 'font-size': '12', fill: '#555', 'text-anchor': 'middle' })).textContent = x;
     }
     for (let y = 0; y <= yMax; y++) {
       const s = toScreen(0, y);
       svg.appendChild(el('line', { x1: s.x - 5, y1: s.y, x2: s.x, y2: s.y, stroke: '#333' }));
-      const t = el('text', { x: s.x - 11, y: s.y + 3, 'font-size': '11', fill: '#555', 'text-anchor': 'end' });
+      const t = el('text', { x: s.x - 11, y: s.y + 3, 'font-size': '12', fill: '#555', 'text-anchor': 'end' });
       t.textContent = y;
       svg.appendChild(t);
     }
@@ -347,13 +508,13 @@ if (window.renderMathInElement) {
     if (axisLabels) {
       const xTitle = el('text', {
         x: originX + (xMax * scale) / 2, y: height - 6,
-        'font-size': '11', 'font-weight': '600', fill: colors[0], 'text-anchor': 'middle'
+        'font-size': '12', 'font-weight': '600', fill: colors[0], 'text-anchor': 'middle'
       });
       xTitle.textContent = axisLabels[0];
       svg.appendChild(xTitle);
       const yTitleY = originY - (yMax * scale) / 2;
       const yTitle = el('text', {
-        x: 14, y: yTitleY, 'font-size': '11', 'font-weight': '600', fill: colors[1],
+        x: 14, y: yTitleY, 'font-size': '12', 'font-weight': '600', fill: colors[1],
         'text-anchor': 'middle', transform: `rotate(-90, 14, ${yTitleY.toFixed(1)})`
       });
       yTitle.textContent = axisLabels[1];
@@ -378,7 +539,7 @@ if (window.renderMathInElement) {
       if (Math.abs(baseBest.x - bestCont.x) > 1e-6 || Math.abs(baseBest.y - bestCont.y) > 1e-6) {
         const cs = toScreen(baseBest.x, baseBest.y);
         svg.appendChild(el('circle', { cx: cs.x.toFixed(1), cy: cs.y.toFixed(1), r: 4, fill: 'none', stroke: '#bbb', 'stroke-width': '1.5', 'stroke-dasharray': '2,2' }));
-        const clabel = el('text', { x: (cs.x + 10).toFixed(1), y: (cs.y - 8).toFixed(1), 'font-size': '10', fill: '#999' });
+        const clabel = el('text', { x: (cs.x + 10).toFixed(1), y: (cs.y - 8).toFixed(1), 'font-size': '12', fill: '#999' });
         clabel.textContent = `before cut: (${fmt(baseBest.x)}, ${fmt(baseBest.y)})`;
         svg.appendChild(clabel);
       }
@@ -429,7 +590,7 @@ if (window.renderMathInElement) {
         hoverTargets.push({ x: cs.x, y: cs.y, r: 6, title: pointTitle(bestCont) });
         const clabel = el('text', {
           x: (cs.x + 10).toFixed(1), y: (cs.y - 8).toFixed(1),
-          'font-size': '10', fill: '#888'
+          'font-size': '12', fill: '#888'
         });
         clabel.textContent = `LP relaxation: (${fmt(bestCont.x)}, ${fmt(bestCont.y)})`;
         svg.appendChild(clabel);
@@ -453,7 +614,7 @@ if (window.renderMathInElement) {
       for (let i = 1; i < pPts.length - 1; i++) {
         svg.appendChild(el('circle', { cx: pPts[i].x.toFixed(1), cy: pPts[i].y.toFixed(1), r: 3.5, fill: pathColor }));
       }
-      const startLabel = el('text', { x: (pPts[0].x + 8).toFixed(1), y: (pPts[0].y - 8).toFixed(1), 'font-size': '10', fill: pathColor });
+      const startLabel = el('text', { x: (pPts[0].x + 8).toFixed(1), y: (pPts[0].y - 8).toFixed(1), 'font-size': '12', fill: pathColor });
       startLabel.textContent = 'start';
       svg.appendChild(startLabel);
     }
@@ -464,7 +625,7 @@ if (window.renderMathInElement) {
       const rp = config.referencePoint;
       const rs = toScreen(rp.x, rp.y);
       svg.appendChild(el('circle', { cx: rs.x.toFixed(1), cy: rs.y.toFixed(1), r: 3.5, fill: '#555' }));
-      const rl = el('text', { x: (rs.x + 8).toFixed(1), y: (rs.y + 15).toFixed(1), 'font-size': '10', fill: '#555' });
+      const rl = el('text', { x: (rs.x + 8).toFixed(1), y: (rs.y + 15).toFixed(1), 'font-size': '12', fill: '#555' });
       rl.textContent = rp.label;
       svg.appendChild(rl);
     }
@@ -474,7 +635,7 @@ if (window.renderMathInElement) {
     hoverTargets.push({ x: bs.x, y: bs.y, r: 6, title: pointTitle(best) });
     const label = el('text', {
       x: (bs.x + 10).toFixed(1), y: (bs.y - 8).toFixed(1),
-      'font-size': '11', fill: '#1a1a1a'
+      'font-size': '12', fill: '#1a1a1a'
     });
     label.textContent = `${config.optimalLabel || 'optimal'}: (${fmt(best.x)}, ${fmt(best.y)})`;
     svg.appendChild(label);
@@ -501,17 +662,8 @@ if (window.renderMathInElement) {
 
     container.innerHTML = '';
     container.appendChild(svg);
-
-    // caption with the computed optimum and profit filled in
-    const caption = document.createElement('p');
-    if (config.caption) {
-      caption.textContent = config.caption(best, bestVal);
-    } else if (integer) {
-      caption.textContent = `The shaded region is the continuous feasible area; the dots are the integer points inside it. The best integer point is (${varNames[0]}, ${varNames[1]}) = (${fmt(best.x)}, ${fmt(best.y)}), for a value of ${fmt(bestVal)} — not the same as rounding the LP relaxation's optimum.`;
-    } else {
-      caption.textContent = `The shaded region is every feasible production plan. The best one sits at a corner — here, (${varNames[0]}, ${varNames[1]}) = (${fmt(best.x)}, ${fmt(best.y)}), for a profit of ${fmt(bestVal)}.`;
-    }
-    container.appendChild(caption);
+    // No caption appended here — the explanation lives as an ordinary
+    // paragraph in the surrounding HTML instead of a figure caption.
   }
 
   function fmt(n) {
@@ -529,7 +681,7 @@ if (window.renderMathInElement) {
       objective: { a: 5, b: 4 },
       objectiveLabel: 'profit',
       constraints: [
-        { a: 2, b: 4, c: 24, color: '#1a1a1a', label: 'milk: 2x₁ + 4x₂ ≤ 24' },
+        { a: 3, b: 4, c: 24, color: '#1a1a1a', label: 'milk: 3x₁ + 4x₂ ≤ 24' },
         { a: 1, b: 0, c: 6, color: '#e64980', label: 'peppermint extract: x₁ ≤ 6' },
         { a: 0, b: 1, c: 5, color: '#3b6bd6', label: 'blueberries: x₂ ≤ 5' }
       ]
@@ -566,12 +718,11 @@ if (window.renderMathInElement) {
       objective: { a: 5, b: 4 },
       objectiveLabel: 'profit',
       constraints: [
-        { a: 2, b: 4, c: 24 },
+        { a: 3, b: 4, c: 24 },
         { a: 1, b: 0, c: 6 },
         { a: 0, b: 1, c: 5 }
       ],
-      path: [{ x: 0, y: 0 }, { x: 6, y: 0 }, { x: 6, y: 3 }],
-      caption: (best, val) => `Simplex starts at a feasible vertex — here, (0, 0) — then repeatedly pivots to an adjacent vertex along the boundary whenever that improves the objective: (0, 0) → (6, 0) → (${fmt(best.x)}, ${fmt(best.y)}). It stops once no neighboring vertex scores higher, landing on the optimum with a profit of ${fmt(val)}.`
+      path: [{ x: 0, y: 0 }, { x: 6, y: 0 }, { x: 6, y: 1.5 }]
     });
   }
 
@@ -589,13 +740,12 @@ if (window.renderMathInElement) {
       objective: { a: 5, b: 4 },
       objectiveLabel: 'profit',
       constraints: [
-        { a: 2, b: 4, c: 24 },
+        { a: 3, b: 4, c: 24 },
         { a: 1, b: 0, c: 6 },
         { a: 0, b: 1, c: 5 },
         { a: -1, b: -1, c: -2 }
       ],
-      path: [{ x: 2, y: 0 }, { x: 6, y: 0 }, { x: 6, y: 3 }],
-      caption: (best, val) => `The minimum-order line slices the corner nearest the origin off the feasible region, so (0, 0) is no longer a valid start. Phase one jumps straight to (2, 0) instead; phase two then walks (2, 0) → (6, 0) → (${fmt(best.x)}, ${fmt(best.y)}) to the same optimum, a profit of ${fmt(val)}.`
+      path: [{ x: 2, y: 0 }, { x: 6, y: 0 }, { x: 6, y: 1.5 }]
     });
   }
 
@@ -618,8 +768,7 @@ if (window.renderMathInElement) {
       cut: { a: 0, b: 1, c: 3, color: '#c0392b', label: 'cut: x₂ ≤ 3' },
       showLattice: true,
       optimalLabel: 'after cut',
-      referencePoint: { x: 3, y: 1, label: 'integer optimum = 31' },
-      caption: (best, val) => `The faint dashed outline is the LP relaxation before any cuts. Since ham must be a whole number, x₂ ≤ 3.33 is really x₂ ≤ 3 — a valid cut that removes no integer point, but slices off the fractional corner and shrinks the relaxation's optimum from 33.33 down to ${fmt(val)}, a step closer to the true integer optimum.`
+      referencePoint: { x: 3, y: 1, label: 'integer optimum = 31' }
     });
   }
 })();
@@ -752,9 +901,6 @@ if (window.renderMathInElement) {
         }
       }
 
-      const step = document.createElement('div');
-      step.className = 'tableau-step';
-
       const card = document.createElement('div');
       card.className = 'tableau-card';
 
@@ -818,31 +964,31 @@ if (window.renderMathInElement) {
       scrollBox.appendChild(table);
       card.appendChild(scrollBox);
 
-      step.appendChild(card);
+      mount.appendChild(card);
 
-      const caption = document.createElement('p');
-      caption.className = 'tableau-caption';
+      // Plain paragraph, not a "caption" — reads as the ordinary narrative
+      // text explaining each pivot, interwoven with the tables rather than
+      // styled as a smaller note attached underneath them.
+      const explanation = document.createElement('p');
       // Phase one's objective tracks the artificial variable, not the real
       // objective — "profit = 0" there would misleadingly read as a bad
       // outcome, so its optimal frame gets its own wording instead.
       if (phaseAt && phaseAt(idx) === 1 && !frame.pivot) {
         const vals = solutionValues(frame, numStructural);
         const parts = varNames.map((n, i) => `${n} = ${fmt(vals[i])}`).join(', ');
-        caption.textContent = `No artificial variable remains in the basis — a feasible corner is found (${parts}). Phase two now optimizes the real objective from here.`;
+        explanation.textContent = `No artificial variable remains in the basis — a feasible corner is found (${parts}). Phase two now optimizes the real objective from here.`;
       } else {
-        caption.textContent = pivotCaption(frame, varNames, objectiveLabel, numStructural);
+        explanation.textContent = pivotCaption(frame, varNames, objectiveLabel, numStructural);
       }
-      step.appendChild(caption);
-
-      mount.appendChild(step);
+      mount.appendChild(explanation);
     });
   }
 
   // --- Simplex (single phase): the pink-peppermint / blueberry LP ----------
-  // max 5x1 + 4x2 s.t. 2x1+4x2<=24, x1<=6, x2<=5, x1,x2>=0
+  // max 5x1 + 4x2 s.t. 3x1+4x2<=24, x1<=6, x2<=5, x1,x2>=0
   const simplexFrames = runSimplexFrames(
     [
-      { coeffs: [2, 4, 1, 0, 0], rhs: 24 },
+      { coeffs: [3, 4, 1, 0, 0], rhs: 24 },
       { coeffs: [1, 0, 0, 1, 0], rhs: 6 },
       { coeffs: [0, 1, 0, 0, 1], rhs: 5 }
     ],
@@ -857,7 +1003,7 @@ if (window.renderMathInElement) {
   // phase 2 then optimizes the real profit from that corner onward.
   const phase1Frames = runSimplexFrames(
     [
-      { coeffs: [2, 4, 1, 0, 0, 0, 0], rhs: 24 },
+      { coeffs: [3, 4, 1, 0, 0, 0, 0], rhs: 24 },
       { coeffs: [1, 0, 0, 1, 0, 0, 0], rhs: 6 },
       { coeffs: [0, 1, 0, 0, 1, 0, 0], rhs: 5 },
       { coeffs: [1, 1, 0, 0, 0, -1, 1], rhs: 2 }
@@ -882,13 +1028,17 @@ if (window.renderMathInElement) {
 })();
 
 // ---------------------------------------------------------------------------
-// Dijkstra's algorithm: a small weighted graph, stepped through one "settle
-// the closest unvisited node" step at a time. Distances/tree are computed
-// live by running the real algorithm, not hand-placed per step.
+// Dijkstra's algorithm: the simplest graph that still forces a real relax
+// (A-B-C-D, where the direct A-C edge isn't the cheapest way to reach C).
+// Rendered as a fixed sequence of static diagrams, one per "settle" step,
+// each followed by its own explanation — same pattern as the simplex
+// tableau cards, not a slider. Distances/tree are computed live by running
+// the real algorithm, not hand-placed per step.
 // ---------------------------------------------------------------------------
 (function () {
   const mount = document.getElementById('dijkstra-graph-root');
   if (!mount) return;
+  mount.innerHTML = '';
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
   function el(tag, attrs) {
@@ -897,17 +1047,20 @@ if (window.renderMathInElement) {
     return node;
   }
 
+  // Positions scaled to ~80% of the original layout to shrink the graph
+  // itself (node spacing, radius) without touching font-size — SVG text
+  // size is an absolute unit, not relative to the coordinate system, so
+  // shrinking the viewBox and max-width together by the same factor keeps
+  // labels rendering at the same actual pixel size (still 1:1 per
+  // AGENTS.md) while the graph they sit on gets visibly more compact.
   const nodePos = {
-    A: { x: 30, y: 140 },
-    B: { x: 140, y: 55 },
-    C: { x: 140, y: 225 },
-    D: { x: 250, y: 140 },
-    E: { x: 250, y: 230 },
-    F: { x: 365, y: 140 }
+    A: { x: 24, y: 112 },
+    B: { x: 120, y: 40 },
+    C: { x: 120, y: 184 },
+    D: { x: 216, y: 112 }
   };
   const edgeList = [
-    ['A', 'B', 4], ['A', 'C', 1], ['B', 'C', 2], ['B', 'D', 5],
-    ['C', 'D', 8], ['C', 'E', 10], ['D', 'E', 2], ['D', 'F', 6], ['E', 'F', 3]
+    ['A', 'B', 4], ['A', 'C', 2], ['B', 'C', 1], ['B', 'D', 5], ['C', 'D', 8]
   ];
   const SOURCE = 'A';
   const names = Object.keys(nodePos);
@@ -917,7 +1070,7 @@ if (window.renderMathInElement) {
   edgeList.forEach(([u, v, w]) => { adj[u].push([v, w]); adj[v].push([u, w]); });
 
   // Run the real algorithm once, recording a snapshot after each "settle"
-  // step so the UI can step through exactly what Dijkstra itself computed.
+  // step so every rendered diagram matches exactly what Dijkstra computed.
   function runDijkstra() {
     const dist = {}, prev = {}, visited = {};
     names.forEach(n => { dist[n] = Infinity; prev[n] = null; visited[n] = false; });
@@ -942,42 +1095,25 @@ if (window.renderMathInElement) {
   }
 
   const steps = runDijkstra();
-  let stepIdx = -1; // -1 = nothing settled yet
-
-  const svg = el('svg', { viewBox: '0 0 400 260', role: 'img', 'aria-label': "Dijkstra's algorithm step-through" });
-  mount.appendChild(svg);
-
-  const controls = document.createElement('div');
-  controls.className = 'dijkstra-controls';
-  const slider = document.createElement('input');
-  slider.type = 'range';
-  slider.min = '0';
-  slider.max = String(steps.length);
-  slider.value = '0';
-  controls.appendChild(slider);
-  mount.parentNode.insertBefore(controls, mount.nextSibling);
-
-  const caption = document.createElement('p');
-  mount.parentNode.insertBefore(caption, controls.nextSibling);
 
   function fmtD(d) { return d === Infinity ? '∞' : String(d); }
 
-  function render() {
-    svg.innerHTML = '';
-    const cur = stepIdx >= 0 ? steps[stepIdx] : null;
-    const dist = cur ? cur.dist : Object.fromEntries(names.map(n => [n, n === SOURCE ? 0 : Infinity]));
-    const prev = cur ? cur.prev : {};
-    const visited = cur ? cur.visited : Object.fromEntries(names.map(n => [n, false]));
+  function renderStep(cur, idx) {
+    const dist = cur.dist, prev = cur.prev, visited = cur.visited;
+    const svg = el('svg', {
+      viewBox: '0 0 240 208',
+      style: `width:100%;max-width:240px${idx > 0 ? ';margin-top:24px' : ''}`,
+      role: 'img',
+      'aria-label': `Dijkstra step ${idx + 1}: settle ${cur.settled}`
+    });
 
-    // plain edges, underneath everything
+    // plain edges, underneath everything (weight labels drawn last, on top
+    // of the tree lines and nodes below — otherwise the tree edge redrawn
+    // over a shared segment, or a node circle sitting near the midpoint,
+    // paints over the label instead of the other way around)
     edgeList.forEach(([u, v, w]) => {
       const p1 = nodePos[u], p2 = nodePos[v];
       svg.appendChild(el('line', { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, stroke: '#ccc', 'stroke-width': '1.5' }));
-      const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
-      svg.appendChild(el('rect', { x: mx - 7, y: my - 8, width: 14, height: 13, fill: '#fff' }));
-      const wl = el('text', { x: mx, y: my + 3, 'font-size': '11', fill: '#888', 'text-anchor': 'middle' });
-      wl.textContent = w;
-      svg.appendChild(wl);
     });
 
     // shortest-path tree so far: solid black to settled nodes, dashed gray to
@@ -996,39 +1132,40 @@ if (window.renderMathInElement) {
     names.forEach(n => {
       const p = nodePos[n];
       const isSettled = visited[n];
-      const isCurrent = cur && cur.settled === n;
+      const isCurrent = cur.settled === n;
       const isFrontier = !isSettled && dist[n] < Infinity;
       svg.appendChild(el('circle', {
-        cx: p.x, cy: p.y, r: 16,
+        cx: p.x, cy: p.y, r: 13,
         fill: isSettled ? '#1a1a1a' : '#fff',
         stroke: isCurrent ? '#c0392b' : (isFrontier ? '#1a1a1a' : '#ccc'),
         'stroke-width': isCurrent ? '3' : '1.5'
       }));
-      const label = el('text', { x: p.x, y: p.y + 4, 'font-size': '13', 'font-weight': '600', fill: isSettled ? '#fff' : '#1a1a1a', 'text-anchor': 'middle' });
+      const label = el('text', { x: p.x, y: p.y + 4, 'font-size': '12', 'font-weight': '600', fill: isSettled ? '#fff' : '#1a1a1a', 'text-anchor': 'middle' });
       label.textContent = n;
       svg.appendChild(label);
-      const dl = el('text', { x: p.x, y: p.y + 30, 'font-size': '11', fill: isSettled ? '#1a1a1a' : '#999', 'text-anchor': 'middle' });
-      dl.textContent = fmtD(dist[n]);
-      svg.appendChild(dl);
     });
 
-    // caption + controls
-    if (!cur) {
-      caption.textContent = `Every node starts unreached except the source, A (distance 0). Drag the slider to settle the closest unvisited node, one step at a time.`;
-    } else {
-      const parts = cur.relaxed.map(r => `${r.node}: ${fmtD(r.from)} → ${r.to}`);
-      const relaxedText = parts.length ? ` Relaxed ${parts.join(', ')}.` : ' No shorter paths found through it.';
-      caption.textContent = `Step ${stepIdx + 1}: settle ${cur.settled} at distance ${cur.dist[cur.settled]} (the closest unvisited node).${relaxedText}`;
-    }
-    slider.value = String(stepIdx + 1);
+    // edge weight labels last, on top of every line/node drawn above
+    edgeList.forEach(([u, v, w]) => {
+      const p1 = nodePos[u], p2 = nodePos[v];
+      const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
+      svg.appendChild(el('rect', { x: mx - 7, y: my - 8, width: 14, height: 13, fill: '#fff' }));
+      const wl = el('text', { x: mx, y: my + 3, 'font-size': '12', fill: '#888', 'text-anchor': 'middle' });
+      wl.textContent = w;
+      svg.appendChild(wl);
+    });
+
+    return svg;
   }
 
-  slider.addEventListener('input', () => {
-    stepIdx = Number(slider.value) - 1;
-    render();
+  steps.forEach((cur, idx) => {
+    mount.appendChild(renderStep(cur, idx));
+    const caption = document.createElement('p');
+    const parts = cur.relaxed.map(r => `${r.node}: ${fmtD(r.from)} → ${r.to}`);
+    const relaxedText = parts.length ? ` Relaxes ${parts.join(', ')}.` : ' No shorter paths found through it.';
+    caption.textContent = `Step ${idx + 1}: settle ${cur.settled} at distance ${cur.dist[cur.settled]} (the closest unvisited node).${relaxedText}`;
+    mount.appendChild(caption);
   });
-
-  render();
 })();
 
 // ---------------------------------------------------------------------------
@@ -1043,6 +1180,31 @@ if (window.renderMathInElement) {
     const node = document.createElementNS(SVG_NS, tag);
     for (const k in attrs) node.setAttribute(k, attrs[k]);
     return node;
+  }
+
+  // Small HTML legend placed under a chart: one swatch + label per item.
+  // item.type is 'line' | 'dashed' | 'fill' | 'dot'; item.color sets the
+  // swatch's color via currentColor so the CSS stays shape-only.
+  // (Duplicated from the earlier IIFE, which has its own private copy —
+  // this file is split into self-contained sections with no shared
+  // module scope, so each section keeps its own helpers.)
+  function renderLegend(container, items) {
+    const legend = document.createElement('div');
+    legend.className = 'chart-legend';
+    items.forEach(item => {
+      const entry = document.createElement('span');
+      entry.className = 'chart-legend-item';
+      const swatch = document.createElement('span');
+      swatch.className = `chart-legend-swatch ${item.type}`;
+      swatch.style.color = item.color;
+      if (item.opacity != null) swatch.style.opacity = item.opacity;
+      entry.appendChild(swatch);
+      const label = document.createElement('span');
+      label.textContent = item.label;
+      entry.appendChild(label);
+      legend.appendChild(entry);
+    });
+    container.appendChild(legend);
   }
 
   function sample(fn, xMin, xMax, n) {
@@ -1061,6 +1223,32 @@ if (window.renderMathInElement) {
     }).join(' ');
   }
 
+  // A small parameter label (μ, θ̂, ...) rendered through KaTeX via a
+  // <foreignObject> rather than plain SVG <text>. Two reasons: the
+  // Unicode combining circumflex (U+0302) doesn't render reliably over
+  // Greek letters in SVG <text> (shows up disconnected, floating beside
+  // the glyph), and a hand-drawn accent shape looked crude next to
+  // KaTeX's own hats used everywhere else on the page. Routing every such
+  // label through KaTeX — hatted or not — also keeps a true/estimate pair
+  // (e.g. μ next to μ̂) visually matched: same font, weight, and
+  // baseline, instead of mixing plain SVG text with KaTeX output.
+  function texLabel(svg, x, y, tex, color, w = 26) {
+    const h = 22;
+    const fo = document.createElementNS(SVG_NS, 'foreignObject');
+    fo.setAttribute('x', (x - w / 2).toFixed(1));
+    fo.setAttribute('y', (y - h + 5).toFixed(1));
+    fo.setAttribute('width', w);
+    fo.setAttribute('height', h);
+    const div = document.createElement('div');
+    div.style.color = color;
+    div.style.fontSize = '13px';
+    div.style.fontWeight = '600';
+    div.style.textAlign = 'center';
+    katex.render(tex, div, { throwOnError: false });
+    fo.appendChild(div);
+    svg.appendChild(fo);
+  }
+
   // Standard normal curve with a shaded right-tail rejection region, the
   // critical value z*, and an observed test statistic marked.
   function renderHypothesisChart(container) {
@@ -1075,10 +1263,19 @@ if (window.renderMathInElement) {
       y: padT + plotH - (y / yMax) * plotH
     });
 
-    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img', 'aria-label': 'Standard normal curve with rejection region' });
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'Standard normal curve with rejection region' });
 
     const curvePts = sample(normalPdf, xMin, xMax, 200);
     svg.appendChild(el('path', { d: pathFor(curvePts, toScreen), fill: 'none', stroke: '#1a1a1a', 'stroke-width': '1.75' }));
+
+    // diagonal-hatch pattern for the p-value region, so it reads as an
+    // overlay on top of the solid α fill instead of just a darker patch
+    // of the same color (which looked like one merged region)
+    const defs = el('defs', {});
+    const hatch = el('pattern', { id: 'pValueHatch', patternUnits: 'userSpaceOnUse', width: '5', height: '5', patternTransform: 'rotate(45)' });
+    hatch.appendChild(el('line', { x1: '0', y1: '0', x2: '0', y2: '5', stroke: '#c92a2a', 'stroke-width': '2.5' }));
+    defs.appendChild(hatch);
+    svg.appendChild(defs);
 
     // shaded rejection region: zCrit..xMax, closed down to the x-axis
     const tailPts = sample(normalPdf, zCrit, xMax, 60);
@@ -1088,6 +1285,18 @@ if (window.renderMathInElement) {
     shadeD += ` L${baseRight.x.toFixed(1)},${baseRight.y.toFixed(1)} Z`;
     svg.appendChild(el('path', { d: shadeD, fill: '#c92a2a', 'fill-opacity': '0.25' }));
 
+    // p-value region nested inside it: zObs..xMax, the same tail but
+    // starting from the observed statistic instead of the critical value.
+    // Drawn as diagonal hatching rather than a second solid fill, so the
+    // α shading underneath stays visible through it — p sits inside α,
+    // not just stacked darker on top of it.
+    const pPts = sample(normalPdf, zObs, xMax, 60);
+    const pBaseLeft = toScreen(zObs, 0), pBaseRight = toScreen(xMax, 0);
+    let pShadeD = `M${pBaseLeft.x.toFixed(1)},${pBaseLeft.y.toFixed(1)} `;
+    pShadeD += pPts.map(p => { const s = toScreen(p.x, p.y); return `L${s.x.toFixed(1)},${s.y.toFixed(1)}`; }).join(' ');
+    pShadeD += ` L${pBaseRight.x.toFixed(1)},${pBaseRight.y.toFixed(1)} Z`;
+    svg.appendChild(el('path', { d: pShadeD, fill: 'url(#pValueHatch)' }));
+
     // x axis
     const o = toScreen(xMin, 0), oR = toScreen(xMax, 0);
     svg.appendChild(el('line', { x1: o.x, y1: o.y, x2: oR.x, y2: oR.y, stroke: '#333' }));
@@ -1096,128 +1305,223 @@ if (window.renderMathInElement) {
     // plot's left edge, since that's the chart's natural reference point
     const zeroPt = toScreen(0, 0), topPt = toScreen(0, yMax);
     svg.appendChild(el('line', { x1: zeroPt.x, y1: zeroPt.y, x2: topPt.x, y2: topPt.y, stroke: '#333' }));
-    const zeroTick = el('text', { x: zeroPt.x, y: zeroPt.y + 15, 'font-size': '10.5', fill: '#555', 'text-anchor': 'middle' });
+    const zeroTick = el('text', { x: zeroPt.x, y: zeroPt.y + 15, 'font-size': '12', fill: '#555', 'text-anchor': 'middle' });
     zeroTick.textContent = '0';
     svg.appendChild(zeroTick);
 
-    const xAxisLabel = el('text', { x: width - 4, y: o.y + 4, 'font-size': '11', fill: '#555', 'text-anchor': 'end' });
+    const xAxisLabel = el('text', { x: width - 4, y: o.y + 4, 'font-size': '12', fill: '#555', 'text-anchor': 'end' });
     xAxisLabel.textContent = 'z';
     svg.appendChild(xAxisLabel);
-    const yAxisLabel = el('text', { x: padL, y: padT + 10, 'font-size': '11', fill: '#555', 'text-anchor': 'start' });
+    const yAxisLabel = el('text', { x: padL, y: padT + 10, 'font-size': '12', fill: '#555', 'text-anchor': 'start' });
     yAxisLabel.textContent = 'f(z)';
     svg.appendChild(yAxisLabel);
 
-    // critical value marker
+    // critical value marker — the dashed line runs from the curve down to
+    // the axis, so its label sits as an axis tick directly below it (like
+    // the "0" tick), not floating near the chart's top where it would be
+    // disconnected from a line that's often short (low density this far
+    // into the tail).
     const cs = toScreen(zCrit, normalPdf(zCrit));
     const cb = toScreen(zCrit, 0);
     svg.appendChild(el('line', { x1: cs.x, y1: cs.y, x2: cb.x, y2: cb.y, stroke: '#c92a2a', 'stroke-width': '1.25', 'stroke-dasharray': '3,3' }));
-    const critLabel = el('text', { x: cs.x, y: padT - 5, 'font-size': '10.5', fill: '#c92a2a', 'text-anchor': 'middle' });
-    critLabel.textContent = `z* = ${zCrit}`;
+    const critLabel = el('text', { x: cb.x, y: cb.y + 15, 'font-size': '12', fill: '#c92a2a', 'text-anchor': 'middle' });
+    critLabel.textContent = 'z*';
     svg.appendChild(critLabel);
 
-    // alpha label — sits just above the axis out past the observed marker,
-    // where the thin tail has room and nothing else is drawn
-    const alphaScreenX = toScreen((xMax + zObs) / 2 + 0.3, 0).x;
-    const alphaLabel = el('text', { x: alphaScreenX, y: padT + plotH - 12, 'font-size': '12', fill: '#c92a2a', 'text-anchor': 'middle', 'font-weight': '600' });
-    alphaLabel.textContent = 'α';
-    svg.appendChild(alphaLabel);
-
-    // observed statistic marker — label sits directly above its own point,
-    // clear of the α label beside it
+    // observed statistic marker — label sits directly above its own point
     const os = toScreen(zObs, normalPdf(zObs));
     const ob = toScreen(zObs, 0);
     svg.appendChild(el('line', { x1: os.x, y1: os.y, x2: ob.x, y2: ob.y, stroke: '#1a1a1a', 'stroke-width': '1.25' }));
     svg.appendChild(el('circle', { cx: os.x.toFixed(1), cy: os.y.toFixed(1), r: 3, fill: '#1a1a1a' }));
-    const obsLabel = el('text', { x: os.x, y: os.y - 8, 'font-size': '10.5', fill: '#1a1a1a', 'text-anchor': 'middle' });
-    obsLabel.textContent = `z = ${zObs}`;
+    const obsLabel = el('text', { x: os.x, y: os.y - 8, 'font-size': '12', fill: '#1a1a1a', 'text-anchor': 'middle' });
+    obsLabel.textContent = 'observed';
     svg.appendChild(obsLabel);
+
+    // α and the p-value region are identified in the legend instead of
+    // labeled directly on the chart, to avoid double-labeling the same
+    // shaded areas in two places.
 
     container.innerHTML = '';
     container.appendChild(svg);
     renderLegend(container, [
       { type: 'line', color: '#1a1a1a', label: 'null distribution' },
-      { type: 'fill', color: '#c92a2a', label: 'rejection region' },
-      { type: 'dot', color: '#1a1a1a', label: 'observed statistic' }
+      { type: 'dot', color: '#1a1a1a', label: 'observed statistic' },
+      { type: 'fill', color: '#c92a2a', label: 'rejection region (α)' },
+      { type: 'hatch', color: '#c92a2a', label: 'p-value region' }
     ]);
-    const caption = document.createElement('p');
-    caption.textContent = `The shaded tail is the rejection region, sized to hold exactly α = 0.05 of the area under the null distribution. The observed statistic falls at z = ${zObs}, past the critical value z* = ${zCrit} — inside the rejection region, so H₀ is rejected.`;
-    container.appendChild(caption);
+    // No trailing caption here, and no plugged-in numbers on the chart
+    // either — matches the symbolic style used elsewhere (the Method of
+    // Moments/MLE charts carry no numbers in their labels).
   }
 
-  // Likelihood curve over θ for a Bernoulli sample, peaked at the MLE.
-  function renderMLEChart(container) {
-    const xMin = 0, xMax = 1;
-    const n = 10, k = 7;
-    const likelihood = theta => Math.pow(theta, k) * Math.pow(1 - theta, n - k);
-    const thetaHat = k / n;
-    const width = 380, height = 170, padL = 30, padR = 22, padT = 20, padB = 24;
+  // Size and power: the null distribution N(0,1) against an alternative
+  // N(δ,1) shifted by δ = 2.5, both drawn over the same rejection region
+  // (z* = 1.645) as the Hypothesis Testing chart above. α is the red tail
+  // of the null past z*; power (1−β) is the teal tail of the alternative
+  // past the same z* — the chance of correctly rejecting H₀ when the
+  // alternative is actually true. The unshaded area of the alternative
+  // curve left of z* is β, the miss rate, left as visual complement to
+  // power rather than shaded a third color to avoid clutter.
+  function renderPowerChart(container) {
+    const xMin = -4, xMax = 6.5;
+    const zCrit = 1.645, delta = 2.5;
+    const normalPdf = (x, mu) => Math.exp(-0.5 * (x - mu) * (x - mu)) / Math.sqrt(2 * Math.PI);
+    const width = 380, height = 190, padL = 16, padR = 20, padT = 18, padB = 24;
     const plotW = width - padL - padR, plotH = height - padT - padB;
-    const pts = sample(likelihood, xMin, xMax, 200);
-    const maxY = Math.max(...pts.map(p => p.y));
+    const yMax = normalPdf(0, 0) * 1.15;
     const toScreen = (x, y) => ({
       x: padL + (x - xMin) / (xMax - xMin) * plotW,
-      y: padT + plotH - (y / maxY) * plotH
+      y: padT + plotH - (y / yMax) * plotH
     });
 
-    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img', 'aria-label': 'Likelihood curve peaked at the MLE' });
-    svg.appendChild(el('path', { d: pathFor(pts, toScreen), fill: 'none', stroke: '#0b7285', 'stroke-width': '1.75' }));
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'Null and alternative distributions with the rejection region, showing size and power' });
 
-    const o = toScreen(xMin, 0), oR = toScreen(xMax, 0), oT = toScreen(xMin, maxY);
+    // shaded power region first (under the alternative, past z*) so the
+    // null curve and its own α shading draw on top and stay legible
+    const powerPts = sample(x => normalPdf(x, delta), zCrit, xMax, 60);
+    const pBaseLeft = toScreen(zCrit, 0), pBaseRight = toScreen(xMax, 0);
+    let powerD = `M${pBaseLeft.x.toFixed(1)},${pBaseLeft.y.toFixed(1)} `;
+    powerD += powerPts.map(p => { const s = toScreen(p.x, p.y); return `L${s.x.toFixed(1)},${s.y.toFixed(1)}`; }).join(' ');
+    powerD += ` L${pBaseRight.x.toFixed(1)},${pBaseRight.y.toFixed(1)} Z`;
+    svg.appendChild(el('path', { d: powerD, fill: '#0b7285', 'fill-opacity': '0.25' }));
+
+    // shaded α region (under the null, past z*)
+    const tailPts = sample(x => normalPdf(x, 0), zCrit, xMax, 60);
+    const baseLeft = toScreen(zCrit, 0), baseRight = toScreen(xMax, 0);
+    let shadeD = `M${baseLeft.x.toFixed(1)},${baseLeft.y.toFixed(1)} `;
+    shadeD += tailPts.map(p => { const s = toScreen(p.x, p.y); return `L${s.x.toFixed(1)},${s.y.toFixed(1)}`; }).join(' ');
+    shadeD += ` L${baseRight.x.toFixed(1)},${baseRight.y.toFixed(1)} Z`;
+    svg.appendChild(el('path', { d: shadeD, fill: '#c92a2a', 'fill-opacity': '0.35' }));
+
+    const nullPts = sample(x => normalPdf(x, 0), xMin, xMax, 200);
+    svg.appendChild(el('path', { d: pathFor(nullPts, toScreen), fill: 'none', stroke: '#1a1a1a', 'stroke-width': '1.75' }));
+    const altPts = sample(x => normalPdf(x, delta), xMin, xMax, 200);
+    svg.appendChild(el('path', { d: pathFor(altPts, toScreen), fill: 'none', stroke: '#0b7285', 'stroke-width': '1.75', 'stroke-dasharray': '5,3' }));
+
+    const o = toScreen(xMin, 0), oR = toScreen(xMax, 0);
     svg.appendChild(el('line', { x1: o.x, y1: o.y, x2: oR.x, y2: oR.y, stroke: '#333' }));
-    svg.appendChild(el('line', { x1: o.x, y1: o.y, x2: oT.x, y2: oT.y, stroke: '#333' }));
+    const zeroPt = toScreen(0, 0), topPt = toScreen(0, yMax);
+    svg.appendChild(el('line', { x1: zeroPt.x, y1: zeroPt.y, x2: topPt.x, y2: topPt.y, stroke: '#333' }));
+    const zeroTick = el('text', { x: zeroPt.x, y: zeroPt.y + 15, 'font-size': '12', fill: '#555', 'text-anchor': 'middle' });
+    zeroTick.textContent = '0';
+    svg.appendChild(zeroTick);
 
-    const xAxisLabel = el('text', { x: width - 4, y: o.y + 4, 'font-size': '11', fill: '#555', 'text-anchor': 'end' });
-    xAxisLabel.textContent = 'θ';
+    const xAxisLabel = el('text', { x: width - 4, y: o.y + 4, 'font-size': '12', fill: '#555', 'text-anchor': 'end' });
+    xAxisLabel.textContent = 'z';
     svg.appendChild(xAxisLabel);
-    const yAxisLabel = el('text', { x: o.x, y: oT.y - 6, 'font-size': '11', fill: '#555', 'text-anchor': 'start' });
-    yAxisLabel.textContent = 'L(θ)';
+    const yAxisLabel = el('text', { x: padL, y: padT + 10, 'font-size': '12', fill: '#555', 'text-anchor': 'start' });
+    yAxisLabel.textContent = 'f(z)';
     svg.appendChild(yAxisLabel);
 
-    const peak = toScreen(thetaHat, maxY);
-    const peakBase = toScreen(thetaHat, 0);
-    svg.appendChild(el('line', { x1: peak.x, y1: peak.y, x2: peakBase.x, y2: peakBase.y, stroke: '#0b7285', 'stroke-width': '1.25', 'stroke-dasharray': '3,3' }));
-    svg.appendChild(el('circle', { cx: peak.x.toFixed(1), cy: peak.y.toFixed(1), r: 3, fill: '#0b7285' }));
-    const label = el('text', { x: peak.x, y: peak.y - 8, 'font-size': '11', fill: '#0b7285', 'text-anchor': 'middle', 'font-weight': '600' });
-    label.textContent = `θ̂ = ${thetaHat}`;
-    svg.appendChild(label);
+    // critical value marker — label as an axis tick directly below the
+    // line's base, not floating at a fixed height near the chart's top
+    // (disconnected from the line whenever the curve is low out there).
+    const cs = toScreen(zCrit, normalPdf(zCrit, delta));
+    const cb = toScreen(zCrit, 0);
+    svg.appendChild(el('line', { x1: cs.x, y1: cs.y, x2: cb.x, y2: cb.y, stroke: '#333', 'stroke-width': '1.25', 'stroke-dasharray': '3,3' }));
+    const critLabel = el('text', { x: cb.x, y: cb.y + 15, 'font-size': '12', fill: '#555', 'text-anchor': 'middle' });
+    critLabel.textContent = 'z*';
+    svg.appendChild(critLabel);
 
-    [0, 1].forEach(v => {
-      const s = toScreen(v, 0);
-      const t = el('text', { x: s.x, y: s.y + 16, 'font-size': '10.5', fill: '#555', 'text-anchor': 'middle' });
-      t.textContent = v;
-      svg.appendChild(t);
+    // α and power are identified in the legend instead of labeled
+    // directly on the chart, to avoid double-labeling the same shaded
+    // areas in two places.
+
+    container.innerHTML = '';
+    container.appendChild(svg);
+    renderLegend(container, [
+      { type: 'line', color: '#1a1a1a', label: 'null distribution' },
+      { type: 'dashed', color: '#0b7285', label: 'alternative distribution' },
+      { type: 'fill', color: '#c92a2a', label: 'α (size)' },
+      { type: 'fill', color: '#0b7285', label: '1−β (power)' }
+    ]);
+    // No trailing caption — δ, z*, and the resulting α/power are already
+    // stated in the prose above, matching the Hypothesis Testing chart's
+    // own pattern.
+  }
+
+  // MLE, Uniform(0,θ) case: the same five data points and true θ as
+  // Method of Moments' Uniform chart, but the estimated support now ends
+  // at the sample maximum (5.5) instead of 2X̄ (6) — a genuinely different
+  // number on identical data, making the method-of-moments-vs-MLE
+  // divergence visible as two different charts over the same points
+  // rather than something only stated in prose.
+  function renderMleUniformChart(container) {
+    const data = [1.0, 1.5, 3.0, 4.0, 5.5];
+    const trueTheta = 7, xHat = Math.max(...data);
+
+    const xMin = 0, xMax = 7.6;
+    const width = 320, height = 150, padL = 16, padR = 16, padT = 18, padB = 30;
+    const plotW = width - padL - padR, plotH = height - padT - padB;
+    const axisY = padT + plotH;
+    const toX = x => padL + (x - xMin) / (xMax - xMin) * plotW;
+    const maxDensity = 1 / xHat;
+    const toY = h => axisY - (h / maxDensity) * (plotH * 0.85);
+
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'True and MLE-estimated Uniform densities, shaded, with five data points' });
+
+    [[trueTheta, '#0b7285', null, false], [xHat, '#999', '4,3', true]].forEach(([end, color, dash, isEstimate]) => {
+      const h = 1 / end;
+      const top = toY(h);
+      const attrs = { d: `M${toX(0)},${axisY} L${toX(0)},${top.toFixed(1)} L${toX(end)},${top.toFixed(1)} L${toX(end)},${axisY} Z`, fill: color, 'fill-opacity': '0.25', stroke: 'none' };
+      svg.appendChild(el('path', attrs));
+      const outline = { x1: toX(0), y1: top, x2: toX(end), y2: top, stroke: color, 'stroke-width': '2' };
+      if (dash) outline['stroke-dasharray'] = dash;
+      svg.appendChild(el('line', outline));
+      svg.appendChild(el('line', { x1: toX(end), y1: top, x2: toX(end), y2: axisY, stroke: color, 'stroke-width': dash ? '1.5' : '2', 'stroke-dasharray': dash || 'none' }));
+      if (isEstimate) {
+        texLabel(svg, toX(end) + 8, top - 6, '\\hat{\\theta}', color);
+      } else {
+        texLabel(svg, toX(end), top - 6, '\\theta', color);
+      }
+    });
+
+    svg.appendChild(el('line', { x1: padL, y1: axisY, x2: padL + plotW, y2: axisY, stroke: '#333' }));
+    data.forEach(x => {
+      svg.appendChild(el('circle', { cx: toX(x), cy: axisY, r: 3, fill: '#1a1a1a' }));
     });
 
     container.innerHTML = '';
     container.appendChild(svg);
     renderLegend(container, [
-      { type: 'line', color: '#0b7285', label: 'likelihood L(θ)' },
-      { type: 'dot', color: '#0b7285', label: 'MLE θ̂' }
+      { type: 'fill', color: '#0b7285', label: 'true θ' },
+      { type: 'fill', color: '#999', label: 'estimated θ̂' },
+      { type: 'dot', color: '#1a1a1a', label: 'data' }
     ]);
-    const caption = document.createElement('p');
-    caption.textContent = `With 7 heads in 10 flips, the likelihood L(θ) = θ⁷(1−θ)³ peaks at θ̂ = 0.7 — the value that makes this exact data most probable.`;
-    container.appendChild(caption);
+    // No trailing caption — the setup is already stated in the prose
+    // right above this chart.
   }
 
   // Prior, likelihood, and posterior curves overlaid (Beta-Binomial),
   // each normalized to its own peak so the three shapes are comparable.
+  // Normal prior on a normal mean (known σ), continuing the same running
+  // normal example as Method of Moments/MLEs: data [4.1,4.6,5.0,5.3,5.5],
+  // X̄ = 4.9, σ = 0.6, n = 5. Prior μ ~ N(4.0, 0.5²) — deliberately vaguer
+  // than σ/√n, so the width gap between the prior and likelihood curves
+  // (and the posterior's resulting pull toward the likelihood) is
+  // actually visible rather than a near-tie. Each curve normalized to its
+  // own peak (prior/likelihood/posterior scale on different axes).
   function renderBayesChart(container) {
-    const xMin = 0, xMax = 1;
-    const n = 10, k = 7;
-    const priorFn = x => x * (1 - x);                       // Beta(2,2), unnormalized
-    const likelihoodFn = x => Math.pow(x, k) * Math.pow(1 - x, n - k);
-    const posteriorFn = x => priorFn(x) * likelihoodFn(x);  // Beta(9,5), unnormalized
+    const sigma = 0.6, n = 5, xBar = 4.9;
+    const mu0 = 4.0, tau = 0.5;
+    const likSigma = sigma / Math.sqrt(n);
+    const w = (n / sigma ** 2) / (n / sigma ** 2 + 1 / tau ** 2);
+    const postMean = w * xBar + (1 - w) * mu0;
+    const postSd = Math.sqrt(1 / (n / sigma ** 2 + 1 / tau ** 2));
+
+    const normalPdf = (x, mu, sd) => Math.exp(-0.5 * ((x - mu) / sd) ** 2) / (sd * Math.sqrt(2 * Math.PI));
+    const xMin = 3.0, xMax = 5.8;
 
     const width = 380, height = 190, padL = 16, padR = 16, padT = 18, padB = 24;
     const plotW = width - padL - padR, plotH = height - padT - padB;
 
     const curves = [
-      { fn: priorFn, color: '#868e96', dash: '4,3', weight: '1.5' },
-      { fn: likelihoodFn, color: '#e8590c', dash: '4,3', weight: '1.5' },
-      { fn: posteriorFn, color: '#0b7285', dash: null, weight: '2' }
+      { fn: x => normalPdf(x, mu0, tau), color: '#868e96', dash: '4,3', weight: '1.5' },
+      { fn: x => normalPdf(x, xBar, likSigma), color: '#e8590c', dash: '4,3', weight: '1.5' },
+      { fn: x => normalPdf(x, postMean, postSd), color: '#0b7285', dash: null, weight: '2' }
     ];
 
-    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img', 'aria-label': 'Prior, likelihood, and posterior curves' });
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'Prior, likelihood, and posterior curves over μ' });
 
     curves.forEach(c => {
       const pts = sample(c.fn, xMin, xMax, 200);
@@ -1234,17 +1538,17 @@ if (window.renderMathInElement) {
     const oY = padT + plotH;
     svg.appendChild(el('line', { x1: padL, y1: oY, x2: padL + plotW, y2: oY, stroke: '#333' }));
     svg.appendChild(el('line', { x1: padL, y1: oY, x2: padL, y2: padT, stroke: '#333' }));
-    [0, 1].forEach(v => {
+    [3.0, 4.0, 5.0].forEach(v => {
       const sx = padL + (v - xMin) / (xMax - xMin) * plotW;
-      const t = el('text', { x: sx, y: oY + 16, 'font-size': '10.5', fill: '#555', 'text-anchor': 'middle' });
-      t.textContent = v;
+      const t = el('text', { x: sx, y: oY + 16, 'font-size': '12', fill: '#555', 'text-anchor': 'middle' });
+      t.textContent = v.toFixed(1);
       svg.appendChild(t);
     });
 
-    const xAxisLabel = el('text', { x: width - 4, y: oY + 4, 'font-size': '11', fill: '#555', 'text-anchor': 'end' });
-    xAxisLabel.textContent = 'θ';
+    const xAxisLabel = el('text', { x: width - 4, y: oY + 4, 'font-size': '12', fill: '#555', 'text-anchor': 'end' });
+    xAxisLabel.textContent = 'μ';
     svg.appendChild(xAxisLabel);
-    const yAxisLabel = el('text', { x: padL, y: padT + 10, 'font-size': '11', fill: '#555', 'text-anchor': 'start' });
+    const yAxisLabel = el('text', { x: padL, y: padT + 10, 'font-size': '12', fill: '#555', 'text-anchor': 'start' });
     yAxisLabel.textContent = 'density';
     svg.appendChild(yAxisLabel);
 
@@ -1255,17 +1559,229 @@ if (window.renderMathInElement) {
       { type: 'dashed', color: '#e8590c', label: 'likelihood' },
       { type: 'line', color: '#0b7285', label: 'posterior' }
     ]);
-    const caption = document.createElement('p');
-    caption.innerHTML = `Starting from a <span class="var-prior">prior</span> centered on "fair" and updating with the <span class="var-likelihood">likelihood</span> of 7 heads in 10 flips produces a <span class="var-posterior">posterior</span> peaked near 0.67 — pulled toward the data, but not all the way to the data's own peak at 0.7.`;
-    container.appendChild(caption);
+    // No trailing caption — the prose right above this chart already
+    // states the posterior/prior/likelihood relationship.
   }
 
-  const mleMount = document.getElementById('mle-chart-root');
-  if (mleMount) renderMLEChart(mleMount);
+  // Approximate sampling distributions of two estimators of a normal mean
+  // (the same running example as Method of Moments/MLEs/Bayesian inference
+  // above, with σ = 0.6, n = 5, and a prior μ₀ = 4.0, τ = 0.5 as in
+  // Bayesian Inference): the unbiased MLE X̄ vs. the Bayesian posterior
+  // mean, whose bias trades for a smaller variance. Both curves share one
+  // y-scale (unlike the prior/likelihood/posterior curves above, each
+  // normalized to its own peak) so the relative spread — the actual
+  // bias/variance tradeoff — is visible directly: the narrower, taller
+  // curve has lower variance. True μ here is hypothetically 4.2 (rather
+  // than the 5.0 used earlier) so the prior sits close enough to it for
+  // the bias/variance tradeoff to actually favor the Bayes estimate.
+  function renderBiasMseChart(container) {
+    const sigma = 0.6, n = 5, trueMu = 4.2;
+    const mu0 = 4.0, tau = 0.5;
+    const w = (n / sigma ** 2) / (n / sigma ** 2 + 1 / tau ** 2);
+    const mleMean = trueMu, mleSd = sigma / Math.sqrt(n);
+    const bayesMean = w * trueMu + (1 - w) * mu0, bayesSd = w * mleSd;
+    const normalPdf = (x, mu, sigma) => Math.exp(-0.5 * ((x - mu) / sigma) ** 2) / (sigma * Math.sqrt(2 * Math.PI));
+
+    const xMin = 3.5, xMax = 4.9;
+    const width = 380, height = 200, padL = 16, padR = 16, padT = 18, padB = 34;
+    const plotW = width - padL - padR, plotH = height - padT - padB;
+    const yMax = Math.max(normalPdf(mleMean, mleMean, mleSd), normalPdf(bayesMean, bayesMean, bayesSd)) * 1.15;
+    const toScreen = (x, y) => ({
+      x: padL + (x - xMin) / (xMax - xMin) * plotW,
+      y: padT + plotH - (y / yMax) * plotH
+    });
+
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'Sampling distributions of two estimators, compared by bias and variance' });
+
+    const mlePts = sample(x => normalPdf(x, mleMean, mleSd), xMin, xMax, 200);
+    svg.appendChild(el('path', { d: pathFor(mlePts, toScreen), fill: 'none', stroke: '#1a1a1a', 'stroke-width': '1.75', 'stroke-dasharray': '5,3' }));
+    const bayesPts = sample(x => normalPdf(x, bayesMean, bayesSd), xMin, xMax, 200);
+    svg.appendChild(el('path', { d: pathFor(bayesPts, toScreen), fill: 'none', stroke: '#0b7285', 'stroke-width': '1.75', 'stroke-dasharray': '5,3' }));
+
+    // true μ — the fixed target both estimators are judged against, so it's
+    // a secondary reference line rather than one of the two main curves
+    const trueTop = toScreen(trueMu, yMax), trueBase = toScreen(trueMu, 0);
+    svg.appendChild(el('line', { x1: trueTop.x, y1: trueTop.y, x2: trueBase.x, y2: trueBase.y, stroke: '#999', 'stroke-width': '1.25' }));
+    const trueLabel = el('text', { x: trueTop.x, y: padT - 5, 'font-size': '12', fill: '#999', 'text-anchor': 'middle' });
+    trueLabel.textContent = 'true μ';
+    svg.appendChild(trueLabel);
+
+    const oY = padT + plotH;
+    svg.appendChild(el('line', { x1: padL, y1: oY, x2: padL + plotW, y2: oY, stroke: '#333' }));
+    svg.appendChild(el('line', { x1: padL, y1: oY, x2: padL, y2: padT, stroke: '#333' }));
+    [3.6, 4.0, 4.4, 4.8].forEach(v => {
+      const sx = toScreen(v, 0).x;
+      const t = el('text', { x: sx, y: oY + 16, 'font-size': '12', fill: '#555', 'text-anchor': 'middle' });
+      t.textContent = v.toFixed(1);
+      svg.appendChild(t);
+    });
+
+    const xAxisLabel = el('text', { x: width - 4, y: oY + 28, 'font-size': '12', fill: '#555', 'text-anchor': 'end' });
+    xAxisLabel.textContent = 'estimate';
+    svg.appendChild(xAxisLabel);
+    const yAxisLabel = el('text', { x: padL, y: padT - 6, 'font-size': '12', fill: '#555', 'text-anchor': 'start' });
+    yAxisLabel.textContent = 'density';
+    svg.appendChild(yAxisLabel);
+
+    container.innerHTML = '';
+    container.appendChild(svg);
+    renderLegend(container, [
+      { type: 'dashed', color: '#1a1a1a', label: 'MLE X̅ (unbiased, higher variance)' },
+      { type: 'dashed', color: '#0b7285', label: 'Bayes estimate (biased, lower variance)' },
+      { type: 'line', color: '#999', label: 'true μ' }
+    ]);
+  }
+
+  // Method of Moments, Normal case: the true N(μ,σ²) the data was drawn
+  // from, against the curve implied by plugging the moment-matched μ̂ = X̄
+  // back into the model, both drawn as shaded regions (not bare outlines)
+  // so overlap between the two densities is visible as blended fill, not
+  // just two close-together lines. True is teal (solid), estimated is
+  // gray (dashed) — the reverse of the Bias/MSE chart's convention above,
+  // by request, so the ground truth reads as the salient curve here.
+  function renderMomNormalChart(container) {
+    const data = [4.1, 4.6, 5.0, 5.3, 5.5];
+    const trueMu = 5.0, sigma = 0.6;
+    const xHat = data.reduce((a, b) => a + b, 0) / data.length;
+    const normalPdf = (x, mu, s) => Math.exp(-0.5 * ((x - mu) / s) ** 2) / (s * Math.sqrt(2 * Math.PI));
+
+    const xMin = 3.2, xMax = 6.8;
+    const width = 380, height = 170, padL = 16, padR = 16, padT = 18, padB = 30;
+    const plotW = width - padL - padR, plotH = height - padT - padB;
+    const maxY = normalPdf(trueMu, trueMu, sigma) * 1.1;
+    const axisY = padT + plotH;
+    const toScreen = (x, y) => ({
+      x: padL + (x - xMin) / (xMax - xMin) * plotW,
+      y: axisY - (y / maxY) * plotH
+    });
+
+    function areaPath(fn) {
+      const pts = sample(fn, xMin, xMax, 200);
+      const left = toScreen(xMin, 0), right = toScreen(xMax, 0);
+      let d = `M${left.x.toFixed(1)},${left.y.toFixed(1)} `;
+      d += pts.map(p => { const s = toScreen(p.x, p.y); return `L${s.x.toFixed(1)},${s.y.toFixed(1)}`; }).join(' ');
+      d += ` L${right.x.toFixed(1)},${right.y.toFixed(1)} Z`;
+      return d;
+    }
+
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'True and estimated Normal densities, shaded, over five data points' });
+
+    svg.appendChild(el('path', { d: areaPath(x => normalPdf(x, trueMu, sigma)), fill: '#0b7285', 'fill-opacity': '0.25', stroke: 'none' }));
+    svg.appendChild(el('path', { d: areaPath(x => normalPdf(x, xHat, sigma)), fill: '#999', 'fill-opacity': '0.2', stroke: 'none' }));
+
+    const truePts = sample(x => normalPdf(x, trueMu, sigma), xMin, xMax, 200);
+    svg.appendChild(el('path', { d: pathFor(truePts, toScreen), fill: 'none', stroke: '#0b7285', 'stroke-width': '2' }));
+    const estPts = sample(x => normalPdf(x, xHat, sigma), xMin, xMax, 200);
+    svg.appendChild(el('path', { d: pathFor(estPts, toScreen), fill: 'none', stroke: '#999', 'stroke-width': '1.75', 'stroke-dasharray': '4,3' }));
+
+    svg.appendChild(el('line', { x1: padL, y1: axisY, x2: padL + plotW, y2: axisY, stroke: '#333' }));
+    data.forEach(x => {
+      const s = toScreen(x, 0);
+      svg.appendChild(el('circle', { cx: s.x, cy: s.y, r: 3, fill: '#1a1a1a' }));
+    });
+
+    // minimal parameter marks: μ and μ̂ are only 0.1 apart here, so both
+    // peaks sit almost on top of each other — staggered horizontally
+    // instead of vertically, so both labels stay above the curves (not
+    // one dropped down to the axis) while still not colliding.
+    // trueMu > xHat here, so the true peak sits to the right of the
+    // estimated one — offset each label further toward its own side
+    // (true right, estimated left) rather than assuming a fixed direction,
+    // or they cross over and the labels read in the wrong left-right order.
+    const truePeak = toScreen(trueMu, normalPdf(trueMu, trueMu, sigma));
+    const estPeak = toScreen(xHat, normalPdf(xHat, xHat, sigma));
+    const trueOffset = truePeak.x >= estPeak.x ? 14 : -14;
+    texLabel(svg, truePeak.x + trueOffset, truePeak.y - 8, '\\mu', '#0b7285');
+    texLabel(svg, estPeak.x - trueOffset, estPeak.y - 8, '\\hat{\\mu}', '#999');
+
+    container.innerHTML = '';
+    container.appendChild(svg);
+    renderLegend(container, [
+      { type: 'fill', color: '#0b7285', label: 'true N(μ, σ²)' },
+      { type: 'fill', color: '#999', label: 'estimated N(μ̂, σ²)' },
+      { type: 'dot', color: '#1a1a1a', label: 'data' }
+    ]);
+    // No trailing caption — the numbers are already in the prose right
+    // above this chart (same precedent as the Hypothesis Testing chart).
+  }
+
+  // Method of Moments, Uniform(0,θ) case: both supports drawn as shaded
+  // rectangles on a shared baseline — true density is 1/θ, so the wider
+  // (true) region is shorter and the narrower (estimated) region is taller,
+  // overlapping near the origin with the true region's uncovered tail
+  // visible as the one part of it the estimate missed entirely. True is
+  // teal (solid), estimated is gray (dashed) — same swapped convention as
+  // the Normal chart above.
+  function renderMomUniformChart(container) {
+    const data = [1.0, 1.5, 3.0, 4.0, 5.5];
+    const trueTheta = 7, xHat = 2 * (data.reduce((a, b) => a + b, 0) / data.length);
+
+    const xMin = 0, xMax = 7.6;
+    const width = 320, height = 150, padL = 16, padR = 16, padT = 18, padB = 30;
+    const plotW = width - padL - padR, plotH = height - padT - padB;
+    const axisY = padT + plotH;
+    const toX = x => padL + (x - xMin) / (xMax - xMin) * plotW;
+    const maxDensity = 1 / xHat;
+    const toY = h => axisY - (h / maxDensity) * (plotH * 0.85);
+
+    const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'True and estimated Uniform densities, shaded, with five data points' });
+
+    [[trueTheta, '#0b7285', null, false], [xHat, '#999', '4,3', true]].forEach(([end, color, dash, isEstimate]) => {
+      const h = 1 / end;
+      const top = toY(h);
+      const attrs = { d: `M${toX(0)},${axisY} L${toX(0)},${top.toFixed(1)} L${toX(end)},${top.toFixed(1)} L${toX(end)},${axisY} Z`, fill: color, 'fill-opacity': '0.25', stroke: 'none' };
+      svg.appendChild(el('path', attrs));
+      const outline = { x1: toX(0), y1: top, x2: toX(end), y2: top, stroke: color, 'stroke-width': '2' };
+      if (dash) outline['stroke-dasharray'] = dash;
+      svg.appendChild(el('line', outline));
+      svg.appendChild(el('line', { x1: toX(end), y1: top, x2: toX(end), y2: axisY, stroke: color, 'stroke-width': dash ? '1.5' : '2', 'stroke-dasharray': dash || 'none' }));
+      // minimal parameter mark: just the symbol, right at the edge it
+      // belongs to, instead of only naming it in the legend below
+      if (isEstimate) {
+        texLabel(svg, toX(end) + 8, top - 6, '\\hat{\\theta}', color);
+      } else {
+        texLabel(svg, toX(end), top - 6, '\\theta', color);
+      }
+    });
+
+    svg.appendChild(el('line', { x1: padL, y1: axisY, x2: padL + plotW, y2: axisY, stroke: '#333' }));
+    data.forEach(x => {
+      svg.appendChild(el('circle', { cx: toX(x), cy: axisY, r: 3, fill: '#1a1a1a' }));
+    });
+
+    container.innerHTML = '';
+    container.appendChild(svg);
+    renderLegend(container, [
+      { type: 'fill', color: '#0b7285', label: 'true θ' },
+      { type: 'fill', color: '#999', label: 'estimated θ̂' },
+      { type: 'dot', color: '#1a1a1a', label: 'data' }
+    ]);
+    // No trailing caption — same reasoning as the Normal chart above.
+  }
+
+  const momNormalMount = document.getElementById('mom-normal-chart-root');
+  if (momNormalMount) renderMomNormalChart(momNormalMount);
+
+  const momUniformMount = document.getElementById('mom-uniform-chart-root');
+  if (momUniformMount) renderMomUniformChart(momUniformMount);
+
+  // Reuses the exact same chart as Method of Moments' normal example —
+  // MLE and method of moments give the identical estimator (X̄) here, so
+  // the chart itself (not just the number) is identical, not just similar.
+  const mleNormalMount = document.getElementById('mle-normal-chart-root');
+  if (mleNormalMount) renderMomNormalChart(mleNormalMount);
+
+  const mleUniformMount = document.getElementById('mle-uniform-chart-root');
+  if (mleUniformMount) renderMleUniformChart(mleUniformMount);
 
   const bayesMount = document.getElementById('bayes-chart-root');
   if (bayesMount) renderBayesChart(bayesMount);
 
   const hypMount = document.getElementById('hyp-chart-root');
   if (hypMount) renderHypothesisChart(hypMount);
+  const powerMount = document.getElementById('power-chart-root');
+  if (powerMount) renderPowerChart(powerMount);
+
+  const biasMseMount = document.getElementById('bias-mse-chart-root');
+  if (biasMseMount) renderBiasMseChart(biasMseMount);
 })();

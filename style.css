@@ -2,6 +2,19 @@
   box-sizing: border-box;
 }
 
+/* Animate same-page anchor navigation (TOC links, heading permalinks, the
+   "complete" cross-reference in Open and Closed Sets) instead of an instant
+   jump. Respects reduced-motion preference since this is pure polish, not
+   something the page depends on for usability. */
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -18,43 +31,161 @@ body {
   padding: 48px 24px;
 }
 
-.tabs {
-  display: flex;
-  border-bottom: 1px solid #e5e5e5;
-  gap: 8px;
+/* Floating table of contents, injected by script.js — lives in the right
+   gutter beside the centered .container. Fixed positioning + a calc()
+   tied to the container's own max-width keeps it clear of the content
+   column at any viewport width, but there's only a gutter to sit in once
+   the viewport is comfortably wider than 720px (container) + itself
+   (~220px) + breathing room either side — hidden below that via the
+   media query rather than risking overlap on narrower windows. */
+.toc {
+  display: none;
+  position: fixed;
+  top: 88px; /* level with .panel h1 — container (48px) + panels (40px) padding */
+  left: calc(50% + 360px + 40px);
+  width: 200px;
+  max-height: calc(100vh - 128px);
+  overflow-y: auto;
 }
 
-.tab {
-  background: none;
-  border: none;
-  outline: none;
+@media (min-width: 1280px) {
+  .toc {
+    display: block;
+  }
+}
+
+.toc-label {
+  margin: 0 0 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #999;
+}
+
+.toc ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-left: 1px solid #e5e5e5;
+}
+
+.toc li + li {
+  margin-top: 2px;
+}
+
+.toc a {
+  display: block;
+  padding: 4px 0 4px 14px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: #888;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.toc a:hover {
+  color: #1a1a1a;
+}
+
+.toc a.active {
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+/* <details class="menu-nav"> is the whole hamburger-button-plus-dropdown
+   widget — native disclosure element, so the open/close toggle works with
+   zero JS. script.js only adds the "close when you click outside it"
+   politeness on top; the menu is still fully usable without it.
+   Fixed-positioned so it floats in the viewport's top-left corner and
+   stays put while the page scrolls, rather than scrolling away with the
+   content below it. */
+.menu-nav {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 30;
+}
+
+/* <summary> gets a default triangle marker and list-item styling in every
+   browser — strip both so it reads as a plain icon button. */
+.menu-button {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 36px;
+  height: 32px;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  cursor: pointer;
+  list-style: none;
+  transition: border-color 0.15s ease;
+}
+
+.menu-button::-webkit-details-marker {
+  display: none;
+}
+
+.menu-button:hover {
+  border-color: #bbb;
+}
+
+.menu-nav[open] .menu-button {
+  border-color: #1a1a1a;
+}
+
+.menu-button .bar {
+  width: 16px;
+  height: 2px;
+  border-radius: 1px;
+  background: #1a1a1a;
+}
+
+.menu-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 20;
+  min-width: 180px;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  padding: 6px;
+}
+
+.menu-item {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 6px;
   font-size: 0.95rem;
   font-weight: 500;
-  color: #888;
-  padding: 12px 16px;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  color: #555;
+  text-decoration: none;
+  transition: background 0.1s ease, color 0.1s ease;
 }
 
-.tab:hover {
+.menu-item:hover {
+  background: #f5f5f5;
   color: #1a1a1a;
 }
 
-.tab.active {
+.menu-item.active {
+  background: #f3f3f3;
   color: #1a1a1a;
-  border-bottom-color: #1a1a1a;
+  font-weight: 600;
 }
 
 .panels {
   padding: 40px 4px;
 }
 
+/* Each page now has exactly one panel, always shown — no more
+   show/hide toggling between panels, just the entrance animation. */
 .panel {
-  display: none;
-}
-
-.panel.active {
   display: block;
   animation: fade 0.2s ease;
 }
@@ -73,26 +204,140 @@ body {
 }
 
 .topics {
-  margin-top: 40px;
+  margin-top: 48px;
 }
 
 .topic {
-  margin-bottom: 28px;
+  margin-bottom: 56px;
+}
+
+.topic strong {
+  font-weight: 600;
 }
 
 .topic h2 {
   font-size: 1.1rem;
   font-weight: 600;
   color: #1a1a1a;
-  margin: 0 0 8px;
+  margin: 0 0 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e5e5;
 }
 
-.topic p + p {
-  margin-top: 14px;
+/* script.js wraps each h2 in this rather than reserving the anchor's
+   gutter via padding directly on h2 — negative margin-left + equal
+   padding-left extends .heading-wrap's own hoverable box into the
+   gutter without touching h2's box at all, so h2's text and its
+   border-bottom stay exactly where they'd be with no anchor, flush
+   with the body text below. (The icon still needs to live inside
+   *some* element's hoverable box, not floating outside it via negative
+   margin on its own — otherwise moving the cursor toward it to click
+   would leave the hover zone and it'd vanish before you could reach
+   it. Here that box is the wrapper's, not the heading's.) */
+.heading-wrap {
+  position: relative;
+  margin-left: -20px;
+  padding-left: 20px;
 }
 
+.heading-anchor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  width: 20px;
+  color: #999;
+  text-decoration: none;
+  font-weight: 400;
+  font-size: 0.9rem;
+  opacity: 0;
+  transition: opacity 0.1s ease, color 0.1s ease;
+}
+
+.heading-anchor:hover {
+  color: #1a1a1a;
+}
+
+.heading-wrap:hover .heading-anchor,
+.heading-anchor:focus {
+  opacity: 1;
+}
+
+/* Any paragraph that isn't the first child gets the standard flow gap —
+   including one that follows a figure/chart/table, not just another <p>.
+   (Scoping to "p + p" here missed that case entirely, leaving some
+   paragraphs flush against the element above them.) */
+.topic > * + p {
+  margin-top: 16px;
+}
+
+/* ...except directly under a heading, where the heading's own bottom
+   margin already provides the gap. h2 is wrapped in .heading-wrap (see
+   above), so .heading-wrap, not h2 itself, is the actual sibling
+   immediately before the first paragraph now. */
+.topic .heading-wrap + p {
+  margin-top: 0;
+}
+
+/* Equations get more breathing room than plain prose, both above and
+   below — specificity (0,2,1) beats the generic "* + p" (0,1,1) rule
+   above, so this wins without needing !important. */
+.topic > p.math {
+  margin-top: 22px;
+}
+
+.topic > p.math + p {
+  margin-top: 22px;
+}
+
+.topic > * + ol,
+.topic > * + ul {
+  margin-top: 16px;
+}
+
+/* Cross-reference links between topics — read as text first, link
+   second, so no color at all, just an underline. */
+.topic p a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.topic ol,
+.topic ul {
+  margin: 0;
+  padding-left: 22px;
+  color: #555;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.topic ol li + li,
+.topic ul li + li {
+  margin-top: 6px;
+}
+
+/* No longer overflow-x: auto — script.js's fitMathBlocks() now actively
+   shrinks any equation wider than this box, so it never genuinely needs to
+   scroll. Leaving it "auto" still made the box a scroll container even
+   with zero real overflow, which trackpads render as a tiny rubber-band
+   nudge on any scroll/gesture over it. "hidden" keeps a safety margin for
+   the rare off-by-a-pixel case (clips instead of scrolling) without that.
+
+   overflow-y needs setting too, not just overflow-x: per spec, a
+   non-"visible" overflow-x with no overflow-y specified computes overflow-y
+   to "auto" too (the two axes can't be "visible"/non-"visible" mixed) — so
+   leaving overflow-y unset here silently made .math vertically scrollable.
+   KaTeX's own internal baseline "struts" (invisible spacers it uses to
+   stack sub/superscripts and fractions at the right height) render a few
+   px taller than the box in every formula, regardless of width/scale, so
+   that implicit overflow-y:auto was a *guaranteed* scrollbar on every
+   equation — the actual "scrolls a tiny bit" the hover/scroll report was
+   about, since a mouse wheel scrolls vertically by default. */
 .topic .math {
-  overflow-x: auto;
+  overflow: hidden;
 }
 
 .topic .math .katex-display {
@@ -122,11 +367,23 @@ body {
 .set-examples {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  margin-top: 16px;
+  gap: 18px;
+  margin-top: 24px;
+}
+
+/* A lone card right after its own equation, rather than paired in the
+   usual two-column grid — keep it from stretching full width. */
+.set-examples.single {
+  grid-template-columns: minmax(0, 220px);
+  justify-content: center;
 }
 
 .set-card {
+  min-width: 0; /* grid items default to min-width:auto, which refuses to
+                   shrink below the card's content size (the SVG) — the
+                   classic CSS Grid overflow trap. Without this, cards in
+                   a narrow viewport's 2-column grid push past the
+                   container's edge instead of shrinking with it. */
   border: 1px solid #eee;
   border-radius: 6px;
   padding: 14px;
@@ -141,6 +398,13 @@ body {
   margin: 0 auto;
 }
 
+/* Wide-format cards (number lines, function graphs) need more than the
+   160px square size meant for the disk diagrams, or their point labels
+   render unreadably small. */
+.set-card svg.wide {
+  max-width: 280px;
+}
+
 .set-card p {
   margin-top: 10px;
   font-size: 0.85rem;
@@ -151,7 +415,7 @@ body {
 }
 
 .viz {
-  margin-top: 16px;
+  margin-top: 24px;
   text-align: center;
 }
 
@@ -164,12 +428,20 @@ body {
 }
 
 .viz p {
-  margin-top: 10px;
+  margin-top: 16px;
   font-size: 0.85rem;
 }
 
+/* Matches the bordered-card look already used for the set-example
+   diagrams (.set-card), for a standalone diagram + caption. */
+.viz-card {
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 14px;
+}
+
 .lp-graph {
-  margin-top: 28px;
+  margin-top: 24px;
 }
 
 .lp-graph svg {
@@ -177,11 +449,11 @@ body {
   max-width: 420px;
   height: auto;
   display: block;
+  margin: 0 auto;
 }
 
 .lp-graph p {
-  margin-top: 14px;
-  font-size: 0.9rem;
+  margin-top: 16px;
 }
 
 .stat-chart {
@@ -193,42 +465,18 @@ body {
   max-width: 380px;
   height: auto;
   display: block;
-}
-
-.cs-table {
-  width: 100%;
-  max-width: 420px;
-  border-collapse: collapse;
-  font-size: 0.85rem;
-}
-
-.cs-table th,
-.cs-table td {
-  text-align: left;
-  padding: 7px 10px 7px 0;
-  color: #555;
-}
-
-.cs-table th {
-  color: #1a1a1a;
-  font-weight: 600;
-}
-
-.dijkstra-graph svg {
-  width: 100%;
-  max-width: 420px;
-  height: auto;
-  display: block;
+  margin: 0 auto;
 }
 
 .stat-chart p {
-  margin-top: 14px;
+  margin-top: 16px;
   font-size: 0.9rem;
 }
 
 .chart-legend {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 8px 16px;
   margin-top: 10px;
   font-size: 0.82rem;
@@ -271,6 +519,17 @@ body {
   background: currentColor;
 }
 
+.chart-legend-swatch.hatch {
+  background: repeating-linear-gradient(
+    -45deg,
+    currentColor,
+    currentColor 1.5px,
+    transparent 1.5px,
+    transparent 4px
+  );
+  border-radius: 2px;
+}
+
 .var-prior {
   color: #868e96;
   font-weight: 600;
@@ -286,46 +545,45 @@ body {
   font-weight: 600;
 }
 
-.dijkstra-controls {
-  margin-top: 14px;
-}
-
-.dijkstra-controls input[type="range"] {
-  width: 100%;
-  max-width: 420px;
-  display: block;
-  accent-color: #1a1a1a;
-}
-
 .tableau-wrap {
-  margin-top: 28px;
+  margin-top: 24px;
 }
 
-.tableau-phase {
-  margin: 28px 0 14px;
+/* The plain explanation paragraphs live inside .tableau-wrap, not
+   directly inside .topic, so the generic ".topic > * + p" flow rule
+   (child combinator) never reaches them — without this they'd sit flush
+   against the card above with no gap, same bug as before in a new spot. */
+.tableau-wrap > p:not(.tableau-phase) {
+  margin-top: 16px;
+}
+
+/* p.tableau-phase (not just .tableau-phase) — a bare class selector loses
+   to .panel p's "margin: 0" on specificity. */
+p.tableau-phase {
+  margin: 32px 0 16px;
   font-size: 0.95rem;
   font-weight: 600;
   color: #1a1a1a;
 }
 
-.tableau-phase:first-child {
+p.tableau-phase:first-child {
   margin-top: 0;
 }
 
-.tableau-step {
-  margin-top: 36px;
-}
-
-.tableau-step:first-child {
-  margin-top: 0;
-}
-
+/* No wrapping step/caption box anymore — each tableau sits directly in
+   the normal flow, with ordinary paragraphs woven in before and after
+   it rather than a smaller "caption" attached underneath. */
 .tableau-card {
   width: fit-content;
   max-width: 100%;
+  margin: 24px auto 0;
   border: 1px solid #e5e5e5;
   border-radius: 8px;
   padding: 16px 18px;
+}
+
+.tableau-card:first-child {
+  margin-top: 0;
 }
 
 .tableau-scroll {
@@ -370,12 +628,6 @@ body {
   font-weight: 700;
   background: rgba(192, 57, 43, 0.07);
   border-radius: 4px;
-}
-
-.tableau-caption {
-  margin-top: 18px;
-  font-size: 0.9rem;
-  color: #555;
 }
 
 .chart-tooltip {
