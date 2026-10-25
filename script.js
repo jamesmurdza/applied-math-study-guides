@@ -644,7 +644,7 @@ if (window.renderMathInElement) {
     }
 
     const bs = toScreen(best.x, best.y);
-    svg.appendChild(el('circle', { cx: bs.x.toFixed(1), cy: bs.y.toFixed(1), r: 4, fill: '#1a1a1a' }));
+    svg.appendChild(el('circle', { cx: bs.x.toFixed(1), cy: bs.y.toFixed(1), r: 4, fill: config.bestPointColor || '#1a1a1a' }));
     hoverTargets.push({ x: bs.x, y: bs.y, r: 6, title: pointTitle(best) });
     // config.labelText overrides with a fixed string (e.g. just "integer
     // optimum", no coordinates); config.hideOptimumLabels drops the label
@@ -787,6 +787,7 @@ if (window.renderMathInElement) {
       cut: { a: 0, b: 1, c: 3, color: '#c0392b', label: 'cut: x₂ ≤ 3' },
       showLattice: true,
       hideOptimumLabels: true,
+      bestPointColor: '#c0392b',
       referencePoint: { x: 3, y: 1, label: 'integer optimum' }
     });
   }
@@ -815,6 +816,7 @@ if (window.renderMathInElement) {
       cut: { a: 1, b: 2, c: 6, color: '#c0392b', label: 'cut: x₁ + 2x₂ ≤ 6' },
       showLattice: true,
       hideOptimumLabels: true,
+      bestPointColor: '#c0392b',
       referencePoint: { x: 3, y: 1, label: 'integer optimum' }
     });
   }
@@ -837,6 +839,7 @@ if (window.renderMathInElement) {
       cut: { a: 3, b: 4, c: 13, color: '#c0392b', label: 'cut: 3x₁ + 4x₂ ≤ 13' },
       showLattice: true,
       hideOptimumLabels: true,
+      bestPointColor: '#c0392b',
       referencePoint: { x: 3, y: 1, label: 'integer optimum' }
     });
   }
