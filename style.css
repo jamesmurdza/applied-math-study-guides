@@ -444,6 +444,24 @@ body {
   margin-top: 24px;
 }
 
+.lp-graph-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.lp-graph-row .lp-graph {
+  margin-top: 0;
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .lp-graph-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 .lp-graph svg {
   width: 100%;
   max-width: 420px;

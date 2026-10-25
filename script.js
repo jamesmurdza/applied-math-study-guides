@@ -539,7 +539,18 @@ if (window.renderMathInElement) {
       if (Math.abs(baseBest.x - bestCont.x) > 1e-6 || Math.abs(baseBest.y - bestCont.y) > 1e-6) {
         const cs = toScreen(baseBest.x, baseBest.y);
         svg.appendChild(el('circle', { cx: cs.x.toFixed(1), cy: cs.y.toFixed(1), r: 4, fill: 'none', stroke: '#bbb', 'stroke-width': '1.5', 'stroke-dasharray': '2,2' }));
-        const clabel = el('text', { x: (cs.x + 10).toFixed(1), y: (cs.y - 8).toFixed(1), 'font-size': '12', fill: '#999' });
+        // When the pre-cut and post-cut optima land close together on screen
+        // (consecutive cuts can shave off only a small corner), the default
+        // above-right placement collides with the post-cut optimum's own
+        // label below — drop this one below-left instead whenever they're
+        // close enough to crowd each other.
+        const bs = toScreen(bestCont.x, bestCont.y);
+        const closeBy = Math.hypot(cs.x - bs.x, cs.y - bs.y) < 45;
+        const clabel = el('text', {
+          x: (cs.x + 10).toFixed(1),
+          y: (closeBy ? cs.y + 18 : cs.y - 8).toFixed(1),
+          'font-size': '12', fill: '#999', 'text-anchor': 'start'
+        });
         clabel.textContent = `before cut: (${fmt(baseBest.x)}, ${fmt(baseBest.y)})`;
         svg.appendChild(clabel);
       }
@@ -766,6 +777,56 @@ if (window.renderMathInElement) {
         { a: 0.7, b: 0.9, c: 3 }
       ],
       cut: { a: 0, b: 1, c: 3, color: '#c0392b', label: 'cut: x₂ ≤ 3' },
+      showLattice: true,
+      optimalLabel: 'after cut',
+      referencePoint: { x: 3, y: 1, label: 'integer optimum = 31' }
+    });
+  }
+
+  // Two more rounds of Gomory cuts on the same problem, shown side by side.
+  // Each chart's "constraints" list is the previous round's full constraint
+  // set (budget + every earlier cut), so its own faint pre-cut outline is
+  // the already-tightened region from the round before — and its "cut" is
+  // the next one, derived the same way as the first: take the fractional
+  // basic variable's tableau row at that round's optimum, keep only the
+  // fractional parts, substitute the slacks back out.
+  const gomoryMount2 = document.getElementById('gomory-graph-root-2');
+  if (gomoryMount2) {
+    renderLPGraph(gomoryMount2, {
+      xMax: 6,
+      yMax: 5,
+      varNames: ['x₁', 'x₂'],
+      varColors: ['#2f9e44', '#c2525c'],
+      axisLabels: ['green eggs', 'ham'],
+      objective: { a: 7, b: 10 },
+      objectiveLabel: 'protein',
+      constraints: [
+        { a: 0.7, b: 0.9, c: 3 },
+        { a: 0, b: 1, c: 3 }
+      ],
+      cut: { a: 1, b: 2, c: 6, color: '#c0392b', label: 'cut: x₁ + 2x₂ ≤ 6' },
+      showLattice: true,
+      optimalLabel: 'after cut',
+      referencePoint: { x: 3, y: 1, label: 'integer optimum = 31' }
+    });
+  }
+
+  const gomoryMount3 = document.getElementById('gomory-graph-root-3');
+  if (gomoryMount3) {
+    renderLPGraph(gomoryMount3, {
+      xMax: 6,
+      yMax: 5,
+      varNames: ['x₁', 'x₂'],
+      varColors: ['#2f9e44', '#c2525c'],
+      axisLabels: ['green eggs', 'ham'],
+      objective: { a: 7, b: 10 },
+      objectiveLabel: 'protein',
+      constraints: [
+        { a: 0.7, b: 0.9, c: 3 },
+        { a: 0, b: 1, c: 3 },
+        { a: 1, b: 2, c: 6 }
+      ],
+      cut: { a: 3, b: 4, c: 13, color: '#c0392b', label: 'cut: 3x₁ + 4x₂ ≤ 13' },
       showLattice: true,
       optimalLabel: 'after cut',
       referencePoint: { x: 3, y: 1, label: 'integer optimum = 31' }

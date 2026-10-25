@@ -128,6 +128,12 @@
             <p class="math">$$7\textcolor{#2f9e44}{x_1} + (30 - 7\textcolor{#2f9e44}{x_1} - 9\textcolor{#c2525c}{x_2}) \geq 3 \quad\Longrightarrow\quad \textcolor{#c2525c}{x_2} \leq 3$$</p>
             <div class="lp-graph" id="gomory-graph-root"></div>
             <p>The faint dashed outline above is the LP relaxation before any cuts. Since ham must be a whole number, x₂ ≤ 3.33 is really x₂ ≤ 3 — a valid cut that removes no integer point, but slices off the fractional corner and shrinks the relaxation's optimum from 33.33 down to 33, a step closer to the true integer optimum of 31.</p>
+            <p>Each cut leaves a new fractional vertex behind, so the process repeats: re-solve the tableau, split a fractional row, add the next cut. Two more rounds on this same problem:</p>
+            <div class="lp-graph-row">
+              <div class="lp-graph" id="gomory-graph-root-2"></div>
+              <div class="lp-graph" id="gomory-graph-root-3"></div>
+            </div>
+            <p>The first cut's new optimum, (<sup>3</sup>⁄<sub>7</sub>, 3), is still fractional in eggs, so splitting its row gives x₁ + 2x₂ ≤ 6 — dropping the relaxation's optimum to 32.4 at (1.2, 2.4). That vertex is fractional in both variables; splitting it gives 3x₁ + 4x₂ ≤ 13, dropping the optimum further to 32 at (1, 2.5) — still short of the true integer optimum of 31, since each cut only shaves off the current corner rather than jumping straight to the integer hull.</p>
           </div>
           <div class="topic" id="dijkstras-algorithm">
             <h2>Dijkstra's Algorithm</h2>
