@@ -1506,11 +1506,14 @@ if (window.renderMathInElement) {
   // each normalized to its own peak so the three shapes are comparable.
   // Normal prior on a normal mean (known σ), continuing the same running
   // normal example as Method of Moments/MLEs: data [4.1,4.6,5.0,5.3,5.5],
-  // X̄ = 4.9, σ = 0.6, n = 5. Prior μ ~ N(4.0, 0.3²). Each curve normalized
-  // to its own peak (prior/likelihood/posterior scale on different axes).
+  // X̄ = 4.9, σ = 0.6, n = 5. Prior μ ~ N(4.0, 0.5²) — deliberately vaguer
+  // than σ/√n, so the width gap between the prior and likelihood curves
+  // (and the posterior's resulting pull toward the likelihood) is
+  // actually visible rather than a near-tie. Each curve normalized to its
+  // own peak (prior/likelihood/posterior scale on different axes).
   function renderBayesChart(container) {
     const sigma = 0.6, n = 5, xBar = 4.9;
-    const mu0 = 4.0, tau = 0.3;
+    const mu0 = 4.0, tau = 0.5;
     const likSigma = sigma / Math.sqrt(n);
     const w = (n / sigma ** 2) / (n / sigma ** 2 + 1 / tau ** 2);
     const postMean = w * xBar + (1 - w) * mu0;
@@ -1572,7 +1575,7 @@ if (window.renderMathInElement) {
 
   // Approximate sampling distributions of two estimators of a normal mean
   // (the same running example as Method of Moments/MLEs/Bayesian inference
-  // above, with σ = 0.6, n = 5, and a prior μ₀ = 4.0, τ = 0.3 as in
+  // above, with σ = 0.6, n = 5, and a prior μ₀ = 4.0, τ = 0.5 as in
   // Bayesian Inference): the unbiased MLE X̄ vs. the Bayesian posterior
   // mean, whose bias trades for a smaller variance. Both curves share one
   // y-scale (unlike the prior/likelihood/posterior curves above, each
@@ -1583,7 +1586,7 @@ if (window.renderMathInElement) {
   // the bias/variance tradeoff to actually favor the Bayes estimate.
   function renderBiasMseChart(container) {
     const sigma = 0.6, n = 5, trueMu = 4.2;
-    const mu0 = 4.0, tau = 0.3;
+    const mu0 = 4.0, tau = 0.5;
     const w = (n / sigma ** 2) / (n / sigma ** 2 + 1 / tau ** 2);
     const mleMean = trueMu, mleSd = sigma / Math.sqrt(n);
     const bayesMean = w * trueMu + (1 - w) * mu0, bayesSd = w * mleSd;
