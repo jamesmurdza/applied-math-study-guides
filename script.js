@@ -1328,19 +1328,9 @@ if (window.renderMathInElement) {
     obsLabel.textContent = 'observed';
     svg.appendChild(obsLabel);
 
-    // alpha label — sits just above its own line's top, in the same spot
-    // z*'s label used to float before it moved down to an axis tick,
-    // marking where the full (lighter) rejection region starts
-    const alphaLabel = el('text', { x: cs.x, y: cs.y - 8, 'font-size': '12', fill: '#c92a2a', 'text-anchor': 'middle', 'font-weight': '600' });
-    alphaLabel.textContent = 'α';
-    svg.appendChild(alphaLabel);
-
-    // p label — sits inside the darker nested region, away from both the
-    // observed marker above it and the alpha label to its left
-    const pScreenX = toScreen((zObs + xMax) / 2 + 0.2, 0).x;
-    const pLabel = el('text', { x: pScreenX, y: padT + plotH - 12, 'font-size': '12', fill: '#c92a2a', 'text-anchor': 'middle', 'font-weight': '600' });
-    pLabel.textContent = 'p';
-    svg.appendChild(pLabel);
+    // α and the p-value region are identified in the legend instead of
+    // labeled directly on the chart, to avoid double-labeling the same
+    // shaded areas in two places.
 
     container.innerHTML = '';
     container.appendChild(svg);
@@ -1424,18 +1414,9 @@ if (window.renderMathInElement) {
     critLabel.textContent = 'z*';
     svg.appendChild(critLabel);
 
-    // alpha and power labels, pushed further apart (and higher, into each
-    // region's own wider area) than a naive even split would give, since
-    // the red tail here is much narrower than the teal one
-    const alphaScreenX = toScreen(zCrit + 0.25, 0).x;
-    const alphaLabel = el('text', { x: alphaScreenX, y: padT + plotH - 10, 'font-size': '12', fill: '#c92a2a', 'text-anchor': 'middle', 'font-weight': '600' });
-    alphaLabel.textContent = 'α';
-    svg.appendChild(alphaLabel);
-
-    const powerScreenX = toScreen(delta + 0.9, 0).x;
-    const powerLabel = el('text', { x: powerScreenX, y: padT + plotH - 10, 'font-size': '12', fill: '#0b7285', 'text-anchor': 'middle', 'font-weight': '600' });
-    powerLabel.textContent = '1−β';
-    svg.appendChild(powerLabel);
+    // α and power are identified in the legend instead of labeled
+    // directly on the chart, to avoid double-labeling the same shaded
+    // areas in two places.
 
     container.innerHTML = '';
     container.appendChild(svg);
