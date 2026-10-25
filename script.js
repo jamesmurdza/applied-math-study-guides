@@ -1566,9 +1566,8 @@ if (window.renderMathInElement) {
       { type: 'dashed', color: '#e8590c', label: 'likelihood' },
       { type: 'line', color: '#0b7285', label: 'posterior' }
     ]);
-    const caption = document.createElement('p');
-    caption.innerHTML = `The <span class="var-posterior">posterior</span> sits between the <span class="var-prior">prior</span> and the <span class="var-likelihood">likelihood</span>, closer to the data since more weight falls on the likelihood here.`;
-    container.appendChild(caption);
+    // No trailing caption — the prose right above this chart already
+    // states the posterior/prior/likelihood relationship.
   }
 
   // Approximate sampling distributions of two estimators of a normal mean

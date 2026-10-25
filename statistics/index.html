@@ -70,16 +70,18 @@
           </div>
           <div class="topic" id="bayesian-inference">
             <h2>Bayesian Inference</h2>
-            <p>MLE answers "what explains the data best," treating θ as fixed but unknown. Bayesian inference asks instead how this data should update what was already believed about θ. Here θ itself is treated as random, with its own distribution.</p>
+            <p>Bayesian inference treats θ as random, with its own distribution, and uses the data to update what we believed about θ before seeing it.</p>
             <p class="math">$$\pi(\textcolor{#0b7285}{\theta} \mid x) \textcolor{#7B4B8C}{\propto} f(x \mid \textcolor{#0b7285}{\theta})\, \pi(\textcolor{#0b7285}{\theta})$$</p>
-            <p><strong>π(θ)</strong> is the prior — belief about θ before seeing data; <strong>f(x∣θ)</strong> is the likelihood — how probable the data is for each θ; <strong>π(θ∣x)</strong> is the posterior — updated belief after seeing it. The ∝ drops a constant that doesn't depend on θ, so it only rescales the curve, not its shape.</p>
+            <p>The prior <strong>π(θ)</strong> is our belief about θ before seeing the data. The likelihood <strong>f(x∣θ)</strong> is how probable the data is for each θ. The posterior <strong>π(θ∣x)</strong> is our updated belief. The ∝ leaves out a constant that doesn't depend on θ, so it changes the curve's height but not its shape.</p>
 
-            <p>A normal prior μ ~ N(μ₀, τ²) on a normal mean gives a normal posterior. Its center is a weighted average of the prior's center and the sample mean:</p>
+            <p>For example, if the data is normal and the prior is μ ~ N(μ₀, τ²), the posterior is also normal. Its center is a weighted average of the prior's center and the sample mean:</p>
             <p class="math">$$\hat{\textcolor{#0b7285}{\mu}}_{\text{Bayes}} = w\bar X + (1-w)\mu_0, \quad w = \frac{n/\sigma^2}{n/\sigma^2 + 1/\tau^2}$$</p>
+
+            <p>In the figure below, the posterior sits between the prior and the likelihood, closer to the likelihood because the data gets more weight here.</p>
 
             <div class="stat-chart" id="bayes-chart-root"></div>
 
-            <p>As n grows, w → 1 and the estimate approaches the MLE — the prior matters most when data is scarce.</p>
+            <p>As n grows, w gets closer to 1 and the estimate approaches the MLE, so the prior matters most when there is little data.</p>
           </div>
           <div class="topic" id="bias-and-mse">
             <h2>Bias and Mean Squared Error</h2>
