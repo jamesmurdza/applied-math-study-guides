@@ -113,7 +113,7 @@
             <p class="math">$$\begin{aligned} \min \quad & 24y_1 + 6y_2 + 5y_3 \\ \text{s.t.} \quad & 3y_1 + y_2 \geq 5 \\ & 4y_1 + y_3 \geq 4 \\ & y_1, y_2, y_3 \geq 0 \end{aligned}$$</p>
             <p>Rather than re-running simplex on it, read the solution off the primal's already-known optimal corner. Both x₁ and x₂ are positive there, so both dual constraints must hold with equality; the blueberries constraint isn't tight at that corner, so y₃ must be 0.</p>
             <p class="math">$$\begin{aligned} 4y_1 + y_3 = 4,\ y_3 = 0 \ &\Longrightarrow\ y_1 = 1 \\ 3y_1 + y_2 = 5 \ &\Longrightarrow\ y_2 = 2 \end{aligned}$$</p>
-            <p>Plugging y₁, y₂, y₃ back into the dual objective gives exactly the primal's optimal profit.</p>
+            <p>Plugging those values into the dual objective, 24y₁ + 6y₂ + 5y₃, gives 24(1) + 6(2) + 5(0) = 36 — exactly the primal's optimal profit, confirming the two optima meet.</p>
             <p><strong>Weak duality</strong> is the fact that every feasible primal value is always less than or equal to every feasible dual value, so as the primal rises toward its optimum and the dual falls toward its own, neither one ever crosses the other. <strong>Strong duality</strong> is the stronger fact that, at those two optima, the primal and dual values don't just stay close — they meet exactly.</p>
           </div>
           <div class="topic" id="gomory-cutting-planes">
