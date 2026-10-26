@@ -103,10 +103,10 @@
             <p>Building the dual, one piece at a time:</p>
             <ol>
               <li>Flip the objective direction — max becomes min.</li>
-              <li>Give each primal constraint its own dual variable: y₁ for the milk constraint, y₂ for the peppermint constraint, y₃ for the blueberries constraint.</li>
-              <li>Each primal constraint's right-hand side becomes that variable's objective coefficient: 24, 6, and 5 turn into min 24y₁ + 6y₂ + 5y₃.</li>
-              <li>Give each primal variable its own dual constraint: one for x₁, one for x₂.</li>
-              <li>Each primal variable's column of constraint coefficients becomes a dual constraint's row, and that variable's objective coefficient becomes the dual constraint's right-hand side. x₁'s column is (3, 1, 0) with objective coefficient 5, giving 3y₁ + y₂ ≥ 5. x₂'s column is (4, 0, 1) with objective coefficient 4, giving 4y₁ + y₃ ≥ 4.</li>
+              <li>Give each primal constraint its own dual variable.</li>
+              <li>Each primal constraint's right-hand side becomes that variable's objective coefficient.</li>
+              <li>Give each primal variable its own dual constraint.</li>
+              <li>Each primal variable's column of constraint coefficients becomes a dual constraint's row, and that variable's objective coefficient becomes the dual constraint's right-hand side.</li>
             </ol>
             <p>Put together, that's the dual:</p>
             <p class="math">$$\begin{aligned} \min \quad & 24y_1 + 6y_2 + 5y_3 \\ \text{s.t.} \quad & 3y_1 + y_2 \geq 5 \\ & 4y_1 + y_3 \geq 4 \\ & y_1, y_2, y_3 \geq 0 \end{aligned}$$</p>
