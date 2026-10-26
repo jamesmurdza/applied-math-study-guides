@@ -602,6 +602,27 @@ p.tableau-phase:first-child {
   overflow-x: auto;
 }
 
+/* Two tableau cards shown side by side (e.g. the first two pivots of a
+   walk, or a phase's full set), same auto-fit pairing as .lp-graph-row. */
+.tableau-pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.tableau-pair:first-child {
+  margin-top: 0;
+}
+
+.tableau-pair-cell .tableau-card {
+  margin: 0 auto;
+}
+
+.tableau-pair-cell > p {
+  margin-top: 16px;
+}
+
 .tableau {
   border-collapse: collapse;
   font-size: 0.9rem;

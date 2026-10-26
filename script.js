@@ -981,25 +981,20 @@ if (window.renderMathInElement) {
     return `${COL[frame.pivot.enterCol]} enters, ${leaveLab} leaves.`;
   }
 
-  function mountTableau(mount, frames, varNames, objectiveLabel, numStructural, phaseAt) {
+  // pairGroups: array of [i, j] frame-index pairs that should render side by
+  // side (same .lp-graph-row-style pairing used for the Gomory/Dijkstra
+  // diagrams) instead of each getting the full width to itself.
+  function mountTableau(mount, frames, varNames, objectiveLabel, numStructural, phaseAt, pairGroups) {
     if (!mount) return;
     mount.innerHTML = '';
     let lastPhase = null;
+    const pairPartner = new Map();
+    const pairedAway = new Set();
+    (pairGroups || []).forEach(([a, b]) => { pairPartner.set(a, b); pairedAway.add(b); });
 
-    frames.forEach((frame, idx) => {
+    function renderFrame(frame, idx, container) {
       const numCols = frame.tableau[0].length - 1;
       const numRows = frame.tableau.length - 1;
-
-      if (phaseAt) {
-        const phase = phaseAt(idx);
-        if (phase !== lastPhase) {
-          const label = document.createElement('p');
-          label.className = 'tableau-phase';
-          label.textContent = `Phase ${phase}`;
-          mount.appendChild(label);
-          lastPhase = phase;
-        }
-      }
 
       const card = document.createElement('div');
       card.className = 'tableau-card';
@@ -1064,7 +1059,7 @@ if (window.renderMathInElement) {
       scrollBox.appendChild(table);
       card.appendChild(scrollBox);
 
-      mount.appendChild(card);
+      container.appendChild(card);
 
       // Plain paragraph, not a "caption" — reads as the ordinary narrative
       // text explaining each pivot, interwoven with the tables rather than
@@ -1080,7 +1075,36 @@ if (window.renderMathInElement) {
       } else {
         explanation.textContent = pivotCaption(frame, varNames, objectiveLabel, numStructural);
       }
-      mount.appendChild(explanation);
+      container.appendChild(explanation);
+    }
+
+    frames.forEach((frame, idx) => {
+      if (pairedAway.has(idx)) return; // already rendered as part of a pair below
+
+      if (phaseAt) {
+        const phase = phaseAt(idx);
+        if (phase !== lastPhase) {
+          const label = document.createElement('p');
+          label.className = 'tableau-phase';
+          label.textContent = `Phase ${phase}`;
+          mount.appendChild(label);
+          lastPhase = phase;
+        }
+      }
+
+      if (pairPartner.has(idx)) {
+        const row = document.createElement('div');
+        row.className = 'tableau-pair';
+        [idx, pairPartner.get(idx)].forEach(i => {
+          const cell = document.createElement('div');
+          cell.className = 'tableau-pair-cell';
+          renderFrame(frames[i], i, cell);
+          row.appendChild(cell);
+        });
+        mount.appendChild(row);
+      } else {
+        renderFrame(frame, idx, mount);
+      }
     });
   }
 
@@ -1096,7 +1120,7 @@ if (window.renderMathInElement) {
     [-5, -4, 0, 0, 0],
     5
   );
-  mountTableau(document.getElementById('simplex-tableau-root'), simplexFrames, ['x₁', 'x₂'], 'profit', 2, null);
+  mountTableau(document.getElementById('simplex-tableau-root'), simplexFrames, ['x₁', 'x₂'], 'profit', 2, null, [[0, 1]]);
 
   // --- Two-phase simplex: same LP, plus a minimum order x1+x2>=2 -----------
   // Phase 1 drives the artificial variable a1 to 0 (feasible corner found);
@@ -1123,7 +1147,8 @@ if (window.renderMathInElement) {
     ['x₁', 'x₂'],
     'profit',
     2,
-    idx => (idx < phaseBoundary ? 1 : 2)
+    idx => (idx < phaseBoundary ? 1 : 2),
+    [[0, 1]]
   );
 })();
 
