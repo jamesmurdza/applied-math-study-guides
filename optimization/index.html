@@ -143,7 +143,6 @@
             <p>Dijkstra grows a shortest-path tree from a source node one node at a time: repeatedly settle the closest unvisited node, then <strong>relax</strong> its edges — updating a neighbor's tentative distance whenever reaching it through the newly settled node is shorter.</p>
             <p>Settling nodes in order of distance is what makes the result exact: since every edge weight is non-negative, no unsettled node could possibly offer a shortcut to one that's already closest, so a node's distance is final the moment it's settled.</p>
             <div class="lp-graph" id="dijkstra-graph-root"></div>
-            <p>The solid lines above are the shortest-path tree Dijkstra builds from A, with each node labeled by its settled distance. B's shortest path goes through C rather than the direct A–B edge — exactly the kind of shortcut relaxation is there to catch.</p>
           </div>
           <div class="topic" id="complexity-and-np-completeness">
             <h2>Complexity and NP-Completeness</h2>

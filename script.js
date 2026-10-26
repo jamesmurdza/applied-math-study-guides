@@ -1128,11 +1128,12 @@ if (window.renderMathInElement) {
 // ---------------------------------------------------------------------------
 // Dijkstra's algorithm: the simplest graph that still forces a real relax
 // (A-B-C-D, where the direct A-B edge isn't the shortest way to reach B).
-// Rendered as a single diagram of the finished shortest-path tree, not a
-// step-by-step narration — the surrounding prose states the principle
-// (settle closest-first, relax neighbors, why non-negative weights make
-// that safe) and the diagram backs it up with one concrete result.
-// Distances/tree are computed live by running the real algorithm.
+// Rendered as a sequence of static diagrams, one per "settle" step, stacked
+// in a single column — the diagrams are what actually show the algorithm
+// running; each gets only a short label, not a repeated full sentence,
+// since the surrounding prose already states the general rule once.
+// Distances/tree are computed live by running the real algorithm, not
+// hand-placed per step.
 // ---------------------------------------------------------------------------
 (function () {
   const mount = document.getElementById('dijkstra-graph-root');
@@ -1162,74 +1163,100 @@ if (window.renderMathInElement) {
   names.forEach(n => { adj[n] = []; });
   edgeList.forEach(([u, v, w]) => { adj[u].push([v, w]); adj[v].push([u, w]); });
 
-  // Run the real algorithm to completion — only the final distances/tree
-  // are drawn, so this just needs the end state, not a snapshot per step.
+  // Run the real algorithm once, recording a snapshot after each "settle"
+  // step so every rendered diagram matches exactly what Dijkstra computed.
   function runDijkstra() {
     const dist = {}, prev = {}, visited = {};
     names.forEach(n => { dist[n] = Infinity; prev[n] = null; visited[n] = false; });
     dist[SOURCE] = 0;
+    const steps = [];
     for (let i = 0; i < names.length; i++) {
       let u = null, best = Infinity;
       names.forEach(n => { if (!visited[n] && dist[n] < best) { best = dist[n]; u = n; } });
       if (u === null) break;
       visited[u] = true;
+      const relaxed = [];
       adj[u].forEach(([v, w]) => {
         if (!visited[v] && dist[u] + w < dist[v]) {
+          relaxed.push({ node: v, to: dist[u] + w });
           dist[v] = dist[u] + w;
           prev[v] = u;
         }
       });
+      steps.push({ settled: u, dist: { ...dist }, prev: { ...prev }, visited: { ...visited }, relaxed });
     }
-    return { dist, prev };
+    return steps;
   }
 
-  const { dist, prev } = runDijkstra();
+  const steps = runDijkstra();
 
-  const svg = el('svg', {
-    viewBox: '0 0 300 260',
-    style: 'width:100%;max-width:300px',
-    role: 'img',
-    'aria-label': 'Finished shortest-path tree from A'
+  function renderStep(cur, idx) {
+    const dist = cur.dist, prev = cur.prev, visited = cur.visited;
+    const svg = el('svg', {
+      viewBox: '0 0 300 260',
+      style: `width:100%;max-width:300px${idx > 0 ? ';margin-top:20px' : ''}`,
+      role: 'img',
+      'aria-label': `Dijkstra step ${idx + 1}: settle ${cur.settled}`
+    });
+
+    // plain edges, underneath everything
+    edgeList.forEach(([u, v, w]) => {
+      const p1 = nodePos[u], p2 = nodePos[v];
+      svg.appendChild(el('line', { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, stroke: '#ccc', 'stroke-width': '1.5' }));
+    });
+
+    // shortest-path tree so far: solid black to settled nodes, dashed gray to
+    // frontier nodes whose distance is only tentative
+    names.forEach(n => {
+      if (!prev[n]) return;
+      const p1 = nodePos[prev[n]], p2 = nodePos[n];
+      svg.appendChild(el('line', {
+        x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y,
+        stroke: '#1a1a1a', 'stroke-width': visited[n] ? '2.5' : '2',
+        'stroke-dasharray': visited[n] ? 'none' : '4,3'
+      }));
+    });
+
+    // nodes on top
+    names.forEach(n => {
+      const p = nodePos[n];
+      const isSettled = visited[n];
+      const isCurrent = cur.settled === n;
+      const isFrontier = !isSettled && dist[n] < Infinity;
+      svg.appendChild(el('circle', {
+        cx: p.x, cy: p.y, r: 16,
+        fill: isSettled ? '#1a1a1a' : '#fff',
+        stroke: isCurrent ? '#c0392b' : (isFrontier ? '#1a1a1a' : '#ccc'),
+        'stroke-width': isCurrent ? '3' : '1.5'
+      }));
+      const label = el('text', { x: p.x, y: p.y + 4, 'font-size': '12', 'font-weight': '600', fill: isSettled ? '#fff' : '#1a1a1a', 'text-anchor': 'middle' });
+      label.textContent = n;
+      svg.appendChild(label);
+    });
+
+    // edge weight labels last, on top of every line/node drawn above
+    edgeList.forEach(([u, v, w]) => {
+      const p1 = nodePos[u], p2 = nodePos[v];
+      const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
+      svg.appendChild(el('rect', { x: mx - 7, y: my - 8, width: 14, height: 13, fill: '#fff' }));
+      const wl = el('text', { x: mx, y: my + 3, 'font-size': '12', fill: '#888', 'text-anchor': 'middle' });
+      wl.textContent = w;
+      svg.appendChild(wl);
+    });
+
+    return svg;
+  }
+
+  // One short caption per step — just what settled and what it relaxed, not
+  // a restatement of the general rule (that's already in the prose above).
+  steps.forEach((cur, idx) => {
+    mount.appendChild(renderStep(cur, idx));
+    const caption = document.createElement('p');
+    caption.style.marginTop = '8px';
+    const parts = cur.relaxed.map(r => `${r.node} → ${r.to}`);
+    caption.textContent = `Settle ${cur.settled} (${cur.dist[cur.settled]})` + (parts.length ? ` — relax ${parts.join(', ')}` : '');
+    mount.appendChild(caption);
   });
-
-  // plain edges, underneath everything (weight labels drawn last, on top of
-  // the tree lines and nodes below)
-  edgeList.forEach(([u, v, w]) => {
-    const p1 = nodePos[u], p2 = nodePos[v];
-    svg.appendChild(el('line', { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, stroke: '#ccc', 'stroke-width': '1.5' }));
-  });
-
-  // the shortest-path tree itself, solid black
-  names.forEach(n => {
-    if (!prev[n]) return;
-    const p1 = nodePos[prev[n]], p2 = nodePos[n];
-    svg.appendChild(el('line', { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, stroke: '#1a1a1a', 'stroke-width': '2.5' }));
-  });
-
-  // nodes on top, each labeled with name and settled distance
-  names.forEach(n => {
-    const p = nodePos[n];
-    svg.appendChild(el('circle', { cx: p.x, cy: p.y, r: 16, fill: n === SOURCE ? '#1a1a1a' : '#fff', stroke: '#1a1a1a', 'stroke-width': '1.5' }));
-    const label = el('text', { x: p.x, y: p.y + 4, 'font-size': '12', 'font-weight': '600', fill: n === SOURCE ? '#fff' : '#1a1a1a', 'text-anchor': 'middle' });
-    label.textContent = n;
-    svg.appendChild(label);
-    svg.appendChild(el('rect', { x: p.x - 10, y: p.y + 20, width: 20, height: 13, fill: '#fff' }));
-    const distLabel = el('text', { x: p.x, y: p.y + 30, 'font-size': '12', fill: '#555', 'text-anchor': 'middle' });
-    distLabel.textContent = dist[n];
-    svg.appendChild(distLabel);
-  });
-
-  // edge weight labels last, on top of every line/node drawn above
-  edgeList.forEach(([u, v, w]) => {
-    const p1 = nodePos[u], p2 = nodePos[v];
-    const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
-    svg.appendChild(el('rect', { x: mx - 7, y: my - 8, width: 14, height: 13, fill: '#fff' }));
-    const wl = el('text', { x: mx, y: my + 3, 'font-size': '12', fill: '#888', 'text-anchor': 'middle' });
-    wl.textContent = w;
-    svg.appendChild(wl);
-  });
-
-  mount.appendChild(svg);
 })();
 
 // ---------------------------------------------------------------------------
