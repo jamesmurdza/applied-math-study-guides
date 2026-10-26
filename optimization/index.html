@@ -142,8 +142,7 @@
             <h2>Dijkstra's Algorithm</h2>
             <p>Dijkstra grows a shortest-path tree from a source node one node at a time, settling the closest unvisited node at each step.</p>
             <div id="dijkstra-graph-root"></div>
-            <p>Settling a node means its distance is now final — and <strong>relaxing</strong> its edges means checking whether reaching each neighbor through it, instead of however that neighbor was reached before, is shorter, updating the neighbor's tentative distance if so. Dashed edges above are still tentative; solid edges are locked in once their endpoint is settled.</p>
-            <p>Always settling the closest node first is what keeps every settled distance final: since edge weights are non-negative, no path through a farther, still-unvisited node could ever beat one already found through closer, settled nodes. That guarantee breaks down with negative weights, which is why Dijkstra can't handle them — Bellman-Ford exists for that case, at the cost of checking every edge repeatedly instead of each node once.</p>
+            <p><strong>Relaxing</strong> a neighbor checks whether reaching it through the node just settled beats however it was reached before, updating its tentative distance if so — dashed edges above are still tentative, solid edges are locked in. This is exact because edge weights are non-negative: a farther, unsettled node can never open up a shorter path to one already reached through closer, settled nodes. That guarantee fails with negative weights, which is why Dijkstra can't handle them — Bellman-Ford does, at the cost of checking every edge repeatedly instead of each node once.</p>
           </div>
           <div class="topic" id="complexity-and-np-completeness">
             <h2>Complexity and NP-Completeness</h2>
