@@ -142,7 +142,7 @@
             <h2>Dijkstra's Algorithm</h2>
             <p>Dijkstra grows a shortest-path tree from a source node one node at a time, settling the closest unvisited node at each step.</p>
             <div id="dijkstra-graph-root-1"></div>
-            <p>The source starts out the only settled node, so the first round of relaxing just records the direct edges out of it as tentative distances. From there the graph starts pulling in nodes it can't reach directly at all, each by way of whichever settled node offers the cheapest route so far.</p>
+            <p>The source starts out the only settled node, so the first round of relaxing just records the direct edges out of it as tentative distances. Each settle after that updates the tentative distances of the newly-settled node's own neighbors, and whichever node now holds the smallest tentative distance gets settled next — even one with no direct edge from the source at all.</p>
             <div id="dijkstra-graph-root-2"></div>
             <p><strong>Relaxing</strong> a neighbor checks whether reaching it through the node just settled beats however it was reached before, updating its tentative distance if so — dashed edges above are still tentative, solid edges are locked in. Above, B ends up reached through C rather than by its own direct edge from the source — exactly the kind of shortcut relaxation is there to catch.</p>
             <p>This is exact because edge weights are non-negative: a farther, unsettled node can never open up a shorter path to one already reached through closer, settled nodes. That guarantee fails with negative weights, which is why Dijkstra can't handle them — Bellman-Ford does, at the cost of checking every edge repeatedly instead of each node once.</p>
