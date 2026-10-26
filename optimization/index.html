@@ -105,8 +105,9 @@
               <li>Flip the objective direction — max becomes min.</li>
               <li>Give each primal constraint its own dual variable.</li>
               <li>Each primal constraint's right-hand side becomes that variable's objective coefficient.</li>
-              <li>Give each primal variable its own dual constraint.</li>
-              <li>Each primal variable's column of constraint coefficients becomes a dual constraint's row, and that variable's objective coefficient becomes the dual constraint's right-hand side.</li>
+              <li>Give each primal variable its own dual constraint, written with ≥ since the dual is a min problem.</li>
+              <li>Each primal variable's column of constraint coefficients becomes that dual constraint's row, and that variable's objective coefficient becomes the constraint's right-hand side.</li>
+              <li>Every dual variable is non-negative, same as the primal's.</li>
             </ol>
             <p>Put together, that's the dual:</p>
             <p class="math">$$\begin{aligned} \min \quad & 24y_1 + 6y_2 + 5y_3 \\ \text{s.t.} \quad & 3y_1 + y_2 \geq 5 \\ & 4y_1 + y_3 \geq 4 \\ & y_1, y_2, y_3 \geq 0 \end{aligned}$$</p>
