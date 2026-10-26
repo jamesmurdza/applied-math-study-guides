@@ -971,12 +971,14 @@ if (window.renderMathInElement) {
       const parts = varNames.map((n, i) => `${n} = ${fmt(vals[i])}`).join(', ');
       return `Every reduced cost is now ≥ 0 — optimal. ${parts}, ${objectiveLabel} = ${fmt(objVal)}.`;
     }
-    const { enterCol, leaveRow, element, ratio } = frame.pivot;
-    const objRow = frame.tableau[frame.tableau.length - 1];
-    const rc = objRow[enterCol];
-    const leaveLab = COL[frame.basis[leaveRow]];
-    const rhs = frame.tableau[leaveRow][frame.tableau[leaveRow].length - 1];
-    return `${COL[enterCol]} enters — its reduced cost (${fmt(rc)}) is the most negative. ${leaveLab} leaves by the minimum ratio test (${fmt(rhs)} / ${fmt(element)} = ${fmt(ratio)}).`;
+    // Short label only — which variable enters and leaves. The general
+    // rule (most-negative reduced cost, minimum ratio test) is already
+    // stated once in the numbered procedure above, and the pivot cells
+    // are already highlighted in the table itself, so restating the full
+    // rule with this pivot's numbers in every single caption was the same
+    // mechanical repetition trimmed from the Dijkstra steps.
+    const leaveLab = COL[frame.basis[frame.pivot.leaveRow]];
+    return `${COL[frame.pivot.enterCol]} enters, ${leaveLab} leaves.`;
   }
 
   function mountTableau(mount, frames, varNames, objectiveLabel, numStructural, phaseAt) {

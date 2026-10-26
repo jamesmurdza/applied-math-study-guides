@@ -136,7 +136,7 @@
               <div class="lp-graph" id="gomory-graph-root-2"></div>
               <div class="lp-graph" id="gomory-graph-root-4"></div>
             </div>
-            <p>The first cut's new optimum, (<sup>3</sup>⁄<sub>7</sub>, 3), is still fractional in eggs, so splitting its row gives x₁ + 2x₂ ≤ 6 — dropping the relaxation's optimum to 32.4 at (1.2, 2.4). That vertex is fractional in both variables; splitting it gives 3x₁ + 4x₂ ≤ 13, dropping the optimum further to 32 at (1, 2.5). There, eggs (x₁ = 1) is already integer, so the next split uses ham's row instead, giving 2x₁ + 3x₂ ≤ 9 — and this time the new optimum lands exactly on (3, 1), objective 31: an integer point, matching the true integer optimum. Four rounds of cuts, each shaving off just the current fractional corner, were needed to get there.</p>
+            <p>Splitting each new vertex's row in turn gives x₁ + 2x₂ ≤ 6, then 3x₁ + 4x₂ ≤ 13 (switching to ham's row once eggs comes out integer), then 2x₁ + 3x₂ ≤ 9 — tightening the relaxation's optimum from 33 down through 32.4 and 32, until it finally lands exactly on the true integer optimum, 31. Four rounds in total.</p>
           </div>
           <div class="topic" id="dijkstras-algorithm">
             <h2>Dijkstra's Algorithm</h2>
