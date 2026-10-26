@@ -1111,8 +1111,24 @@ if (window.renderMathInElement) {
           row.appendChild(cell);
         });
         mount.appendChild(row);
-        appendCaption(frames[idx], idx);
-        appendCaption(frames[partnerIdx], partnerIdx);
+        // One connected sentence for both pivots, not two separate
+        // paragraphs stating the same rule back to back — each pivot
+        // on its own read as a sentence hanging with nothing tying it
+        // to the one next to it. Only possible when both frames in the
+        // pair are actual pivots; a pair ending on a completion frame
+        // (no frame.pivot, e.g. phase one's "feasible corner found")
+        // falls back to its own distinct caption instead.
+        const a = frames[idx].pivot, b = frames[partnerIdx].pivot;
+        if (a && b) {
+          const leaveA = COL[frames[idx].basis[a.leaveRow]];
+          const leaveB = COL[frames[partnerIdx].basis[b.leaveRow]];
+          const explanation = document.createElement('p');
+          explanation.textContent = `The most negative reduced cost brings ${COL[a.enterCol]} into the basis in place of ${leaveA}; the same rule then brings ${COL[b.enterCol]} in for ${leaveB}.`;
+          mount.appendChild(explanation);
+        } else {
+          appendCaption(frames[idx], idx);
+          appendCaption(frames[partnerIdx], partnerIdx);
+        }
       } else {
         renderCard(frame, mount);
         appendCaption(frame, idx);
