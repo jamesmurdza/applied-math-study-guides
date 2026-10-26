@@ -44,7 +44,7 @@
             <p class="math">$$\textcolor{#e64980}{x_1}, \textcolor{#3b6bd6}{x_2} \geq 0$$</p>
 
             <div class="lp-graph" id="lp-graph-root"></div>
-            <p>The shaded region above is every feasible production plan. The best one always sits at a corner of that region, marked above as the optimum.</p>
+            <p>The shaded region above is every feasible production plan. Because the objective is linear, its value can't peak in the interior — pushing in the improving direction only stops where it's blocked by a boundary, which is always a corner, marked above as the optimum.</p>
           </div>
           <div class="topic" id="integer-linear-programming-ilp-formulation">
             <h2>Integer Linear Programming (ILP) Formulation</h2>
@@ -81,7 +81,7 @@
             <h2>Two-Phase Simplex</h2>
             <p>Add a minimum order to the same ice cream line: at least 2 liters total must be made, or it isn't worth running the machine.</p>
             <p class="math">$$\textcolor{#e64980}{x_1} + \textcolor{#3b6bd6}{x_2} \geq 2$$</p>
-            <p>Now the origin is infeasible, so simplex has nowhere obvious to start. Phase one ignores profit and just hunts for any feasible corner, using an artificial variable to patch the constraint; phase two then optimizes real profit from there.</p>
+            <p>Now the origin is infeasible, so simplex has nowhere obvious to start. Phase one minimizes an artificial variable added just to make the new constraint solvable; once that artificial variable is driven to zero, its row describes a real feasible corner, and phase two optimizes profit from there.</p>
             <div class="lp-graph" id="two-phase-graph-root"></div>
             <p>The minimum-order line slices the corner nearest the origin off the feasible region, so the origin is no longer a valid start. Phase one jumps to a feasible corner instead; phase two then walks from there, along the arrows above, to the same optimum as before.</p>
             <p>The procedure, building on ordinary simplex:</p>
