@@ -444,6 +444,18 @@ body {
   margin-top: 24px;
 }
 
+.lp-graph-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.lp-graph-row .lp-graph {
+  margin-top: 0;
+  min-width: 0;
+}
+
 .lp-graph svg {
   width: 100%;
   max-width: 420px;
@@ -588,6 +600,23 @@ p.tableau-phase:first-child {
 
 .tableau-scroll {
   overflow-x: auto;
+}
+
+/* Two tableau cards shown side by side (e.g. the first two pivots of a
+   walk, or a phase's full set), same auto-fit pairing as .lp-graph-row. */
+.tableau-pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.tableau-pair:first-child {
+  margin-top: 0;
+}
+
+.tableau-pair-cell .tableau-card {
+  margin: 0 auto;
 }
 
 .tableau {

@@ -539,9 +539,22 @@ if (window.renderMathInElement) {
       if (Math.abs(baseBest.x - bestCont.x) > 1e-6 || Math.abs(baseBest.y - bestCont.y) > 1e-6) {
         const cs = toScreen(baseBest.x, baseBest.y);
         svg.appendChild(el('circle', { cx: cs.x.toFixed(1), cy: cs.y.toFixed(1), r: 4, fill: 'none', stroke: '#bbb', 'stroke-width': '1.5', 'stroke-dasharray': '2,2' }));
-        const clabel = el('text', { x: (cs.x + 10).toFixed(1), y: (cs.y - 8).toFixed(1), 'font-size': '12', fill: '#999' });
-        clabel.textContent = `before cut: (${fmt(baseBest.x)}, ${fmt(baseBest.y)})`;
-        svg.appendChild(clabel);
+        // When the pre-cut and post-cut optima land close together on screen
+        // (consecutive cuts can shave off only a small corner), the default
+        // above-right placement collides with the post-cut optimum's own
+        // label below — drop this one below-left instead whenever they're
+        // close enough to crowd each other.
+        if (!config.hideOptimumLabels) {
+          const bs = toScreen(bestCont.x, bestCont.y);
+          const closeBy = Math.hypot(cs.x - bs.x, cs.y - bs.y) < 45;
+          const clabel = el('text', {
+            x: (cs.x + 10).toFixed(1),
+            y: (closeBy ? cs.y + 18 : cs.y - 8).toFixed(1),
+            'font-size': '12', fill: '#999', 'text-anchor': 'start'
+          });
+          clabel.textContent = `before cut: (${fmt(baseBest.x)}, ${fmt(baseBest.y)})`;
+          svg.appendChild(clabel);
+        }
       }
     }
 
@@ -631,14 +644,20 @@ if (window.renderMathInElement) {
     }
 
     const bs = toScreen(best.x, best.y);
-    svg.appendChild(el('circle', { cx: bs.x.toFixed(1), cy: bs.y.toFixed(1), r: 4, fill: '#1a1a1a' }));
+    svg.appendChild(el('circle', { cx: bs.x.toFixed(1), cy: bs.y.toFixed(1), r: 4, fill: config.bestPointColor || '#1a1a1a' }));
     hoverTargets.push({ x: bs.x, y: bs.y, r: 6, title: pointTitle(best) });
-    const label = el('text', {
-      x: (bs.x + 10).toFixed(1), y: (bs.y - 8).toFixed(1),
-      'font-size': '12', fill: '#1a1a1a'
-    });
-    label.textContent = `${config.optimalLabel || 'optimal'}: (${fmt(best.x)}, ${fmt(best.y)})`;
-    svg.appendChild(label);
+    // config.labelText overrides with a fixed string (e.g. just "integer
+    // optimum", no coordinates); config.hideOptimumLabels drops the label
+    // entirely unless labelText is also set.
+    const bestLabelText = config.labelText || (!config.hideOptimumLabels ? `${config.optimalLabel || 'optimal'}: (${fmt(best.x)}, ${fmt(best.y)})` : null);
+    if (bestLabelText) {
+      const label = el('text', {
+        x: (bs.x + 10).toFixed(1), y: (bs.y - 8).toFixed(1),
+        'font-size': '12', fill: '#1a1a1a'
+      });
+      label.textContent = bestLabelText;
+      svg.appendChild(label);
+    }
 
     // Append every hover target last so it's painted on top of everything
     // else (axis lines, labels, markers) and reliably catches the pointer.
@@ -767,8 +786,87 @@ if (window.renderMathInElement) {
       ],
       cut: { a: 0, b: 1, c: 3, color: '#c0392b', label: 'cut: x₂ ≤ 3' },
       showLattice: true,
-      optimalLabel: 'after cut',
-      referencePoint: { x: 3, y: 1, label: 'integer optimum = 31' }
+      hideOptimumLabels: true,
+      bestPointColor: '#c0392b',
+      referencePoint: { x: 3, y: 1, label: 'integer optimum' }
+    });
+  }
+
+  // Two more rounds of Gomory cuts on the same problem, shown side by side.
+  // Each chart's "constraints" list is the previous round's full constraint
+  // set (budget + every earlier cut), so its own faint pre-cut outline is
+  // the already-tightened region from the round before — and its "cut" is
+  // the next one, derived the same way as the first: take the fractional
+  // basic variable's tableau row at that round's optimum, keep only the
+  // fractional parts, substitute the slacks back out.
+  const gomoryMount2 = document.getElementById('gomory-graph-root-2');
+  if (gomoryMount2) {
+    renderLPGraph(gomoryMount2, {
+      xMax: 6,
+      yMax: 5,
+      varNames: ['x₁', 'x₂'],
+      varColors: ['#2f9e44', '#c2525c'],
+      axisLabels: ['green eggs', 'ham'],
+      objective: { a: 7, b: 10 },
+      objectiveLabel: 'protein',
+      constraints: [
+        { a: 0.7, b: 0.9, c: 3 },
+        { a: 0, b: 1, c: 3 }
+      ],
+      cut: { a: 1, b: 2, c: 6, color: '#c0392b', label: 'cut: x₁ + 2x₂ ≤ 6' },
+      showLattice: true,
+      hideOptimumLabels: true,
+      bestPointColor: '#c0392b',
+      referencePoint: { x: 3, y: 1, label: 'integer optimum' }
+    });
+  }
+
+  const gomoryMount3 = document.getElementById('gomory-graph-root-3');
+  if (gomoryMount3) {
+    renderLPGraph(gomoryMount3, {
+      xMax: 6,
+      yMax: 5,
+      varNames: ['x₁', 'x₂'],
+      varColors: ['#2f9e44', '#c2525c'],
+      axisLabels: ['green eggs', 'ham'],
+      objective: { a: 7, b: 10 },
+      objectiveLabel: 'protein',
+      constraints: [
+        { a: 0.7, b: 0.9, c: 3 },
+        { a: 0, b: 1, c: 3 },
+        { a: 1, b: 2, c: 6 }
+      ],
+      cut: { a: 3, b: 4, c: 13, color: '#c0392b', label: 'cut: 3x₁ + 4x₂ ≤ 13' },
+      showLattice: true,
+      hideOptimumLabels: true,
+      bestPointColor: '#c0392b',
+      referencePoint: { x: 3, y: 1, label: 'integer optimum' }
+    });
+  }
+
+  // Fourth round: this cut's own optimum lands exactly on the integer
+  // optimum, so there's no separate reference point to draw — the "after
+  // cut" marker and label are the integer optimum.
+  const gomoryMount4 = document.getElementById('gomory-graph-root-4');
+  if (gomoryMount4) {
+    renderLPGraph(gomoryMount4, {
+      xMax: 6,
+      yMax: 5,
+      varNames: ['x₁', 'x₂'],
+      varColors: ['#2f9e44', '#c2525c'],
+      axisLabels: ['green eggs', 'ham'],
+      objective: { a: 7, b: 10 },
+      objectiveLabel: 'protein',
+      constraints: [
+        { a: 0.7, b: 0.9, c: 3 },
+        { a: 0, b: 1, c: 3 },
+        { a: 1, b: 2, c: 6 },
+        { a: 3, b: 4, c: 13 }
+      ],
+      cut: { a: 2, b: 3, c: 9, color: '#c0392b', label: 'cut: 2x₁ + 3x₂ ≤ 9' },
+      showLattice: true,
+      hideOptimumLabels: true,
+      labelText: 'integer optimum'
     });
   }
 })();
@@ -871,35 +969,45 @@ if (window.renderMathInElement) {
       const vals = solutionValues(frame, numStructural);
       const objVal = frame.tableau[frame.tableau.length - 1][frame.tableau[0].length - 1];
       const parts = varNames.map((n, i) => `${n} = ${fmt(vals[i])}`).join(', ');
-      return `Every reduced cost is now ≥ 0 — optimal. ${parts}, ${objectiveLabel} = ${fmt(objVal)}.`;
+      return `Every reduced cost is now ≥ 0, so this corner is optimal: ${parts}, for a ${objectiveLabel} of ${fmt(objVal)}.`;
     }
-    const { enterCol, leaveRow, element, ratio } = frame.pivot;
-    const objRow = frame.tableau[frame.tableau.length - 1];
-    const rc = objRow[enterCol];
-    const leaveLab = COL[frame.basis[leaveRow]];
-    const rhs = frame.tableau[leaveRow][frame.tableau[leaveRow].length - 1];
-    return `${COL[enterCol]} enters — its reduced cost (${fmt(rc)}) is the most negative. ${leaveLab} leaves by the minimum ratio test (${fmt(rhs)} / ${fmt(element)} = ${fmt(ratio)}).`;
+    // States the reasoning, not just the outcome — which variable enters
+    // and leaves is already visible from the highlighted cells, so a
+    // caption that only names them ("X enters, Y leaves") would just be a
+    // label repeating what's already on the table. The actual numbers
+    // (reduced cost, ratio) are visible in the table too, so this stays
+    // general — naming the rule each pivot obeys — with just the variable
+    // names as the one touch of this specific example.
+    const leaveLab = COL[frame.basis[frame.pivot.leaveRow]];
+    return `${COL[frame.pivot.enterCol]} has the most negative reduced cost, so it enters the basis; ${leaveLab} leaves by the tightest ratio.`;
   }
 
-  function mountTableau(mount, frames, varNames, objectiveLabel, numStructural, phaseAt) {
+  // pairGroups: array of [i, j] frame-index pairs that should render side by
+  // side (same .lp-graph-row-style pairing used for the Gomory/Dijkstra
+  // diagrams) instead of each getting the full width to itself.
+  function mountTableau(mount, frames, varNames, objectiveLabel, numStructural, phaseAt, pairGroups) {
     if (!mount) return;
     mount.innerHTML = '';
     let lastPhase = null;
+    const pairPartner = new Map();
+    const pairedAway = new Set();
+    (pairGroups || []).forEach(([a, b]) => { pairPartner.set(a, b); pairedAway.add(b); });
 
-    frames.forEach((frame, idx) => {
+    // Builds the caption text for a frame — pulled out as its own function
+    // so paired frames can still get a full-width paragraph each, instead
+    // of being squeezed into the same narrow column as their table.
+    function captionFor(frame, idx) {
+      if (phaseAt && phaseAt(idx) === 1 && !frame.pivot) {
+        const vals = solutionValues(frame, numStructural);
+        const parts = varNames.map((n, i) => `${n} = ${fmt(vals[i])}`).join(', ');
+        return `No artificial variable remains in the basis — a feasible corner is found (${parts}). Phase two now optimizes the real objective from here.`;
+      }
+      return pivotCaption(frame, varNames, objectiveLabel, numStructural);
+    }
+
+    function renderCard(frame, container) {
       const numCols = frame.tableau[0].length - 1;
       const numRows = frame.tableau.length - 1;
-
-      if (phaseAt) {
-        const phase = phaseAt(idx);
-        if (phase !== lastPhase) {
-          const label = document.createElement('p');
-          label.className = 'tableau-phase';
-          label.textContent = `Phase ${phase}`;
-          mount.appendChild(label);
-          lastPhase = phase;
-        }
-      }
 
       const card = document.createElement('div');
       card.className = 'tableau-card';
@@ -964,23 +1072,67 @@ if (window.renderMathInElement) {
       scrollBox.appendChild(table);
       card.appendChild(scrollBox);
 
-      mount.appendChild(card);
+      container.appendChild(card);
+    }
 
-      // Plain paragraph, not a "caption" — reads as the ordinary narrative
-      // text explaining each pivot, interwoven with the tables rather than
-      // styled as a smaller note attached underneath them.
+    // Plain paragraph, not a "caption" — reads as the ordinary narrative
+    // text explaining each pivot, interwoven with the tables rather than
+    // styled as a smaller note attached underneath them. Always appended
+    // directly to the main mount — text stays one full-width column even
+    // when its table is paired side by side with another.
+    function appendCaption(frame, idx) {
       const explanation = document.createElement('p');
-      // Phase one's objective tracks the artificial variable, not the real
-      // objective — "profit = 0" there would misleadingly read as a bad
-      // outcome, so its optimal frame gets its own wording instead.
-      if (phaseAt && phaseAt(idx) === 1 && !frame.pivot) {
-        const vals = solutionValues(frame, numStructural);
-        const parts = varNames.map((n, i) => `${n} = ${fmt(vals[i])}`).join(', ');
-        explanation.textContent = `No artificial variable remains in the basis — a feasible corner is found (${parts}). Phase two now optimizes the real objective from here.`;
-      } else {
-        explanation.textContent = pivotCaption(frame, varNames, objectiveLabel, numStructural);
-      }
+      explanation.textContent = captionFor(frame, idx);
       mount.appendChild(explanation);
+    }
+
+    frames.forEach((frame, idx) => {
+      if (pairedAway.has(idx)) return; // already rendered as part of a pair below
+
+      if (phaseAt) {
+        const phase = phaseAt(idx);
+        if (phase !== lastPhase) {
+          const label = document.createElement('p');
+          label.className = 'tableau-phase';
+          label.textContent = `Phase ${phase}`;
+          mount.appendChild(label);
+          lastPhase = phase;
+        }
+      }
+
+      if (pairPartner.has(idx)) {
+        const partnerIdx = pairPartner.get(idx);
+        const row = document.createElement('div');
+        row.className = 'tableau-pair';
+        [idx, partnerIdx].forEach(i => {
+          const cell = document.createElement('div');
+          cell.className = 'tableau-pair-cell';
+          renderCard(frames[i], cell);
+          row.appendChild(cell);
+        });
+        mount.appendChild(row);
+        // One connected sentence for both pivots, not two separate
+        // paragraphs stating the same rule back to back — each pivot
+        // on its own read as a sentence hanging with nothing tying it
+        // to the one next to it. Only possible when both frames in the
+        // pair are actual pivots; a pair ending on a completion frame
+        // (no frame.pivot, e.g. phase one's "feasible corner found")
+        // falls back to its own distinct caption instead.
+        const a = frames[idx].pivot, b = frames[partnerIdx].pivot;
+        if (a && b) {
+          const leaveA = COL[frames[idx].basis[a.leaveRow]];
+          const leaveB = COL[frames[partnerIdx].basis[b.leaveRow]];
+          const explanation = document.createElement('p');
+          explanation.textContent = `${COL[a.enterCol]} has the most negative reduced cost, so it enters the basis in place of ${leaveA} — the same rule then swaps in ${COL[b.enterCol]} for ${leaveB}.`;
+          mount.appendChild(explanation);
+        } else {
+          appendCaption(frames[idx], idx);
+          appendCaption(frames[partnerIdx], partnerIdx);
+        }
+      } else {
+        renderCard(frame, mount);
+        appendCaption(frame, idx);
+      }
     });
   }
 
@@ -996,7 +1148,7 @@ if (window.renderMathInElement) {
     [-5, -4, 0, 0, 0],
     5
   );
-  mountTableau(document.getElementById('simplex-tableau-root'), simplexFrames, ['x₁', 'x₂'], 'profit', 2, null);
+  mountTableau(document.getElementById('simplex-tableau-root'), simplexFrames, ['x₁', 'x₂'], 'profit', 2, null, [[0, 1]]);
 
   // --- Two-phase simplex: same LP, plus a minimum order x1+x2>=2 -----------
   // Phase 1 drives the artificial variable a1 to 0 (feasible corner found);
@@ -1023,22 +1175,27 @@ if (window.renderMathInElement) {
     ['x₁', 'x₂'],
     'profit',
     2,
-    idx => (idx < phaseBoundary ? 1 : 2)
+    idx => (idx < phaseBoundary ? 1 : 2),
+    [[0, 1], [2, 3]]
   );
 })();
 
 // ---------------------------------------------------------------------------
 // Dijkstra's algorithm: the simplest graph that still forces a real relax
-// (A-B-C-D, where the direct A-C edge isn't the cheapest way to reach C).
-// Rendered as a fixed sequence of static diagrams, one per "settle" step,
-// each followed by its own explanation — same pattern as the simplex
-// tableau cards, not a slider. Distances/tree are computed live by running
-// the real algorithm, not hand-placed per step.
+// (A-B-C-D, where the direct A-B edge isn't the shortest way to reach B).
+// Rendered as a sequence of static diagrams, one per "settle" step, paired
+// two-by-two (same side-by-side layout as the Gomory cut charts) — the
+// diagrams are what show the algorithm actually running, unlabeled beyond
+// the graph itself, since the surrounding prose covers the theory and
+// method in general terms rather than narrating each step. Distances/tree
+// are computed live by running the real algorithm, not hand-placed per step.
 // ---------------------------------------------------------------------------
 (function () {
-  const mount = document.getElementById('dijkstra-graph-root');
-  if (!mount) return;
-  mount.innerHTML = '';
+  const mount1 = document.getElementById('dijkstra-graph-root-1');
+  const mount2 = document.getElementById('dijkstra-graph-root-2');
+  if (!mount1 || !mount2) return;
+  mount1.innerHTML = '';
+  mount2.innerHTML = '';
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
   function el(tag, attrs) {
@@ -1047,12 +1204,9 @@ if (window.renderMathInElement) {
     return node;
   }
 
-  // Positions scaled to ~80% of the original layout to shrink the graph
-  // itself (node spacing, radius) without touching font-size — SVG text
-  // size is an absolute unit, not relative to the coordinate system, so
-  // shrinking the viewBox and max-width together by the same factor keeps
-  // labels rendering at the same actual pixel size (still 1:1 per
-  // AGENTS.md) while the graph they sit on gets visibly more compact.
+  // Positions scaled to ~80% of a full-size layout (node spacing, radius)
+  // without touching font-size, so two diagrams sit comfortably side by
+  // side — same scaling approach as the Gomory charts.
   const nodePos = {
     A: { x: 24, y: 112 },
     B: { x: 120, y: 40 },
@@ -1084,7 +1238,7 @@ if (window.renderMathInElement) {
       const relaxed = [];
       adj[u].forEach(([v, w]) => {
         if (!visited[v] && dist[u] + w < dist[v]) {
-          relaxed.push({ node: v, from: dist[v], to: dist[u] + w });
+          relaxed.push({ node: v, to: dist[u] + w });
           dist[v] = dist[u] + w;
           prev[v] = u;
         }
@@ -1096,21 +1250,16 @@ if (window.renderMathInElement) {
 
   const steps = runDijkstra();
 
-  function fmtD(d) { return d === Infinity ? '∞' : String(d); }
-
   function renderStep(cur, idx) {
     const dist = cur.dist, prev = cur.prev, visited = cur.visited;
     const svg = el('svg', {
       viewBox: '0 0 240 208',
-      style: `width:100%;max-width:240px${idx > 0 ? ';margin-top:24px' : ''}`,
+      style: 'width:100%;max-width:240px',
       role: 'img',
       'aria-label': `Dijkstra step ${idx + 1}: settle ${cur.settled}`
     });
 
-    // plain edges, underneath everything (weight labels drawn last, on top
-    // of the tree lines and nodes below — otherwise the tree edge redrawn
-    // over a shared segment, or a node circle sitting near the midpoint,
-    // paints over the label instead of the other way around)
+    // plain edges, underneath everything
     edgeList.forEach(([u, v, w]) => {
       const p1 = nodePos[u], p2 = nodePos[v];
       svg.appendChild(el('line', { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, stroke: '#ccc', 'stroke-width': '1.5' }));
@@ -1158,14 +1307,23 @@ if (window.renderMathInElement) {
     return svg;
   }
 
-  steps.forEach((cur, idx) => {
-    mount.appendChild(renderStep(cur, idx));
-    const caption = document.createElement('p');
-    const parts = cur.relaxed.map(r => `${r.node}: ${fmtD(r.from)} → ${r.to}`);
-    const relaxedText = parts.length ? ` Relaxes ${parts.join(', ')}.` : ' No shorter paths found through it.';
-    caption.textContent = `Step ${idx + 1}: settle ${cur.settled} at distance ${cur.dist[cur.settled]} (the closest unvisited node).${relaxedText}`;
-    mount.appendChild(caption);
-  });
+  // Two steps per row, split across two mounts (steps 1-2, then 3-4) so
+  // the surrounding HTML can put a paragraph of prose between the pairs —
+  // same .lp-graph-row/.lp-graph pairing as the Gomory cut charts, no
+  // per-step caption text.
+  function renderRow(mount, pairSteps, offset) {
+    const row = document.createElement('div');
+    row.className = 'lp-graph-row';
+    pairSteps.forEach((cur, i) => {
+      const cell = document.createElement('div');
+      cell.className = 'lp-graph';
+      cell.appendChild(renderStep(cur, offset + i));
+      row.appendChild(cell);
+    });
+    mount.appendChild(row);
+  }
+  renderRow(mount1, steps.slice(0, 2), 0);
+  renderRow(mount2, steps.slice(2, 4), 2);
 })();
 
 // ---------------------------------------------------------------------------

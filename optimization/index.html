@@ -32,7 +32,7 @@
           <div class="topic" id="linear-programming-lp-formulation">
             <h2>Linear Programming (LP) Formulation</h2>
             <p>Example: a factory picks liters of <span class="var-mint">pink peppermint (x₁)</span> and <span class="var-berry">blueberry (x₂)</span> ice cream to maximize profit under ingredient limits.</p>
-            <p>The factory wants to maximize profit from the liters it produces: $5 profit per liter of peppermint, $4 per liter of blueberry.</p>
+            <p>The factory wants to maximize profit from the liters it produces, which earns a different amount per liter for each flavor.</p>
             <p class="math">$$\max\quad 5\textcolor{#e64980}{x_1} + 4\textcolor{#3b6bd6}{x_2}$$</p>
             <p>There's only so much milk on hand, so milk used across both flavors can't exceed the supply.</p>
             <p class="math">$$3\textcolor{#e64980}{x_1} + 4\textcolor{#3b6bd6}{x_2} \leq 24$$</p>
@@ -44,7 +44,7 @@
             <p class="math">$$\textcolor{#e64980}{x_1}, \textcolor{#3b6bd6}{x_2} \geq 0$$</p>
 
             <div class="lp-graph" id="lp-graph-root"></div>
-            <p>The shaded region above is every feasible production plan. The best one sits at a corner — here, (x₁, x₂) = (6, 1.5), for a profit of 36.</p>
+            <p>The shaded region above is every feasible production plan. Because the objective is linear, its value can't peak in the interior — pushing in the improving direction only stops where it's blocked by a boundary, which is always a corner, marked above as the optimum.</p>
           </div>
           <div class="topic" id="integer-linear-programming-ilp-formulation">
             <h2>Integer Linear Programming (ILP) Formulation</h2>
@@ -57,63 +57,64 @@
             <p class="math">$$\textcolor{#2f9e44}{x_1}, \textcolor{#c2525c}{x_2} \in \mathbb{Z}_{\geq 0}$$</p>
 
             <div class="lp-graph" id="ilp-graph-root"></div>
-            <p>The shaded region above is the continuous feasible area; the dots are the integer points inside it. The best integer point is (x₁, x₂) = (3, 1), for a value of 31 — not the same as rounding the LP relaxation's optimum of (0, 3.33), which scores 33.33.</p>
+            <p>The shaded region above is the continuous feasible area; the dots are the integer points inside it. The best integer point, marked solid, generally isn't the one you'd get by rounding the LP relaxation's optimum, marked hollow.</p>
           </div>
           <div class="topic" id="simplex">
             <h2>Simplex</h2>
             <p>The simplex method never looks inside the feasible region — it starts at a corner and walks along the edges toward a better one.</p>
             <div class="lp-graph" id="simplex-graph-root"></div>
-            <p>Simplex starts at a feasible vertex — here, (0, 0) — then repeatedly pivots to an adjacent vertex along the boundary whenever that improves the objective: (0, 0) → (6, 0) → (6, 1.5). It stops once no neighboring vertex scores higher, landing on the optimum with a profit of 36.</p>
-            <p>The algorithm, as a repeatable procedure:</p>
+            <p>Simplex starts at a feasible vertex and repeatedly pivots to an adjacent vertex along the boundary whenever that improves the objective, following the arrows above. It stops once no neighboring vertex scores higher, landing on the optimum.</p>
+            <p>The algorithm, as a repeatable procedure, goes like this:</p>
             <ol>
               <li>Add a slack variable to each ≤ constraint, turning it into an equality.</li>
-              <li>Set up the initial tableau with every slack basic and every structural variable at zero.</li>
+              <li>Set up the initial tableau with every slack basic and every decision variable at zero.</li>
               <li>Check optimality: if every coefficient in the objective row is already non-negative, stop — the current corner is optimal.</li>
               <li>Otherwise, choose the entering variable: the non-basic variable with the most negative objective-row coefficient.</li>
               <li>Choose the leaving variable with the minimum ratio test: among rows with a positive entry in the entering column, pick the one with the smallest RHS-to-coefficient ratio.</li>
               <li>Pivot — scale the chosen row so the entering variable's coefficient becomes 1, then clear that column from every other row, including the objective row.</li>
               <li>Repeat from step 3.</li>
             </ol>
-            <p>The same walk, numerically: the tableau starts with every slack basic, then pivots one variable in and one out per step.</p>
+            <p>Numerically, the same walk starts with every slack basic in the tableau, then pivots one variable in and one out per step.</p>
             <div class="tableau-wrap" id="simplex-tableau-root"></div>
           </div>
           <div class="topic" id="two-phase-simplex">
             <h2>Two-Phase Simplex</h2>
             <p>Add a minimum order to the same ice cream line: at least 2 liters total must be made, or it isn't worth running the machine.</p>
             <p class="math">$$\textcolor{#e64980}{x_1} + \textcolor{#3b6bd6}{x_2} \geq 2$$</p>
-            <p>Now the origin is infeasible, so simplex has nowhere obvious to start. Phase one ignores profit and just hunts for any feasible corner, using an artificial variable to patch the constraint; phase two then optimizes real profit from there.</p>
+            <p>Now the origin is infeasible, so simplex has nowhere obvious to start. Phase one minimizes an artificial variable added just to make the new constraint solvable; once that artificial variable is driven to zero, its row describes a real feasible corner, and phase two optimizes profit from there.</p>
             <div class="lp-graph" id="two-phase-graph-root"></div>
-            <p>The minimum-order line slices the corner nearest the origin off the feasible region, so (0, 0) is no longer a valid start. Phase one jumps straight to (2, 0) instead; phase two then walks (2, 0) → (6, 0) → (6, 1.5) to the same optimum, a profit of 36.</p>
-            <p>The procedure, building on ordinary simplex:</p>
+            <p>The minimum-order line slices the corner nearest the origin off the feasible region, so the origin is no longer a valid start. Phase one jumps to a feasible corner instead; phase two then walks from there, along the arrows above, to the same optimum as before.</p>
+            <p>The procedure builds on ordinary simplex:</p>
             <ol>
               <li>For any constraint that isn't already ≤ with a non-negative right-hand side, add a surplus variable and an artificial variable to force an equality.</li>
-              <li>Phase one: temporarily minimize the sum of the artificial variables, using the same entering/leaving/pivot rules as ordinary simplex, starting from the tableau where the artificials are basic.</li>
+              <li>Phase one temporarily minimizes the sum of the artificial variables, using the same entering/leaving/pivot rules as ordinary simplex, starting from the tableau where the artificials are basic.</li>
               <li>If phase one reaches zero, every artificial variable has left the basis (or sits at zero) — a feasible corner of the real region has been found. If it can't reach zero, the original problem is infeasible.</li>
               <li>Drop the artificial variables' columns, restore the real objective row, and recompute it against the current, now-feasible basis.</li>
-              <li>Phase two: run ordinary simplex from there, pivoting on the real objective until every coefficient is non-negative.</li>
+              <li>Phase two runs ordinary simplex from there, pivoting on the real objective until every coefficient is non-negative.</li>
             </ol>
-            <p>The same walk, numerically, now in two phases:</p>
+            <p>Numerically, the same walk now unfolds in two phases:</p>
             <div class="tableau-wrap" id="two-phase-tableau-root"></div>
           </div>
           <div class="topic" id="getting-a-dual-from-a-primal">
             <h2>Getting a Dual from a Primal</h2>
             <p>Every primal has a dual: a max problem's dual is a min problem, one dual variable per primal constraint and one dual constraint per primal variable.</p>
             <p>Start from the ice cream factory's primal LP:</p>
-            <p class="math">$$\max\quad 5\textcolor{#e64980}{x_1} + 4\textcolor{#3b6bd6}{x_2} \quad \text{s.t.} \quad 3\textcolor{#e64980}{x_1} + 4\textcolor{#3b6bd6}{x_2} \leq 24,\ \ \textcolor{#e64980}{x_1} \leq 6,\ \ \textcolor{#3b6bd6}{x_2} \leq 5$$</p>
-            <p>Building the dual, one piece at a time:</p>
+            <p class="math">$$\begin{aligned} \max \quad & 5\textcolor{#e64980}{x_1} + 4\textcolor{#3b6bd6}{x_2} \\ \text{s.t.} \quad & 3\textcolor{#e64980}{x_1} + 4\textcolor{#3b6bd6}{x_2} \leq 24 \\ & \textcolor{#e64980}{x_1} \leq 6 \\ & \textcolor{#3b6bd6}{x_2} \leq 5 \end{aligned}$$</p>
+            <p>The dual is built one piece at a time:</p>
             <ol>
               <li>Flip the objective direction — max becomes min.</li>
-              <li>Give each primal constraint its own dual variable: y₁ for the milk constraint, y₂ for the peppermint constraint, y₃ for the blueberries constraint.</li>
-              <li>Each primal constraint's right-hand side becomes that variable's objective coefficient: 24, 6, and 5 turn into min 24y₁ + 6y₂ + 5y₃.</li>
-              <li>Give each primal variable its own dual constraint: one for x₁, one for x₂.</li>
-              <li>Each primal variable's column of constraint coefficients becomes a dual constraint's row, and that variable's objective coefficient becomes the dual constraint's right-hand side. x₁'s column is (3, 1, 0) with objective coefficient 5, giving 3y₁ + y₂ ≥ 5. x₂'s column is (4, 0, 1) with objective coefficient 4, giving 4y₁ + y₃ ≥ 4.</li>
+              <li>Give each primal constraint its own dual variable.</li>
+              <li>Each primal constraint's right-hand side becomes that variable's objective coefficient.</li>
+              <li>Give each primal variable its own dual constraint, written with ≥ since the dual is a min problem.</li>
+              <li>Each primal variable's column of constraint coefficients becomes that dual constraint's row, and that variable's objective coefficient becomes the constraint's right-hand side.</li>
+              <li>Every dual variable is non-negative, same as the primal's.</li>
             </ol>
             <p>Put together, that's the dual:</p>
-            <p class="math">$$\min\ 24y_1 + 6y_2 + 5y_3 \quad \text{s.t.} \quad 3y_1 + y_2 \geq 5,\ \ 4y_1 + y_3 \geq 4,\ \ y_1, y_2, y_3 \geq 0$$</p>
-            <p>Rather than re-running simplex on it, read the solution off the primal's already-known optimal corner, (x₁, x₂) = (6, 1.5). Both x₁ and x₂ are positive, so both dual constraints must hold with equality; the blueberries constraint x₂ ≤ 5 isn't tight there (1.5 < 5), so y₃ must be 0.</p>
-            <p class="math">$$4y_1 + y_3 = 4,\ y_3 = 0 \ \Longrightarrow\ y_1 = 1, \qquad 3y_1 + y_2 = 5 \ \Longrightarrow\ y_2 = 2$$</p>
-            <p>That gives y₁ = 1, y₂ = 2, y₃ = 0 — a dual objective of 24(1) + 6(2) + 5(0) = 24 + 12 = 36, exactly matching the primal's optimal profit.</p>
-            <p>Weak duality keeps the primal's rising values below the dual's falling ones at every step; strong duality is the special fact that, at the optimum, they meet exactly.</p>
+            <p class="math">$$\begin{aligned} \min \quad & 24y_1 + 6y_2 + 5y_3 \\ \text{s.t.} \quad & 3y_1 + y_2 \geq 5 \\ & 4y_1 + y_3 \geq 4 \\ & y_1, y_2, y_3 \geq 0 \end{aligned}$$</p>
+            <p>Rather than re-running simplex on it, read the solution off the primal's already-known optimal corner. Both x₁ and x₂ are positive there, so both dual constraints must hold with equality; the blueberries constraint isn't tight at that corner, so y₃ must be 0.</p>
+            <p class="math">$$\begin{aligned} 4y_1 + y_3 = 4,\ y_3 = 0 \ &\Longrightarrow\ y_1 = 1 \\ 3y_1 + y_2 = 5 \ &\Longrightarrow\ y_2 = 2 \end{aligned}$$</p>
+            <p>Plugging those values into the dual objective, 24y₁ + 6y₂ + 5y₃, gives 24(1) + 6(2) + 5(0) = 36 — exactly the primal's optimal profit, confirming the two optima meet.</p>
+            <p><strong>Weak duality</strong> is the fact that every feasible primal value is always less than or equal to every feasible dual value, so as the primal rises toward its optimum and the dual falls toward its own, neither one ever crosses the other. <strong>Strong duality</strong> is the stronger fact that, at those two optima, the primal and dual values don't just stay close — they meet exactly.</p>
           </div>
           <div class="topic" id="gomory-cutting-planes">
             <h2>Gomory Cutting Planes</h2>
@@ -126,18 +127,32 @@
             <p class="math">$$\tfrac{7}{9}\textcolor{#2f9e44}{x_1} + \tfrac{1}{9}s_1 \geq \tfrac{1}{3} \quad\Longrightarrow\quad 7\textcolor{#2f9e44}{x_1} + s_1 \geq 3$$</p>
             <p>Substituting the slack back out in terms of the original variables collapses this to a single bound on ham, independent of eggs — exactly the cut drawn below.</p>
             <p class="math">$$7\textcolor{#2f9e44}{x_1} + (30 - 7\textcolor{#2f9e44}{x_1} - 9\textcolor{#c2525c}{x_2}) \geq 3 \quad\Longrightarrow\quad \textcolor{#c2525c}{x_2} \leq 3$$</p>
-            <div class="lp-graph" id="gomory-graph-root"></div>
-            <p>The faint dashed outline above is the LP relaxation before any cuts. Since ham must be a whole number, x₂ ≤ 3.33 is really x₂ ≤ 3 — a valid cut that removes no integer point, but slices off the fractional corner and shrinks the relaxation's optimum from 33.33 down to 33, a step closer to the true integer optimum of 31.</p>
+            <div class="lp-graph-row">
+              <div class="lp-graph" id="gomory-graph-root"></div>
+              <div class="lp-graph" id="gomory-graph-root-3"></div>
+            </div>
+            <p>The faint dashed outline in the first figure is the LP relaxation before any cuts. Since ham must be a whole number, x₂ ≤ 3.33 is really x₂ ≤ 3 — a valid cut that removes no integer point, but slices off the fractional corner and shrinks the relaxation's optimum from 33.33 down to 33, a step closer to the true integer optimum of 31.</p>
+            <p>Each cut leaves a new fractional vertex behind, so the process repeats: re-solve the tableau, split a fractional row, add the next cut. More rounds follow on this same problem:</p>
+            <div class="lp-graph-row">
+              <div class="lp-graph" id="gomory-graph-root-2"></div>
+              <div class="lp-graph" id="gomory-graph-root-4"></div>
+            </div>
+            <p>Splitting each new vertex's row in turn gives x₁ + 2x₂ ≤ 6, then 3x₁ + 4x₂ ≤ 13 (switching to ham's row once eggs comes out integer), then 2x₁ + 3x₂ ≤ 9 — tightening the relaxation's optimum from 33 down through 32.4 and 32, until it finally lands exactly on the true integer optimum, 31. Four rounds in total.</p>
           </div>
           <div class="topic" id="dijkstras-algorithm">
             <h2>Dijkstra's Algorithm</h2>
-            <p>Dijkstra grows a shortest-path tree one node at a time, always settling the closest unvisited node next.</p>
-            <div class="lp-graph" id="dijkstra-graph-root"></div>
+            <p>Dijkstra grows a shortest-path tree from a source node one node at a time, settling the closest unvisited node at each step.</p>
+            <div id="dijkstra-graph-root-1"></div>
+            <p>The source starts out the only settled node, so the first round of relaxing just records the direct edges out of it as tentative distances. Each settle after that updates the tentative distances of the newly-settled node's own neighbors, and whichever node now holds the smallest tentative distance gets settled next — even one with no direct edge from the source at all.</p>
+            <div id="dijkstra-graph-root-2"></div>
+            <p><strong>Relaxing</strong> a neighbor checks whether reaching it through the node just settled beats however it was reached before, updating its tentative distance if so — dashed edges above are still tentative, solid edges are locked in. Above, B ends up reached through C rather than by its own direct edge from the source — exactly the kind of shortcut relaxation is there to catch.</p>
+            <p>This is exact because edge weights are non-negative: a farther, unsettled node can never open up a shorter path to one already reached through closer, settled nodes. That guarantee fails with negative weights, which is why Dijkstra can't handle them — Bellman-Ford does, at the cost of checking every edge repeatedly instead of each node once.</p>
           </div>
           <div class="topic" id="complexity-and-np-completeness">
             <h2>Complexity and NP-Completeness</h2>
-            <p>P is every problem solvable quickly; NP is every problem whose solution can be checked quickly; NP-complete problems are the hardest problems in NP, each able to encode any other via a reduction.</p>
-            <p>If any single NP-complete problem (like SAT) turns out to be solvable quickly, a reduction lets every problem in NP ride along and be solved quickly too — that's exactly the open question "does P = NP?".</p>
+            <p><em>Placeholder: definitions — P (solvable quickly), NP (solution checkable quickly), NP-complete (hardest problems in NP, each able to encode any other via a reduction).</em></p>
+            <p><em>Placeholder: the P = NP question — if any single NP-complete problem (e.g. SAT) is solvable quickly, a reduction lets every problem in NP ride along.</em></p>
+            <p><em>Placeholder: example reduction between two NP-complete problems.</em></p>
           </div>
         </div>
       </section>
