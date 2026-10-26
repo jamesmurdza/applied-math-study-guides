@@ -979,7 +979,7 @@ if (window.renderMathInElement) {
     // general — naming the rule each pivot obeys — with just the variable
     // names as the one touch of this specific example.
     const leaveLab = COL[frame.basis[frame.pivot.leaveRow]];
-    return `The most negative reduced cost brings ${COL[frame.pivot.enterCol]} into the basis; the tightest ratio sends ${leaveLab} out.`;
+    return `${COL[frame.pivot.enterCol]} has the most negative reduced cost, so it enters the basis; ${leaveLab} leaves by the tightest ratio.`;
   }
 
   // pairGroups: array of [i, j] frame-index pairs that should render side by
@@ -1123,7 +1123,7 @@ if (window.renderMathInElement) {
           const leaveA = COL[frames[idx].basis[a.leaveRow]];
           const leaveB = COL[frames[partnerIdx].basis[b.leaveRow]];
           const explanation = document.createElement('p');
-          explanation.textContent = `The most negative reduced cost brings ${COL[a.enterCol]} into the basis in place of ${leaveA}; the same rule then brings ${COL[b.enterCol]} in for ${leaveB}.`;
+          explanation.textContent = `${COL[a.enterCol]} has the most negative reduced cost, so it enters the basis in place of ${leaveA} — the same rule then swaps in ${COL[b.enterCol]} for ${leaveB}.`;
           mount.appendChild(explanation);
         } else {
           appendCaption(frames[idx], idx);
