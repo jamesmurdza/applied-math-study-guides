@@ -1159,7 +1159,7 @@ if (window.renderMathInElement) {
     'profit',
     2,
     idx => (idx < phaseBoundary ? 1 : 2),
-    [[0, 1]]
+    [[0, 1], [2, 3]]
   );
 })();
 
