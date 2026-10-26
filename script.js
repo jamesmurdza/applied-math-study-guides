@@ -992,7 +992,19 @@ if (window.renderMathInElement) {
     const pairedAway = new Set();
     (pairGroups || []).forEach(([a, b]) => { pairPartner.set(a, b); pairedAway.add(b); });
 
-    function renderFrame(frame, idx, container) {
+    // Builds the caption text for a frame — pulled out as its own function
+    // so paired frames can still get a full-width paragraph each, instead
+    // of being squeezed into the same narrow column as their table.
+    function captionFor(frame, idx) {
+      if (phaseAt && phaseAt(idx) === 1 && !frame.pivot) {
+        const vals = solutionValues(frame, numStructural);
+        const parts = varNames.map((n, i) => `${n} = ${fmt(vals[i])}`).join(', ');
+        return `No artificial variable remains in the basis — a feasible corner is found (${parts}). Phase two now optimizes the real objective from here.`;
+      }
+      return pivotCaption(frame, varNames, objectiveLabel, numStructural);
+    }
+
+    function renderCard(frame, container) {
       const numCols = frame.tableau[0].length - 1;
       const numRows = frame.tableau.length - 1;
 
@@ -1060,22 +1072,17 @@ if (window.renderMathInElement) {
       card.appendChild(scrollBox);
 
       container.appendChild(card);
+    }
 
-      // Plain paragraph, not a "caption" — reads as the ordinary narrative
-      // text explaining each pivot, interwoven with the tables rather than
-      // styled as a smaller note attached underneath them.
+    // Plain paragraph, not a "caption" — reads as the ordinary narrative
+    // text explaining each pivot, interwoven with the tables rather than
+    // styled as a smaller note attached underneath them. Always appended
+    // directly to the main mount — text stays one full-width column even
+    // when its table is paired side by side with another.
+    function appendCaption(frame, idx) {
       const explanation = document.createElement('p');
-      // Phase one's objective tracks the artificial variable, not the real
-      // objective — "profit = 0" there would misleadingly read as a bad
-      // outcome, so its optimal frame gets its own wording instead.
-      if (phaseAt && phaseAt(idx) === 1 && !frame.pivot) {
-        const vals = solutionValues(frame, numStructural);
-        const parts = varNames.map((n, i) => `${n} = ${fmt(vals[i])}`).join(', ');
-        explanation.textContent = `No artificial variable remains in the basis — a feasible corner is found (${parts}). Phase two now optimizes the real objective from here.`;
-      } else {
-        explanation.textContent = pivotCaption(frame, varNames, objectiveLabel, numStructural);
-      }
-      container.appendChild(explanation);
+      explanation.textContent = captionFor(frame, idx);
+      mount.appendChild(explanation);
     }
 
     frames.forEach((frame, idx) => {
@@ -1093,17 +1100,21 @@ if (window.renderMathInElement) {
       }
 
       if (pairPartner.has(idx)) {
+        const partnerIdx = pairPartner.get(idx);
         const row = document.createElement('div');
         row.className = 'tableau-pair';
-        [idx, pairPartner.get(idx)].forEach(i => {
+        [idx, partnerIdx].forEach(i => {
           const cell = document.createElement('div');
           cell.className = 'tableau-pair-cell';
-          renderFrame(frames[i], i, cell);
+          renderCard(frames[i], cell);
           row.appendChild(cell);
         });
         mount.appendChild(row);
+        appendCaption(frames[idx], idx);
+        appendCaption(frames[partnerIdx], partnerIdx);
       } else {
-        renderFrame(frame, idx, mount);
+        renderCard(frame, mount);
+        appendCaption(frame, idx);
       }
     });
   }

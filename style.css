@@ -619,10 +619,6 @@ p.tableau-phase:first-child {
   margin: 0 auto;
 }
 
-.tableau-pair-cell > p {
-  margin-top: 16px;
-}
-
 .tableau {
   border-collapse: collapse;
   font-size: 0.9rem;
