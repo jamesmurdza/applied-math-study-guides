@@ -64,7 +64,7 @@
             <p>The simplex method never looks inside the feasible region — it starts at a corner and walks along the edges toward a better one.</p>
             <div class="lp-graph" id="simplex-graph-root"></div>
             <p>Simplex starts at a feasible vertex and repeatedly pivots to an adjacent vertex along the boundary whenever that improves the objective, following the arrows above. It stops once no neighboring vertex scores higher, landing on the optimum.</p>
-            <p>The algorithm, as a repeatable procedure:</p>
+            <p>The algorithm, as a repeatable procedure, goes like this:</p>
             <ol>
               <li>Add a slack variable to each ≤ constraint, turning it into an equality.</li>
               <li>Set up the initial tableau with every slack basic and every decision variable at zero.</li>
@@ -84,7 +84,7 @@
             <p>Now the origin is infeasible, so simplex has nowhere obvious to start. Phase one minimizes an artificial variable added just to make the new constraint solvable; once that artificial variable is driven to zero, its row describes a real feasible corner, and phase two optimizes profit from there.</p>
             <div class="lp-graph" id="two-phase-graph-root"></div>
             <p>The minimum-order line slices the corner nearest the origin off the feasible region, so the origin is no longer a valid start. Phase one jumps to a feasible corner instead; phase two then walks from there, along the arrows above, to the same optimum as before.</p>
-            <p>The procedure, building on ordinary simplex:</p>
+            <p>The procedure builds on ordinary simplex:</p>
             <ol>
               <li>For any constraint that isn't already ≤ with a non-negative right-hand side, add a surplus variable and an artificial variable to force an equality.</li>
               <li>Phase one temporarily minimizes the sum of the artificial variables, using the same entering/leaving/pivot rules as ordinary simplex, starting from the tableau where the artificials are basic.</li>
@@ -100,7 +100,7 @@
             <p>Every primal has a dual: a max problem's dual is a min problem, one dual variable per primal constraint and one dual constraint per primal variable.</p>
             <p>Start from the ice cream factory's primal LP:</p>
             <p class="math">$$\begin{aligned} \max \quad & 5\textcolor{#e64980}{x_1} + 4\textcolor{#3b6bd6}{x_2} \\ \text{s.t.} \quad & 3\textcolor{#e64980}{x_1} + 4\textcolor{#3b6bd6}{x_2} \leq 24 \\ & \textcolor{#e64980}{x_1} \leq 6 \\ & \textcolor{#3b6bd6}{x_2} \leq 5 \end{aligned}$$</p>
-            <p>Building the dual, one piece at a time:</p>
+            <p>The dual is built one piece at a time:</p>
             <ol>
               <li>Flip the objective direction — max becomes min.</li>
               <li>Give each primal constraint its own dual variable.</li>
@@ -131,7 +131,7 @@
               <div class="lp-graph" id="gomory-graph-root-3"></div>
             </div>
             <p>The faint dashed outline in the first figure is the LP relaxation before any cuts. Since ham must be a whole number, x₂ ≤ 3.33 is really x₂ ≤ 3 — a valid cut that removes no integer point, but slices off the fractional corner and shrinks the relaxation's optimum from 33.33 down to 33, a step closer to the true integer optimum of 31.</p>
-            <p>Each cut leaves a new fractional vertex behind, so the process repeats: re-solve the tableau, split a fractional row, add the next cut. More rounds on this same problem:</p>
+            <p>Each cut leaves a new fractional vertex behind, so the process repeats: re-solve the tableau, split a fractional row, add the next cut. More rounds follow on this same problem:</p>
             <div class="lp-graph-row">
               <div class="lp-graph" id="gomory-graph-root-2"></div>
               <div class="lp-graph" id="gomory-graph-root-4"></div>
