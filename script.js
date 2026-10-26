@@ -1128,12 +1128,12 @@ if (window.renderMathInElement) {
 // ---------------------------------------------------------------------------
 // Dijkstra's algorithm: the simplest graph that still forces a real relax
 // (A-B-C-D, where the direct A-B edge isn't the shortest way to reach B).
-// Rendered as a sequence of static diagrams, one per "settle" step, stacked
-// in a single column — the diagrams are what actually show the algorithm
-// running; each gets only a short label, not a repeated full sentence,
-// since the surrounding prose already states the general rule once.
-// Distances/tree are computed live by running the real algorithm, not
-// hand-placed per step.
+// Rendered as a sequence of static diagrams, one per "settle" step, paired
+// two-by-two (same side-by-side layout as the Gomory cut charts) — the
+// diagrams are what show the algorithm actually running, unlabeled beyond
+// the graph itself, since the surrounding prose covers the theory and
+// method in general terms rather than narrating each step. Distances/tree
+// are computed live by running the real algorithm, not hand-placed per step.
 // ---------------------------------------------------------------------------
 (function () {
   const mount = document.getElementById('dijkstra-graph-root');
@@ -1147,11 +1147,14 @@ if (window.renderMathInElement) {
     return node;
   }
 
+  // Positions scaled to ~80% of a full-size layout (node spacing, radius)
+  // without touching font-size, so two diagrams sit comfortably side by
+  // side — same scaling approach as the Gomory charts.
   const nodePos = {
-    A: { x: 30, y: 140 },
-    B: { x: 150, y: 50 },
-    C: { x: 150, y: 230 },
-    D: { x: 270, y: 140 }
+    A: { x: 24, y: 112 },
+    B: { x: 120, y: 40 },
+    C: { x: 120, y: 184 },
+    D: { x: 216, y: 112 }
   };
   const edgeList = [
     ['A', 'B', 4], ['A', 'C', 2], ['B', 'C', 1], ['B', 'D', 5], ['C', 'D', 8]
@@ -1193,8 +1196,8 @@ if (window.renderMathInElement) {
   function renderStep(cur, idx) {
     const dist = cur.dist, prev = cur.prev, visited = cur.visited;
     const svg = el('svg', {
-      viewBox: '0 0 300 260',
-      style: `width:100%;max-width:300px${idx > 0 ? ';margin-top:20px' : ''}`,
+      viewBox: '0 0 240 208',
+      style: 'width:100%;max-width:240px',
       role: 'img',
       'aria-label': `Dijkstra step ${idx + 1}: settle ${cur.settled}`
     });
@@ -1224,7 +1227,7 @@ if (window.renderMathInElement) {
       const isCurrent = cur.settled === n;
       const isFrontier = !isSettled && dist[n] < Infinity;
       svg.appendChild(el('circle', {
-        cx: p.x, cy: p.y, r: 16,
+        cx: p.x, cy: p.y, r: 13,
         fill: isSettled ? '#1a1a1a' : '#fff',
         stroke: isCurrent ? '#c0392b' : (isFrontier ? '#1a1a1a' : '#ccc'),
         'stroke-width': isCurrent ? '3' : '1.5'
@@ -1247,15 +1250,20 @@ if (window.renderMathInElement) {
     return svg;
   }
 
-  // One short caption per step — just what settled and what it relaxed, not
-  // a restatement of the general rule (that's already in the prose above).
+  // Two steps per row, same .lp-graph-row/.lp-graph pairing as the Gomory
+  // cut charts — no per-step caption text; the theory lives in the prose
+  // around this diagram, not repeated under each one.
+  let row = null;
   steps.forEach((cur, idx) => {
-    mount.appendChild(renderStep(cur, idx));
-    const caption = document.createElement('p');
-    caption.style.marginTop = '8px';
-    const parts = cur.relaxed.map(r => `${r.node} → ${r.to}`);
-    caption.textContent = `Settle ${cur.settled} (${cur.dist[cur.settled]})` + (parts.length ? ` — relax ${parts.join(', ')}` : '');
-    mount.appendChild(caption);
+    if (idx % 2 === 0) {
+      row = document.createElement('div');
+      row.className = 'lp-graph-row';
+      mount.appendChild(row);
+    }
+    const cell = document.createElement('div');
+    cell.className = 'lp-graph';
+    cell.appendChild(renderStep(cur, idx));
+    row.appendChild(cell);
   });
 })();
 
