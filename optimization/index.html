@@ -32,7 +32,7 @@
           <div class="topic" id="linear-programming-lp-formulation">
             <h2>Linear Programming (LP) Formulation</h2>
             <p>Example: a factory picks liters of <span class="var-mint">pink peppermint (x₁)</span> and <span class="var-berry">blueberry (x₂)</span> ice cream to maximize profit under ingredient limits.</p>
-            <p>The factory wants to maximize profit from the liters it produces: $5 profit per liter of peppermint, $4 per liter of blueberry.</p>
+            <p>The factory wants to maximize profit from the liters it produces, which earns a different amount per liter for each flavor.</p>
             <p class="math">$$\max\quad 5\textcolor{#e64980}{x_1} + 4\textcolor{#3b6bd6}{x_2}$$</p>
             <p>There's only so much milk on hand, so milk used across both flavors can't exceed the supply.</p>
             <p class="math">$$3\textcolor{#e64980}{x_1} + 4\textcolor{#3b6bd6}{x_2} \leq 24$$</p>
@@ -44,7 +44,7 @@
             <p class="math">$$\textcolor{#e64980}{x_1}, \textcolor{#3b6bd6}{x_2} \geq 0$$</p>
 
             <div class="lp-graph" id="lp-graph-root"></div>
-            <p>The shaded region above is every feasible production plan. The best one sits at a corner — here, (x₁, x₂) = (6, 1.5), for a profit of 36.</p>
+            <p>The shaded region above is every feasible production plan. The best one always sits at a corner of that region, marked above as the optimum.</p>
           </div>
           <div class="topic" id="integer-linear-programming-ilp-formulation">
             <h2>Integer Linear Programming (ILP) Formulation</h2>
@@ -57,13 +57,13 @@
             <p class="math">$$\textcolor{#2f9e44}{x_1}, \textcolor{#c2525c}{x_2} \in \mathbb{Z}_{\geq 0}$$</p>
 
             <div class="lp-graph" id="ilp-graph-root"></div>
-            <p>The shaded region above is the continuous feasible area; the dots are the integer points inside it. The best integer point is (x₁, x₂) = (3, 1), for a value of 31 — not the same as rounding the LP relaxation's optimum of (0, 3.33), which scores 33.33.</p>
+            <p>The shaded region above is the continuous feasible area; the dots are the integer points inside it. The best integer point, marked solid, generally isn't the one you'd get by rounding the LP relaxation's optimum, marked hollow.</p>
           </div>
           <div class="topic" id="simplex">
             <h2>Simplex</h2>
             <p>The simplex method never looks inside the feasible region — it starts at a corner and walks along the edges toward a better one.</p>
             <div class="lp-graph" id="simplex-graph-root"></div>
-            <p>Simplex starts at a feasible vertex — here, (0, 0) — then repeatedly pivots to an adjacent vertex along the boundary whenever that improves the objective: (0, 0) → (6, 0) → (6, 1.5). It stops once no neighboring vertex scores higher, landing on the optimum with a profit of 36.</p>
+            <p>Simplex starts at a feasible vertex and repeatedly pivots to an adjacent vertex along the boundary whenever that improves the objective, following the arrows above. It stops once no neighboring vertex scores higher, landing on the optimum.</p>
             <p>The algorithm, as a repeatable procedure:</p>
             <ol>
               <li>Add a slack variable to each ≤ constraint, turning it into an equality.</li>
@@ -83,7 +83,7 @@
             <p class="math">$$\textcolor{#e64980}{x_1} + \textcolor{#3b6bd6}{x_2} \geq 2$$</p>
             <p>Now the origin is infeasible, so simplex has nowhere obvious to start. Phase one ignores profit and just hunts for any feasible corner, using an artificial variable to patch the constraint; phase two then optimizes real profit from there.</p>
             <div class="lp-graph" id="two-phase-graph-root"></div>
-            <p>The minimum-order line slices the corner nearest the origin off the feasible region, so (0, 0) is no longer a valid start. Phase one jumps straight to (2, 0) instead; phase two then walks (2, 0) → (6, 0) → (6, 1.5) to the same optimum, a profit of 36.</p>
+            <p>The minimum-order line slices the corner nearest the origin off the feasible region, so the origin is no longer a valid start. Phase one jumps to a feasible corner instead; phase two then walks from there, along the arrows above, to the same optimum as before.</p>
             <p>The procedure, building on ordinary simplex:</p>
             <ol>
               <li>For any constraint that isn't already ≤ with a non-negative right-hand side, add a surplus variable and an artificial variable to force an equality.</li>
@@ -110,9 +110,9 @@
             </ol>
             <p>Put together, that's the dual:</p>
             <p class="math">$$\min\ 24y_1 + 6y_2 + 5y_3 \quad \text{s.t.} \quad 3y_1 + y_2 \geq 5,\ \ 4y_1 + y_3 \geq 4,\ \ y_1, y_2, y_3 \geq 0$$</p>
-            <p>Rather than re-running simplex on it, read the solution off the primal's already-known optimal corner, (x₁, x₂) = (6, 1.5). Both x₁ and x₂ are positive, so both dual constraints must hold with equality; the blueberries constraint x₂ ≤ 5 isn't tight there (1.5 < 5), so y₃ must be 0.</p>
+            <p>Rather than re-running simplex on it, read the solution off the primal's already-known optimal corner. Both x₁ and x₂ are positive there, so both dual constraints must hold with equality; the blueberries constraint isn't tight at that corner, so y₃ must be 0.</p>
             <p class="math">$$4y_1 + y_3 = 4,\ y_3 = 0 \ \Longrightarrow\ y_1 = 1, \qquad 3y_1 + y_2 = 5 \ \Longrightarrow\ y_2 = 2$$</p>
-            <p>That gives y₁ = 1, y₂ = 2, y₃ = 0 — a dual objective of 24(1) + 6(2) + 5(0) = 24 + 12 = 36, exactly matching the primal's optimal profit.</p>
+            <p>Plugging y₁, y₂, y₃ back into the dual objective gives exactly the primal's optimal profit.</p>
             <p>Weak duality keeps the primal's rising values below the dual's falling ones at every step; strong duality is the special fact that, at the optimum, they meet exactly.</p>
           </div>
           <div class="topic" id="gomory-cutting-planes">
@@ -143,8 +143,9 @@
           </div>
           <div class="topic" id="complexity-and-np-completeness">
             <h2>Complexity and NP-Completeness</h2>
-            <p>P is every problem solvable quickly; NP is every problem whose solution can be checked quickly; NP-complete problems are the hardest problems in NP, each able to encode any other via a reduction.</p>
-            <p>If any single NP-complete problem (like SAT) turns out to be solvable quickly, a reduction lets every problem in NP ride along and be solved quickly too — that's exactly the open question "does P = NP?".</p>
+            <p><em>Placeholder: definitions — P (solvable quickly), NP (solution checkable quickly), NP-complete (hardest problems in NP, each able to encode any other via a reduction).</em></p>
+            <p><em>Placeholder: the P = NP question — if any single NP-complete problem (e.g. SAT) is solvable quickly, a reduction lets every problem in NP ride along.</em></p>
+            <p><em>Placeholder: example reduction between two NP-complete problems.</em></p>
           </div>
         </div>
       </section>
