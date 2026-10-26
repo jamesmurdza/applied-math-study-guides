@@ -87,10 +87,10 @@
             <p>The procedure, building on ordinary simplex:</p>
             <ol>
               <li>For any constraint that isn't already ≤ with a non-negative right-hand side, add a surplus variable and an artificial variable to force an equality.</li>
-              <li>Phase one: temporarily minimize the sum of the artificial variables, using the same entering/leaving/pivot rules as ordinary simplex, starting from the tableau where the artificials are basic.</li>
+              <li>Phase one temporarily minimizes the sum of the artificial variables, using the same entering/leaving/pivot rules as ordinary simplex, starting from the tableau where the artificials are basic.</li>
               <li>If phase one reaches zero, every artificial variable has left the basis (or sits at zero) — a feasible corner of the real region has been found. If it can't reach zero, the original problem is infeasible.</li>
               <li>Drop the artificial variables' columns, restore the real objective row, and recompute it against the current, now-feasible basis.</li>
-              <li>Phase two: run ordinary simplex from there, pivoting on the real objective until every coefficient is non-negative.</li>
+              <li>Phase two runs ordinary simplex from there, pivoting on the real objective until every coefficient is non-negative.</li>
             </ol>
             <p>Numerically, the same walk now unfolds in two phases:</p>
             <div class="tableau-wrap" id="two-phase-tableau-root"></div>
