@@ -1200,7 +1200,7 @@ if (window.renderMathInElement) {
     const dist = cur.dist, prev = cur.prev, visited = cur.visited;
     const svg = el('svg', {
       viewBox: '0 0 240 208',
-      style: `width:100%;max-width:240px${idx > 0 ? ';margin-top:24px' : ''}`,
+      style: 'width:100%;max-width:240px',
       role: 'img',
       'aria-label': `Dijkstra step ${idx + 1}: settle ${cur.settled}`
     });
@@ -1256,13 +1256,25 @@ if (window.renderMathInElement) {
     return svg;
   }
 
+  // Two steps per row (same side-by-side layout as the Gomory cut charts),
+  // each step kept in its own .lp-graph cell with its diagram and caption
+  // together so the pair stays aligned regardless of caption length.
+  let row = null;
   steps.forEach((cur, idx) => {
-    mount.appendChild(renderStep(cur, idx));
+    if (idx % 2 === 0) {
+      row = document.createElement('div');
+      row.className = 'lp-graph-row';
+      mount.appendChild(row);
+    }
+    const cell = document.createElement('div');
+    cell.className = 'lp-graph';
+    cell.appendChild(renderStep(cur, idx));
     const caption = document.createElement('p');
     const parts = cur.relaxed.map(r => `${r.node}: ${fmtD(r.from)} → ${r.to}`);
     const relaxedText = parts.length ? ` Relaxes ${parts.join(', ')}.` : ' No shorter paths found through it.';
     caption.textContent = `Step ${idx + 1}: settle ${cur.settled} at distance ${cur.dist[cur.settled]} (the closest unvisited node).${relaxedText}`;
-    mount.appendChild(caption);
+    cell.appendChild(caption);
+    row.appendChild(cell);
   });
 })();
 
