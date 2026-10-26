@@ -969,7 +969,7 @@ if (window.renderMathInElement) {
       const vals = solutionValues(frame, numStructural);
       const objVal = frame.tableau[frame.tableau.length - 1][frame.tableau[0].length - 1];
       const parts = varNames.map((n, i) => `${n} = ${fmt(vals[i])}`).join(', ');
-      return `Every reduced cost is now ≥ 0 — optimal. ${parts}, ${objectiveLabel} = ${fmt(objVal)}.`;
+      return `Every reduced cost is now ≥ 0, so this corner is optimal: ${parts}, for a ${objectiveLabel} of ${fmt(objVal)}.`;
     }
     // States the reasoning, not just the outcome — which variable enters
     // and leaves is already visible from the highlighted cells, so a
