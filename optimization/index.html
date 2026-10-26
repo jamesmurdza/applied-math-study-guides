@@ -67,7 +67,7 @@
             <p>The algorithm, as a repeatable procedure:</p>
             <ol>
               <li>Add a slack variable to each ≤ constraint, turning it into an equality.</li>
-              <li>Set up the initial tableau with every slack basic and every structural variable at zero.</li>
+              <li>Set up the initial tableau with every slack basic and every decision variable at zero.</li>
               <li>Check optimality: if every coefficient in the objective row is already non-negative, stop — the current corner is optimal.</li>
               <li>Otherwise, choose the entering variable: the non-basic variable with the most negative objective-row coefficient.</li>
               <li>Choose the leaving variable with the minimum ratio test: among rows with a positive entry in the entering column, pick the one with the smallest RHS-to-coefficient ratio.</li>
