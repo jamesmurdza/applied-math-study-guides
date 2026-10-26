@@ -1136,9 +1136,11 @@ if (window.renderMathInElement) {
 // are computed live by running the real algorithm, not hand-placed per step.
 // ---------------------------------------------------------------------------
 (function () {
-  const mount = document.getElementById('dijkstra-graph-root');
-  if (!mount) return;
-  mount.innerHTML = '';
+  const mount1 = document.getElementById('dijkstra-graph-root-1');
+  const mount2 = document.getElementById('dijkstra-graph-root-2');
+  if (!mount1 || !mount2) return;
+  mount1.innerHTML = '';
+  mount2.innerHTML = '';
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
   function el(tag, attrs) {
@@ -1250,21 +1252,23 @@ if (window.renderMathInElement) {
     return svg;
   }
 
-  // Two steps per row, same .lp-graph-row/.lp-graph pairing as the Gomory
-  // cut charts — no per-step caption text; the theory lives in the prose
-  // around this diagram, not repeated under each one.
-  let row = null;
-  steps.forEach((cur, idx) => {
-    if (idx % 2 === 0) {
-      row = document.createElement('div');
-      row.className = 'lp-graph-row';
-      mount.appendChild(row);
-    }
-    const cell = document.createElement('div');
-    cell.className = 'lp-graph';
-    cell.appendChild(renderStep(cur, idx));
-    row.appendChild(cell);
-  });
+  // Two steps per row, split across two mounts (steps 1-2, then 3-4) so
+  // the surrounding HTML can put a paragraph of prose between the pairs —
+  // same .lp-graph-row/.lp-graph pairing as the Gomory cut charts, no
+  // per-step caption text.
+  function renderRow(mount, pairSteps, offset) {
+    const row = document.createElement('div');
+    row.className = 'lp-graph-row';
+    pairSteps.forEach((cur, i) => {
+      const cell = document.createElement('div');
+      cell.className = 'lp-graph';
+      cell.appendChild(renderStep(cur, offset + i));
+      row.appendChild(cell);
+    });
+    mount.appendChild(row);
+  }
+  renderRow(mount1, steps.slice(0, 2), 0);
+  renderRow(mount2, steps.slice(2, 4), 2);
 })();
 
 // ---------------------------------------------------------------------------
