@@ -99,7 +99,7 @@
             <h2>Getting a Dual from a Primal</h2>
             <p>Every primal has a dual: a max problem's dual is a min problem, one dual variable per primal constraint and one dual constraint per primal variable.</p>
             <p>Start from the ice cream factory's primal LP:</p>
-            <p class="math">$$\max\quad 5\textcolor{#e64980}{x_1} + 4\textcolor{#3b6bd6}{x_2} \quad \text{s.t.} \quad 3\textcolor{#e64980}{x_1} + 4\textcolor{#3b6bd6}{x_2} \leq 24,\ \ \textcolor{#e64980}{x_1} \leq 6,\ \ \textcolor{#3b6bd6}{x_2} \leq 5$$</p>
+            <p class="math">$$\begin{aligned} \max \quad & 5\textcolor{#e64980}{x_1} + 4\textcolor{#3b6bd6}{x_2} \\ \text{s.t.} \quad & 3\textcolor{#e64980}{x_1} + 4\textcolor{#3b6bd6}{x_2} \leq 24 \\ & \textcolor{#e64980}{x_1} \leq 6 \\ & \textcolor{#3b6bd6}{x_2} \leq 5 \end{aligned}$$</p>
             <p>Building the dual, one piece at a time:</p>
             <ol>
               <li>Flip the objective direction — max becomes min.</li>
@@ -109,9 +109,9 @@
               <li>Each primal variable's column of constraint coefficients becomes a dual constraint's row, and that variable's objective coefficient becomes the dual constraint's right-hand side. x₁'s column is (3, 1, 0) with objective coefficient 5, giving 3y₁ + y₂ ≥ 5. x₂'s column is (4, 0, 1) with objective coefficient 4, giving 4y₁ + y₃ ≥ 4.</li>
             </ol>
             <p>Put together, that's the dual:</p>
-            <p class="math">$$\min\ 24y_1 + 6y_2 + 5y_3 \quad \text{s.t.} \quad 3y_1 + y_2 \geq 5,\ \ 4y_1 + y_3 \geq 4,\ \ y_1, y_2, y_3 \geq 0$$</p>
+            <p class="math">$$\begin{aligned} \min \quad & 24y_1 + 6y_2 + 5y_3 \\ \text{s.t.} \quad & 3y_1 + y_2 \geq 5 \\ & 4y_1 + y_3 \geq 4 \\ & y_1, y_2, y_3 \geq 0 \end{aligned}$$</p>
             <p>Rather than re-running simplex on it, read the solution off the primal's already-known optimal corner. Both x₁ and x₂ are positive there, so both dual constraints must hold with equality; the blueberries constraint isn't tight at that corner, so y₃ must be 0.</p>
-            <p class="math">$$4y_1 + y_3 = 4,\ y_3 = 0 \ \Longrightarrow\ y_1 = 1, \qquad 3y_1 + y_2 = 5 \ \Longrightarrow\ y_2 = 2$$</p>
+            <p class="math">$$\begin{aligned} 4y_1 + y_3 = 4,\ y_3 = 0 \ &\Longrightarrow\ y_1 = 1 \\ 3y_1 + y_2 = 5 \ &\Longrightarrow\ y_2 = 2 \end{aligned}$$</p>
             <p>Plugging y₁, y₂, y₃ back into the dual objective gives exactly the primal's optimal profit.</p>
             <p>Weak duality keeps the primal's rising values below the dual's falling ones at every step; strong duality is the special fact that, at the optimum, they meet exactly.</p>
           </div>
