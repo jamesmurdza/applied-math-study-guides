@@ -971,14 +971,15 @@ if (window.renderMathInElement) {
       const parts = varNames.map((n, i) => `${n} = ${fmt(vals[i])}`).join(', ');
       return `Every reduced cost is now ≥ 0 — optimal. ${parts}, ${objectiveLabel} = ${fmt(objVal)}.`;
     }
-    // Short label only — which variable enters and leaves. The general
-    // rule (most-negative reduced cost, minimum ratio test) is already
-    // stated once in the numbered procedure above, and the pivot cells
-    // are already highlighted in the table itself, so restating the full
-    // rule with this pivot's numbers in every single caption was the same
-    // mechanical repetition trimmed from the Dijkstra steps.
+    // States the reasoning, not just the outcome — which variable enters
+    // and leaves is already visible from the highlighted cells, so a
+    // caption that only names them ("X enters, Y leaves") would just be a
+    // label repeating what's already on the table. The actual numbers
+    // (reduced cost, ratio) are visible in the table too, so this stays
+    // general — naming the rule each pivot obeys — with just the variable
+    // names as the one touch of this specific example.
     const leaveLab = COL[frame.basis[frame.pivot.leaveRow]];
-    return `${COL[frame.pivot.enterCol]} enters, ${leaveLab} leaves.`;
+    return `The most negative reduced cost brings ${COL[frame.pivot.enterCol]} into the basis; the tightest ratio sends ${leaveLab} out.`;
   }
 
   // pairGroups: array of [i, j] frame-index pairs that should render side by
