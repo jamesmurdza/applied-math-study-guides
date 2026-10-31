@@ -1534,8 +1534,18 @@ if (window.renderMathInElement) {
 
     const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, style: `width:100%;max-width:${width}px`, role: 'img', 'aria-label': 'Null and alternative distributions with the rejection region, showing size and power' });
 
+    // diagonal-hatch pattern for α, so its region reads as an overlay on
+    // top of the solid power fill instead of just blending into a
+    // muddier patch of the same overlapping area (the two tails cover
+    // the same x-range past z*, so solid fills on both stacked badly)
+    const defs = el('defs', {});
+    const hatch = el('pattern', { id: 'alphaHatch', patternUnits: 'userSpaceOnUse', width: '5', height: '5', patternTransform: 'rotate(45)' });
+    hatch.appendChild(el('line', { x1: '0', y1: '0', x2: '0', y2: '5', stroke: '#c92a2a', 'stroke-width': '2.5' }));
+    defs.appendChild(hatch);
+    svg.appendChild(defs);
+
     // shaded power region first (under the alternative, past z*) so the
-    // null curve and its own α shading draw on top and stay legible
+    // null curve and its own α hatching draw on top and stay legible
     const powerPts = sample(x => normalPdf(x, delta), zCrit, xMax, 60);
     const pBaseLeft = toScreen(zCrit, 0), pBaseRight = toScreen(xMax, 0);
     let powerD = `M${pBaseLeft.x.toFixed(1)},${pBaseLeft.y.toFixed(1)} `;
@@ -1543,13 +1553,15 @@ if (window.renderMathInElement) {
     powerD += ` L${pBaseRight.x.toFixed(1)},${pBaseRight.y.toFixed(1)} Z`;
     svg.appendChild(el('path', { d: powerD, fill: '#0b7285', 'fill-opacity': '0.25' }));
 
-    // shaded α region (under the null, past z*)
+    // α region (under the null, past z*) as diagonal hatching rather
+    // than a solid fill, so it stays legible as its own region where it
+    // overlaps the power fill instead of combining into a solid blend
     const tailPts = sample(x => normalPdf(x, 0), zCrit, xMax, 60);
     const baseLeft = toScreen(zCrit, 0), baseRight = toScreen(xMax, 0);
     let shadeD = `M${baseLeft.x.toFixed(1)},${baseLeft.y.toFixed(1)} `;
     shadeD += tailPts.map(p => { const s = toScreen(p.x, p.y); return `L${s.x.toFixed(1)},${s.y.toFixed(1)}`; }).join(' ');
     shadeD += ` L${baseRight.x.toFixed(1)},${baseRight.y.toFixed(1)} Z`;
-    svg.appendChild(el('path', { d: shadeD, fill: '#c92a2a', 'fill-opacity': '0.35' }));
+    svg.appendChild(el('path', { d: shadeD, fill: 'url(#alphaHatch)' }));
 
     const nullPts = sample(x => normalPdf(x, 0), xMin, xMax, 200);
     svg.appendChild(el('path', { d: pathFor(nullPts, toScreen), fill: 'none', stroke: '#1a1a1a', 'stroke-width': '1.75' }));
@@ -1590,7 +1602,7 @@ if (window.renderMathInElement) {
     renderLegend(container, [
       { type: 'line', color: '#1a1a1a', label: 'null distribution' },
       { type: 'dashed', color: '#0b7285', label: 'alternative distribution' },
-      { type: 'fill', color: '#c92a2a', label: 'α (size)' },
+      { type: 'hatch', color: '#c92a2a', label: 'α (size)' },
       { type: 'fill', color: '#0b7285', label: '1−β (power)' }
     ]);
     // No trailing caption — δ, z*, and the resulting α/power are already
